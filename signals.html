@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <meta name="description" content="Your personal trading mentor, market toolkit, and daily challenge – all in your pocket." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>FLP AcademyWorks - Signals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Brand colors from design.json
+                        primary: '#FFD60A',
+                        success: '#32D74B',
+                        warning: '#FFD60A',
+                        danger: '#FF453A',
+                        info: '#64D2FF',
+                        
+                        // Background colors
+                        bg: '#0B0B0F',
+                        'bg-elevated': '#141417',
+                        'bg-secondary': '#1C1C1F',
+                        'bg-tertiary': '#2C2C2E',
+                        
+                        // Text colors
+                        'label-primary': '#FFFFFF',
+                        'label-secondary': 'rgba(235,235,245,0.6)',
+                        'label-tertiary': 'rgba(235,235,245,0.3)',
+                        'label-quaternary': 'rgba(235,235,245,0.18)',
+                        
+                        // Fill colors
+                        'fill-primary': 'rgba(120,120,128,0.36)',
+                        'fill-secondary': 'rgba(120,120,128,0.32)',
+                        'fill-tertiary': 'rgba(120,120,128,0.24)',
+                        
+                        // Interaction colors
+                        separator: 'rgba(84,84,88,0.36)',
+                        overlay: 'rgba(0,0,0,0.6)',
+                        'focus-ring': 'rgba(255,214,10,0.45)',
+                        
+                        // Trading colors
+                        'chart-up': '#32D74B',
+                        'chart-down': '#FF453A',
+                        buy: '#32D74B',
+                        sell: '#FF453A'
+                    },
+                    fontFamily: {
+                        'sf-pro': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        'sf-display': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        'sf-ui': ['SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'elevated': '0 4px 16px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08)',
+                        'card': '0 2px 8px rgba(0,0,0,0.1)',
+                        'button': '0 1px 3px rgba(0,0,0,0.12)',
+                        'modal': '0 8px 32px rgba(0,0,0,0.24)'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-bg flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="text-primary text-2xl font-bold mb-4">FLP</div>
+            <div class="text-white">Loading...</div>
+        </div>
+    </div>
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 px-4 py-3 flex justify-between items-center" style="background: rgba(22,22,24,0.6); backdrop-filter: blur(20px);">
+        <div class="text-primary text-base font-sf-display font-semibold">FLP AcademyWorks</div>
+        <a href="notifications.html" class="text-label-secondary opacity-80 hover:opacity-100 transition-opacity relative">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                <path d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"></path>
+            </svg>
+            <div class="absolute -top-1 -right-1 w-3 h-3 bg-danger rounded-full flex items-center justify-center">
+                <span class="text-white text-xs font-bold">3</span>
+            </div>
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16 pb-20 max-w-md mx-auto">
+        <!-- Tabs -->
+        <div class="flex bg-gray-800 mx-4 mt-4 rounded-lg p-1">
+            <button class="flex-1 bg-primary text-black py-2 px-3 rounded-md text-xs font-medium tab-btn" onclick="switchTab('live')">
+                Live Signals
+            </button>
+            <button class="flex-1 text-gray-300 py-2 px-3 rounded-md text-xs font-medium tab-btn" onclick="switchTab('history')">
+                History
+            </button>
+            <button class="flex-1 text-gray-300 py-2 px-3 rounded-md text-xs font-medium tab-btn" onclick="switchTab('leaderboard')">
+                Leaderboard
+            </button>
+        </div>
+
+        <!-- Live Signals Tab -->
+        <div id="live-tab" class="px-4 mt-4 space-y-4">
+            <!-- Signal Card 1 - BUY -->
+            <div class="bg-gray-900 rounded-lg p-4 border-l-4 border-green-500">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-base font-bold">EUR/USD</h3>
+                            <span class="bg-green-500 text-black px-2 py-1 rounded-full text-xs font-bold">BUY</span>
+                        </div>
+                        <p class="text-gray-400 text-xs">🕐 2 minutes ago</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-gray-400">Risk</div>
+                        <div class="text-primary font-bold">2.5%</div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4 mb-3 text-xs">
+                    <div>
+                        <div class="text-gray-400">Entry</div>
+                        <div class="font-semibold">1.0850</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-400">Stop Loss</div>
+                        <div class="font-semibold text-red-400">1.0820</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-400">Take Profit</div>
+                        <div class="font-semibold text-green-400">1.0920</div>
+                    </div>
+                </div>
+
+                <!-- Confidence Meter -->
+                <div class="mb-3">
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-gray-400">Confidence</span>
+                        <span class="text-primary font-semibold">85%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div class="bg-primary h-2 rounded-full" style="width: 85%"></div>
+                    </div>
+                </div>
+
+                <button class="w-full bg-gray-800 text-white py-2 px-4 rounded-lg text-xs font-medium">
+                    <span class="flex items-center gap-2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                            <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"></path>
+                        </svg>
+                        Explain this Signal
+                    </span>
+                </button>
+            </div>
+
+            <!-- Signal Card 2 - SELL -->
+            <div class="bg-gray-900 rounded-lg p-4 border-l-4 border-red-500">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-base font-bold">GBP/JPY</h3>
+                            <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">SELL</span>
+                        </div>
+                        <p class="text-gray-400 text-xs">🕐 5 minutes ago</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-gray-400">Risk</div>
+                        <div class="text-primary font-bold">1.8%</div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4 mb-3 text-xs">
+                    <div>
+                        <div class="text-gray-400">Entry</div>
+                        <div class="font-semibold">185.20</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-400">Stop Loss</div>
+                        <div class="font-semibold text-red-400">186.50</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-400">Take Profit</div>
+                        <div class="font-semibold text-green-400">183.80</div>
+                    </div>
+                </div>
+
+                <!-- Confidence Meter -->
+                <div class="mb-3">
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-gray-400">Confidence</span>
+                        <span class="text-primary font-semibold">72%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div class="bg-primary h-2 rounded-full" style="width: 72%"></div>
+                    </div>
+                </div>
+
+                <button class="w-full bg-gray-800 text-white py-2 px-4 rounded-lg text-xs font-medium">
+                    <span class="flex items-center gap-2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                            <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"></path>
+                        </svg>
+                        Explain this Signal
+                    </span>
+                </button>
+            </div>
+
+            <!-- Signal Card 3 - BUY -->
+            <div class="bg-gray-900 rounded-lg p-4 border-l-4 border-green-500">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-base font-bold">USD/CAD</h3>
+                            <span class="bg-green-500 text-black px-2 py-1 rounded-full text-xs font-bold">BUY</span>
+                        </div>
+                        <p class="text-gray-400 text-xs">🕐 12 minutes ago</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-gray-400">Risk</div>
+                        <div class="text-primary font-bold">3.0%</div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4 mb-3 text-xs">
+                    <div>
+                        <div class="text-gray-400">Entry</div>
+                        <div class="font-semibold">1.3420</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-400">Stop Loss</div>
+                        <div class="font-semibold text-red-400">1.3380</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-400">Take Profit</div>
+                        <div class="font-semibold text-green-400">1.3520</div>
+                    </div>
+                </div>
+
+                <!-- Confidence Meter -->
+                <div class="mb-3">
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-gray-400">Confidence</span>
+                        <span class="text-primary font-semibold">91%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div class="bg-primary h-2 rounded-full" style="width: 91%"></div>
+                    </div>
+                </div>
+
+                <button class="w-full bg-gray-800 text-white py-2 px-4 rounded-lg text-xs font-medium">
+                    <span class="flex items-center gap-2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                            <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"></path>
+                        </svg>
+                        Explain this Signal
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history-tab" class="px-4 mt-4 space-y-4 hidden">
+            <div class="bg-gray-900 rounded-lg p-4 border-l-4 border-green-600">
+                <div class="flex justify-between items-center mb-2">
+                    <div>
+                        <h3 class="text-base font-bold">EUR/USD</h3>
+                        <p class="text-gray-400 text-xs">Yesterday</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="bg-green-600 text-white px-2 py-1 rounded-full text-xs">WIN</span>
+                        <div class="text-green-400 font-bold">+2.4%</div>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-400">
+                    Entry: 1.0820 → Exit: 1.0895
+                </div>
+            </div>
+
+            <div class="bg-gray-900 rounded-lg p-4 border-l-4 border-red-600">
+                <div class="flex justify-between items-center mb-2">
+                    <div>
+                        <h3 class="text-base font-bold">GBP/USD</h3>
+                        <p class="text-gray-400 text-xs">2 days ago</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="bg-red-600 text-white px-2 py-1 rounded-full text-xs">LOSS</span>
+                        <div class="text-red-400 font-bold">-1.5%</div>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-400">
+                    Entry: 1.2650 → Exit: 1.2595
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Tab -->
+        <div id="leaderboard-tab" class="px-4 mt-4 space-y-3 hidden">
+            <div class="bg-gray-900 rounded-lg p-4">
+                <h3 class="text-base font-semibold mb-3">Top Performers This Week</h3>
+                
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-black font-bold text-xs">1</div>
+                            <div>
+                                <div class="font-semibold">Alex Chen</div>
+                                <div class="text-gray-400 text-xs">15 signals</div>
+                            </div>
+                        </div>
+                        <div class="text-green-400 font-bold">+12.8%</div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white font-bold text-xs">2</div>
+                            <div>
+                                <div class="font-semibold">Maria Santos</div>
+                                <div class="text-gray-400 text-xs">12 signals</div>
+                            </div>
+                        </div>
+                        <div class="text-green-400 font-bold">+9.2%</div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-amber-600 rounded-full flex items-center justify-center text-black font-bold text-xs">3</div>
+                            <div>
+                                <div class="font-semibold">David Kim</div>
+                                <div class="text-gray-400 text-xs">18 signals</div>
+                            </div>
+                        </div>
+                        <div class="text-green-400 font-bold">+7.5%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- iOS-style Tab Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 border-t border-separator/50" style="background: rgba(22,22,24,0.75); backdrop-filter: blur(30px);">
+        <div class="flex justify-around items-center py-3 relative">
+            <a href="home.html" class="text-label-secondary text-center flex-1 opacity-70">
+                <div class="flex justify-center mb-1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                        <path d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"></path>
+                    </svg>
+                </div>
+                <div class="text-xs font-sf-ui">Home</div>
+            </a>
+            <a href="signals.html" class="text-primary text-center flex-1">
+                <div class="flex justify-center mb-1">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path>
+                    </svg>
+                </div>
+                <div class="text-xs font-sf-ui font-medium">Signals</div>
+            </a>
+            
+            <!-- Floating Trade Button - Half overlapping the navigation -->
+            <div class="flex-1 flex justify-center">
+                <button 
+                    onclick="openTradingPlatform()" 
+                    class="bg-primary text-bg rounded-full w-14 h-14 shadow-xl flex items-center justify-center font-bold hover:scale-110 transition-all duration-200 -mt-7 border-4 border-bg-elevated"
+                    title="Open Trading Platform"
+                >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">
+                        <path d="M12 5v14m7-7H5"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <a href="education.html" class="text-label-secondary text-center flex-1 opacity-70">
+                <div class="flex justify-center mb-1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                        <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"></path>
+                    </svg>
+                </div>
+                <div class="text-xs font-sf-ui">Learn</div>
+            </a>
+            <a href="profile.html" class="text-label-secondary text-center flex-1 opacity-70">
+                <div class="flex justify-center mb-1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                        <path d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <div class="text-xs font-sf-ui">Me</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Trading Platform Function
+        function openTradingPlatform() {
+            // Show platform selection modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-gray-900 rounded-lg p-6 w-full max-w-sm">
+                    <h3 class="text-white text-base font-bold mb-4 text-center">Choose Trading Platform</h3>
+                    <div class="space-y-3">
+                        <button onclick="openPlatform('mt4')" class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                            <span class="flex items-center gap-2">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                    <rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
+                                    <path d="M12 18h.01"></path>
+                                </svg>
+                                Open MetaTrader 4
+                            </span>
+                        </button>
+                        <button onclick="openPlatform('mt5')" class="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors">
+                            <span class="flex items-center gap-2">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                    <rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
+                                    <path d="M12 18h.01"></path>
+                                </svg>
+                                Open MetaTrader 5
+                            </span>
+                        </button>
+                        <button onclick="closeModal()" class="w-full bg-gray-700 text-gray-300 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Close modal function
+            window.closeModal = function() {
+                document.body.removeChild(modal);
+            }
+            
+            // Open platform function
+            window.openPlatform = function(platform) {
+                const url = platform === 'mt4' ? 'mt4://' : 'mt5://';
+                window.open(url, '_blank');
+                closeModal();
+            }
+            
+            // Close on backdrop click
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.getElementById('live-tab').classList.add('hidden');
+            document.getElementById('history-tab').classList.add('hidden');
+            document.getElementById('leaderboard-tab').classList.add('hidden');
+            
+            // Remove active styling from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-black');
+                btn.classList.add('text-gray-300');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            
+            // Add active styling to selected button
+            event.target.classList.add('bg-primary', 'text-black');
+            event.target.classList.remove('text-gray-300');
+        }
+    </script>
+
+    <script>
+        // Authentication check
+        function checkAuth() {
+            const user = localStorage.getItem('flp_user');
+            if (!user) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            const userData = JSON.parse(user);
+            if (!userData.isLoggedIn) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            return userData;
+        }
+
+        // Initialize page
+        window.addEventListener('DOMContentLoaded', function() {
+            const userData = checkAuth();
+            if (userData) {
+                // Hide loading screen
+                document.getElementById('loadingScreen').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

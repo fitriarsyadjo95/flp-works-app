@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <meta name="description" content="Your personal trading mentor, market toolkit, and daily challenge – all in your pocket." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>FLP AcademyWorks - Trading Platforms</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Brand colors from design.json
+                        primary: '#FFD60A',
+                        success: '#32D74B',
+                        warning: '#FFD60A',
+                        danger: '#FF453A',
+                        info: '#64D2FF',
+                        
+                        // Background colors
+                        bg: '#0B0B0F',
+                        'bg-elevated': '#141417',
+                        'bg-secondary': '#1C1C1F',
+                        'bg-tertiary': '#2C2C2E',
+                        
+                        // Text colors
+                        'label-primary': '#FFFFFF',
+                        'label-secondary': 'rgba(235,235,245,0.6)',
+                        'label-tertiary': 'rgba(235,235,245,0.3)',
+                        'label-quaternary': 'rgba(235,235,245,0.18)',
+                        
+                        // Fill colors
+                        'fill-primary': 'rgba(120,120,128,0.36)',
+                        'fill-secondary': 'rgba(120,120,128,0.32)',
+                        'fill-tertiary': 'rgba(120,120,128,0.24)',
+                        
+                        // Interaction colors
+                        separator: 'rgba(84,84,88,0.36)',
+                        overlay: 'rgba(0,0,0,0.6)',
+                        'focus-ring': 'rgba(255,214,10,0.45)',
+                        
+                        // Trading colors
+                        'chart-up': '#32D74B',
+                        'chart-down': '#FF453A',
+                        buy: '#32D74B',
+                        sell: '#FF453A'
+                    },
+                    fontFamily: {
+                        'sf-pro': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        'sf-display': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        'sf-ui': ['SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'elevated': '0 4px 16px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08)',
+                        'card': '0 2px 8px rgba(0,0,0,0.1)',
+                        'button': '0 1px 3px rgba(0,0,0,0.12)',
+                        'modal': '0 8px 32px rgba(0,0,0,0.24)'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui">
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 px-4 py-3 flex justify-between items-center" style="background: rgba(22,22,24,0.6); backdrop-filter: blur(20px);">
+        <div class="flex items-center gap-3">
+            <button onclick="history.back()" class="text-label-secondary opacity-80 hover:opacity-100 transition-opacity">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                    <path d="M19 12H5m7 7l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <div class="text-primary text-base font-sf-display font-semibold">Trading Platforms</div>
+        </div>
+        <button class="text-label-secondary opacity-80 hover:opacity-100 transition-opacity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="19" cy="12" r="1"></circle>
+                <circle cx="5" cy="12" r="1"></circle>
+            </svg>
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-24 max-w-md mx-auto px-4">
+        <!-- Connected Status -->
+        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-3 h-3 bg-success rounded-full"></div>
+                <div class="text-xs font-medium text-success">2 Platforms Connected</div>
+            </div>
+            <div class="text-xl font-sf-display font-bold mb-2">Ready to Trade</div>
+            <div class="text-xs text-label-secondary">Your trading platforms are connected and synced with FLP signals</div>
+        </div>
+
+        <!-- Platform Cards -->
+        <div class="space-y-4 mb-8">
+            <!-- MetaTrader 4 -->
+            <div class="bg-bg-elevated rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6 text-primary">
+                                <rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
+                                <path d="M12 18h.01"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="text-base font-semibold">MetaTrader 4</div>
+                            <div class="text-xs text-label-secondary">Account: 1234567</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-success rounded-full"></div>
+                        <span class="text-xs text-success font-medium">Connected</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="bg-bg rounded-xl p-3">
+                        <div class="text-xs text-label-secondary">Balance</div>
+                        <div class="text-base font-semibold text-label-primary">$2,450.30</div>
+                    </div>
+                    <div class="bg-bg rounded-xl p-3">
+                        <div class="text-xs text-label-secondary">Equity</div>
+                        <div class="text-base font-semibold text-success">$2,523.45</div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button class="flex-1 bg-primary text-bg py-2.5 px-4 rounded-xl text-xs font-semibold">
+                        Open Platform
+                    </button>
+                    <button class="bg-bg-secondary text-label-secondary py-2.5 px-4 rounded-xl text-xs font-medium">
+                        Settings
+                    </button>
+                </div>
+            </div>
+
+            <!-- MetaTrader 5 -->
+            <div class="bg-bg-elevated rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-info/20 rounded-xl flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6 text-info">
+                                <rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
+                                <path d="M12 18h.01"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="text-base font-semibold">MetaTrader 5</div>
+                            <div class="text-xs text-label-secondary">Account: 9876543</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-success rounded-full"></div>
+                        <span class="text-xs text-success font-medium">Connected</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="bg-bg rounded-xl p-3">
+                        <div class="text-xs text-label-secondary">Balance</div>
+                        <div class="text-base font-semibold text-label-primary">$5,280.15</div>
+                    </div>
+                    <div class="bg-bg rounded-xl p-3">
+                        <div class="text-xs text-label-secondary">Equity</div>
+                        <div class="text-base font-semibold text-success">$5,340.82</div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button class="flex-1 bg-info text-bg py-2.5 px-4 rounded-xl text-xs font-semibold">
+                        Open Platform
+                    </button>
+                    <button class="bg-bg-secondary text-label-secondary py-2.5 px-4 rounded-xl text-xs font-medium">
+                        Settings
+                    </button>
+                </div>
+            </div>
+
+            <!-- Add Platform -->
+            <div class="bg-bg-elevated border-2 border-dashed border-separator rounded-2xl p-6 text-center">
+                <div class="w-16 h-16 bg-fill-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-label-secondary">
+                        <path d="M12 5v14m7-7H5"></path>
+                    </svg>
+                </div>
+                <div class="text-base font-semibold mb-2">Connect Another Platform</div>
+                <div class="text-xs text-label-secondary mb-4">Add more trading accounts to sync with FLP signals</div>
+                <button class="bg-primary text-bg py-2.5 px-6 rounded-xl text-xs font-semibold">
+                    Add Platform
+                </button>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
+            <h3 class="text-base font-semibold mb-4">Platform Features</h3>
+            <div class="space-y-4">
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 bg-success/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3 h-3 text-success">
+                            <polyline points="20,6 9,17 4,12"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-xs font-medium">Auto-sync Signals</div>
+                        <div class="text-xs text-label-secondary">Automatically receive FLP trading signals in your platform</div>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 bg-success/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3 h-3 text-success">
+                            <polyline points="20,6 9,17 4,12"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-xs font-medium">Real-time Balance Updates</div>
+                        <div class="text-xs text-label-secondary">View your account balance and equity in real-time</div>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 bg-success/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3 h-3 text-success">
+                            <polyline points="20,6 9,17 4,12"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-xs font-medium">Trade History Sync</div>
+                        <div class="text-xs text-label-secondary">Track your trades and performance across platforms</div>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 bg-success/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3 h-3 text-success">
+                            <polyline points="20,6 9,17 4,12"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-xs font-medium">Risk Management</div>
+                        <div class="text-xs text-label-secondary">Automatic position sizing based on your risk tolerance</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-bg-elevated rounded-2xl p-6">
+            <h3 class="text-base font-semibold mb-4">Recent Activity</h3>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between py-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-success/20 rounded-lg flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4 text-success">
+                                <polyline points="22,6 12,16 2,10"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="text-xs font-medium">EUR/USD Signal Executed</div>
+                            <div class="text-xs text-label-secondary">MT4 • 2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-success font-medium">+$45.20</div>
+                </div>
+                <div class="flex items-center justify-between py-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-info/20 rounded-lg flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-info">
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="text-xs font-medium">Account Synced</div>
+                            <div class="text-xs text-label-secondary">MT5 • 4 hours ago</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between py-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-primary">
+                                <path d="M9 11H3m3 8l-3-3 3-3m5-6h6m-3-8l3 3-3 3"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="text-xs font-medium">Signal Received</div>
+                            <div class="text-xs text-label-secondary">GBP/JPY • 6 hours ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

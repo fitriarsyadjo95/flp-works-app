@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <meta name="description" content="Your personal trading mentor, market toolkit, and daily challenge – all in your pocket." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>FLP AcademyWorks - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Brand colors from design.json
+                        primary: '#FFD60A',
+                        success: '#32D74B',
+                        warning: '#FFD60A',
+                        danger: '#FF453A',
+                        info: '#64D2FF',
+                        
+                        // Background colors
+                        bg: '#0B0B0F',
+                        'bg-elevated': '#141417',
+                        'bg-secondary': '#1C1C1F',
+                        'bg-tertiary': '#2C2C2E',
+                        
+                        // Text colors
+                        'label-primary': '#FFFFFF',
+                        'label-secondary': 'rgba(235,235,245,0.6)',
+                        'label-tertiary': 'rgba(235,235,245,0.3)',
+                        'label-quaternary': 'rgba(235,235,245,0.18)',
+                        
+                        // Fill colors
+                        'fill-primary': 'rgba(120,120,128,0.36)',
+                        'fill-secondary': 'rgba(120,120,128,0.32)',
+                        'fill-tertiary': 'rgba(120,120,128,0.24)',
+                        
+                        // Interaction colors
+                        separator: 'rgba(84,84,88,0.36)',
+                        overlay: 'rgba(0,0,0,0.6)',
+                        'focus-ring': 'rgba(255,214,10,0.45)',
+                        
+                        // Trading colors
+                        'chart-up': '#32D74B',
+                        'chart-down': '#FF453A',
+                        buy: '#32D74B',
+                        sell: '#FF453A'
+                    },
+                    fontFamily: {
+                        'sf-pro': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        'sf-display': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        'sf-ui': ['SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'elevated': '0 4px 16px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08)',
+                        'card': '0 2px 8px rgba(0,0,0,0.1)',
+                        'button': '0 1px 3px rgba(0,0,0,0.12)',
+                        'modal': '0 8px 32px rgba(0,0,0,0.24)'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui min-h-screen flex flex-col">
+    <!-- Main Content -->
+    <main class="flex-1 flex items-center justify-center px-4 py-8">
+        <div class="w-full max-w-md">
+            <!-- Logo and Welcome -->
+            <div class="text-center mb-8">
+                <div class="text-primary text-xl font-bold mb-2">FLP</div>
+                <h1 class="text-xl font-bold mb-2">Welcome Back</h1>
+                <p class="text-gray-400 text-xs">
+                    Your personal trading mentor, market toolkit, and daily challenge – all in your pocket.
+                </p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label for="email" class="block text-xs font-medium text-gray-300 mb-2">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email"
+                        required
+                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                        placeholder="Enter your email"
+                    >
+                </div>
+
+                <div>
+                    <label for="password" class="block text-xs font-medium text-gray-300 mb-2">Password</label>
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password"
+                            required
+                            class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                            placeholder="Enter your password"
+                        >
+                        <button 
+                            type="button" 
+                            id="togglePassword"
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                        >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
+                                <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="w-4 h-4 text-primary bg-gray-800 border-gray-600 rounded focus:ring-primary focus:ring-2">
+                        <span class="ml-2 text-xs text-gray-300">Remember me</span>
+                    </label>
+                    <a href="#" class="text-xs text-primary hover:text-primary/80">Forgot password?</a>
+                </div>
+
+                <button 
+                    type="submit"
+                    class="w-full bg-primary text-black font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-dark"
+                >
+                    <span id="loginButtonText">Sign In</span>
+                    <span id="loginSpinner" class="hidden">Signing in...</span>
+                </button>
+            </form>
+
+            <!-- Social Login -->
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-700"></div>
+                    </div>
+                    <div class="relative flex justify-center text-xs">
+                        <span class="px-2 bg-dark text-gray-400">Or continue with</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                    <button 
+                        type="button"
+                        class="w-full inline-flex justify-center py-3 px-4 border border-gray-700 rounded-lg bg-gray-800 text-xs font-medium text-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-dark"
+                    >
+                        <span class="mr-2">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
+                                <rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
+                                <path d="M12 18h.01"></path>
+                            </svg>
+                        </span>
+                        Google
+                    </button>
+                    <button 
+                        type="button"
+                        class="w-full inline-flex justify-center py-3 px-4 border border-gray-700 rounded-lg bg-gray-800 text-xs font-medium text-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-dark"
+                    >
+                        <span class="mr-2">🍎</span>
+                        Apple
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sign Up Link -->
+            <div class="mt-6 text-center">
+                <span class="text-gray-400">Don't have an account? </span>
+                <a href="signup.html" class="text-primary font-semibold hover:text-primary/80">Sign up</a>
+            </div>
+
+            <!-- Demo Login -->
+            <div class="mt-8 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                <h3 class="text-xs font-semibold text-gray-300 mb-2">Demo Login</h3>
+                <p class="text-xs text-gray-400 mb-3">Use any email and password to demo the app</p>
+                <button 
+                    type="button"
+                    id="demoLogin"
+                    class="w-full bg-gray-700 text-white py-2 px-4 rounded text-xs hover:bg-gray-600 transition-colors"
+                >
+                    Demo Login (demo@flp.com)
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-4 left-4 right-4 bg-red-600 text-white p-3 rounded-lg transform -translate-y-full opacity-0 transition-all duration-300 z-50">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('password');
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            const eyeOpen = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5"><path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>`;
+            const eyeClosed = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5"><path d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 11-4.243-4.243m4.242 4.242L9.88 9.88"></path></svg>`;
+            this.innerHTML = type === 'password' ? eyeOpen : eyeClosed;
+        });
+
+        // Demo login
+        document.getElementById('demoLogin').addEventListener('click', function() {
+            document.getElementById('email').value = 'demo@flp.com';
+            document.getElementById('password').value = 'demo123';
+            document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+        });
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Validate form
+            if (!email || !password) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+
+            // Show loading state
+            const buttonText = document.getElementById('loginButtonText');
+            const spinner = document.getElementById('loginSpinner');
+            buttonText.classList.add('hidden');
+            spinner.classList.remove('hidden');
+
+            // Simulate login process
+            setTimeout(() => {
+                // For demo purposes, accept any email/password combination
+                if (email && password.length >= 6) {
+                    // Store user session
+                    localStorage.setItem('flp_user', JSON.stringify({
+                        email: email,
+                        name: email.split('@')[0],
+                        loginTime: new Date().toISOString(),
+                        isLoggedIn: true
+                    }));
+
+                    showToast('Login successful! Redirecting...', 'success');
+                    
+                    // Redirect to splash screen which will show post-login experience
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                } else {
+                    showToast('Invalid credentials. Password must be at least 6 characters.', 'error');
+                    
+                    // Reset loading state
+                    buttonText.classList.remove('hidden');
+                    spinner.classList.add('hidden');
+                }
+            }, 1500);
+        });
+
+        // Toast notification function
+        function showToast(message, type = 'error') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            
+            // Set toast color based on type
+            toast.className = `fixed top-4 left-4 right-4 p-3 rounded-lg transform opacity-0 transition-all duration-300 z-50 ${
+                type === 'success' ? 'bg-green-600' : 'bg-red-600'
+            } text-white`;
+            
+            // Show toast
+            setTimeout(() => {
+                toast.style.transform = 'translateY(0)';
+                toast.style.opacity = '1';
+            }, 100);
+            
+            // Hide toast after 3 seconds
+            setTimeout(() => {
+                toast.style.transform = 'translateY(-100%)';
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', function() {
+            const user = localStorage.getItem('flp_user');
+            if (user) {
+                const userData = JSON.parse(user);
+                if (userData.isLoggedIn) {
+                    window.location.href = 'home.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

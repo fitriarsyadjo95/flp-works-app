@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <meta name="description" content="Your personal trading mentor, market toolkit, and daily challenge – all in your pocket." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>FLP AcademyWorks - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Brand colors from design.json
+                        primary: '#FFD60A',
+                        success: '#32D74B',
+                        warning: '#FFD60A',
+                        danger: '#FF453A',
+                        info: '#64D2FF',
+                        
+                        // Background colors
+                        bg: '#0B0B0F',
+                        'bg-elevated': '#141417',
+                        'bg-secondary': '#1C1C1F',
+                        'bg-tertiary': '#2C2C2E',
+                        
+                        // Text colors
+                        'label-primary': '#FFFFFF',
+                        'label-secondary': 'rgba(235,235,245,0.6)',
+                        'label-tertiary': 'rgba(235,235,245,0.3)',
+                        'label-quaternary': 'rgba(235,235,245,0.18)',
+                        
+                        // Fill colors
+                        'fill-primary': 'rgba(120,120,128,0.36)',
+                        'fill-secondary': 'rgba(120,120,128,0.32)',
+                        'fill-tertiary': 'rgba(120,120,128,0.24)',
+                        
+                        // Interaction colors
+                        separator: 'rgba(84,84,88,0.36)',
+                        overlay: 'rgba(0,0,0,0.6)',
+                        'focus-ring': 'rgba(255,214,10,0.45)',
+                        
+                        // Trading colors
+                        'chart-up': '#32D74B',
+                        'chart-down': '#FF453A',
+                        buy: '#32D74B',
+                        sell: '#FF453A'
+                    },
+                    fontFamily: {
+                        'sf-ui': ['SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                        'sf-display': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                        'sf-mono': ['SF Mono', 'ui-monospace', 'Menlo', 'Consolas', 'Liberation Mono', 'monospace']
+                    },
+                    fontSize: {
+                        'xs': ['11px', { lineHeight: '1.2' }],
+                        'sm': ['13px', { lineHeight: '1.2' }],
+                        'md': ['15px', { lineHeight: '1.2' }],
+                        'lg': ['17px', { lineHeight: '1.2' }],
+                        'xl': ['20px', { lineHeight: '1.2' }],
+                        '2xl': ['28px', { lineHeight: '1.1' }],
+                        '3xl': ['34px', { lineHeight: '1.0' }]
+                    },
+                    borderRadius: {
+                        'xs': '8px',
+                        'sm': '10px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '22px',
+                        'pill': '999px'
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 8px rgba(0,0,0,0.35)',
+                        'elevated': '0 8px 24px rgba(0,0,0,0.45)'
+                    },
+                    backdropBlur: {
+                        'system-thin': '20px',
+                        'system-thick': '30px'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-bg flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="text-primary text-xl font-sf-display font-bold mb-4">FLP</div>
+            <div class="text-label-secondary text-xs font-sf-ui">Loading...</div>
+        </div>
+    </div>
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 px-4 py-3 flex justify-between items-center" style="background: rgba(22,22,24,0.6); backdrop-filter: blur(20px);">
+        <div class="text-primary text-base font-sf-display font-semibold">FLP AcademyWorks</div>
+        <a href="notifications.html" class="text-label-secondary opacity-80 hover:opacity-100 transition-opacity relative">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                <path d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"></path>
+            </svg>
+            <div class="absolute -top-1 -right-1 w-3 h-3 bg-danger rounded-full flex items-center justify-center">
+                <span class="text-white text-xs font-bold">3</span>
+            </div>
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16 pb-20 max-w-md mx-auto">
+        <!-- Video Feed -->
+        <div class="space-y-4 px-4">
+            <!-- Video Card 1 -->
+            <div class="bg-bg-elevated rounded-lg overflow-hidden shadow-soft border border-separator/20">
+                <div class="aspect-video bg-gradient-to-br from-bg-secondary to-bg-tertiary flex items-center justify-center">
+                    <div class="w-16 h-16 opacity-60">
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16 text-label-secondary">
+                            <path d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-base font-sf-ui font-semibold text-label-primary mb-2">Master the 5-Minute Scalping Strategy</h3>
+                    <div class="flex items-center justify-between text-xs text-label-tertiary mb-3 font-sf-ui">
+                        <span class="flex items-center gap-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            45.2K views
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12,6 12,12 16,14"></polyline>
+                            </svg>
+                            8:45
+                        </span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="bg-primary text-bg px-4 py-2.5 rounded-lg font-sf-ui font-semibold text-xs flex-1 active:scale-[0.98] transition-transform">
+                            Watch Now
+                        </button>
+                        <button class="bg-fill-secondary text-label-primary px-4 py-2.5 rounded-lg font-sf-ui font-medium text-xs active:scale-[0.98] transition-transform">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Card 2 -->
+            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg">
+                <div class="aspect-video bg-gradient-to-br from-blue-700 to-purple-800 flex items-center justify-center">
+                    <div class="w-16 h-16 flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 text-white">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-base font-semibold mb-2">Psychology of Trading: Overcoming FOMO</h3>
+                    <div class="flex items-center justify-between text-xs text-gray-400 mb-3">
+                        <span class="flex items-center gap-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            32.8K views
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12,6 12,12 16,14"></polyline>
+                            </svg>
+                            12:30
+                        </span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="bg-primary text-black px-4 py-2 rounded-lg font-medium text-xs flex-1">
+                            Watch Now
+                        </button>
+                        <button class="border border-gray-600 text-gray-300 px-4 py-2 rounded-lg font-medium text-xs">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Card 3 -->
+            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg">
+                <div class="aspect-video bg-gradient-to-br from-green-700 to-teal-800 flex items-center justify-center">
+                    <div class="w-16 h-16 flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 text-white">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-base font-semibold mb-2">MT4 Setup: Ultimate Configuration Guide</h3>
+                    <div class="flex items-center justify-between text-xs text-gray-400 mb-3">
+                        <span class="flex items-center gap-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            28.1K views
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12,6 12,12 16,14"></polyline>
+                            </svg>
+                            15:20
+                        </span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="bg-primary text-black px-4 py-2 rounded-lg font-medium text-xs flex-1">
+                            Watch Now
+                        </button>
+                        <button class="border border-gray-600 text-gray-300 px-4 py-2 rounded-lg font-medium text-xs">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Card 4 -->
+            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg">
+                <div class="aspect-video bg-gradient-to-br from-red-700 to-orange-800 flex items-center justify-center">
+                    <div class="w-16 h-16 flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 text-white">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-base font-semibold mb-2">Risk Management: The 2% Rule Explained</h3>
+                    <div class="flex items-center justify-between text-xs text-gray-400 mb-3">
+                        <span class="flex items-center gap-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            52.3K views
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12,6 12,12 16,14"></polyline>
+                            </svg>
+                            10:15
+                        </span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="bg-primary text-black px-4 py-2 rounded-lg font-medium text-xs flex-1">
+                            Watch Now
+                        </button>
+                        <button class="border border-gray-600 text-gray-300 px-4 py-2 rounded-lg font-medium text-xs">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- iOS-style Tab Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 border-t border-separator/50" style="background: rgba(22,22,24,0.75); backdrop-filter: blur(30px);">
+        <div class="flex justify-around items-center py-3 relative">
+            <a href="home.html" class="text-primary text-center flex-1">
+                <div class="flex justify-center mb-1">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.061l8.69-8.69z"></path>
+                        <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"></path>
+                    </svg>
+                </div>
+                <div class="text-xs font-sf-ui font-medium">Home</div>
+            </a>
+            <a href="signals.html" class="text-label-secondary text-center flex-1 opacity-70">
+                <div class="flex justify-center mb-1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                        <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path>
+                    </svg>
+                </div>
+                <div class="text-xs font-sf-ui">Signals</div>
+            </a>
+            
+            <!-- Floating Trade Button - Half overlapping the navigation -->
+            <div class="flex-1 flex justify-center">
+                <button 
+                    onclick="openTradingPlatform()" 
+                    class="bg-primary text-bg rounded-full w-14 h-14 shadow-xl flex items-center justify-center font-bold hover:scale-110 transition-all duration-200 -mt-7 border-4 border-bg-elevated"
+                    title="Open Trading Platform"
+                >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">
+                        <path d="M12 5v14m7-7H5"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <a href="education.html" class="text-label-secondary text-center flex-1 opacity-70">
+                <div class="flex justify-center mb-1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                        <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"></path>
+                    </svg>
+                </div>
+                <div class="text-xs font-sf-ui">Learn</div>
+            </a>
+            <a href="profile.html" class="text-label-secondary text-center flex-1 opacity-70">
+                <div class="flex justify-center mb-1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                        <path d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <div class="text-xs font-sf-ui">Me</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Trading Platform Function
+        function openTradingPlatform() {
+            // Show platform selection modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-overlay flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-bg-elevated rounded-xl p-6 w-full max-w-sm shadow-elevated border border-separator/20">
+                    <div class="w-9 h-1 bg-fill-primary rounded-full mx-auto mb-4"></div>
+                    <h3 class="text-label-primary text-base font-sf-display font-semibold mb-6 text-center">Choose Trading Platform</h3>
+                    <div class="space-y-3">
+                        <button onclick="openPlatform('mt4')" class="w-full bg-info text-bg py-3.5 rounded-lg font-sf-ui font-semibold active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
+                                <path d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"></path>
+                            </svg>
+                            Open MetaTrader 4
+                        </button>
+                        <button onclick="openPlatform('mt5')" class="w-full bg-success text-bg py-3.5 rounded-lg font-sf-ui font-semibold active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
+                                <path d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"></path>
+                            </svg>
+                            Open MetaTrader 5
+                        </button>
+                        <button onclick="closeModal()" class="w-full bg-fill-secondary text-label-primary py-3 rounded-lg font-sf-ui font-medium active:scale-[0.98] transition-all mt-4">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Close modal function
+            window.closeModal = function() {
+                document.body.removeChild(modal);
+            }
+            
+            // Open platform function
+            window.openPlatform = function(platform) {
+                const url = platform === 'mt4' ? 'mt4://' : 'mt5://';
+                window.open(url, '_blank');
+                closeModal();
+            }
+            
+            // Close on backdrop click
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+
+        // Authentication check
+        function checkAuth() {
+            const user = localStorage.getItem('flp_user');
+            if (!user) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            const userData = JSON.parse(user);
+            if (!userData.isLoggedIn) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            return userData;
+        }
+
+        // Initialize page
+        window.addEventListener('DOMContentLoaded', function() {
+            const userData = checkAuth();
+            if (userData) {
+                // Hide loading screen
+                document.getElementById('loadingScreen').style.display = 'none';
+                
+                // Update UI with user data if needed
+                console.log('User logged in:', userData.name);
+            }
+        });
+    </script>
+</body>
+</html>

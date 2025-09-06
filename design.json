@@ -1,0 +1,341 @@
+{
+    "$schema": "https://example.com/design.schema.json",
+    "meta": {
+      "name": "ios-dark-design",
+      "version": "1.1.0",
+      "description": "iOS-inspired dark mode design tokens and component styles for a mobile trading app.",
+      "platform": "mobile",
+      "base_unit": 4
+    },
+    "mode": "dark",
+    "brand": {
+      "primary": "#FFD60A",
+      "success": "#32D74B",
+      "warning": "#FFD60A",
+      "danger": "#FF453A",
+      "info": "#64D2FF"
+    },
+    "colors": {
+      "bg": "#0B0B0F",
+      "bgElevated": "#141417",
+      "bgSecondary": "#1C1C1F",
+      "bgTertiary": "#2C2C2E",
+      "overlay": "rgba(0,0,0,0.6)",
+      "separator": "rgba(84,84,88,0.36)",
+      "labelPrimary": "#FFFFFF",
+      "labelSecondary": "rgba(235,235,245,0.6)",
+      "labelTertiary": "rgba(235,235,245,0.3)",
+      "labelQuaternary": "rgba(235,235,245,0.18)",
+      "fillPrimary": "rgba(120,120,128,0.36)",
+      "fillSecondary": "rgba(120,120,128,0.32)",
+      "fillTertiary": "rgba(120,120,128,0.24)",
+      "fillQuaternary": "rgba(120,120,128,0.18)",
+      "tint": "{brand.primary}",
+      "link": "{brand.primary}",
+      "chartUp": "#32D74B",
+      "chartDown": "#FF453A",
+      "chartNeutral": "#8E8E93",
+      "buy": "#32D74B",
+      "sell": "#FF453A",
+      "focusRing": "rgba(255,214,10,0.45)"
+    },
+    "typography": {
+      "fontFamily": {
+        "ui": "SF Pro Text, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial",
+        "display": "SF Pro Display, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial",
+        "mono": "SF Mono, ui-monospace, Menlo, Consolas, 'Liberation Mono', monospace"
+      },
+      "sizes": {
+        "xs": 11,
+        "sm": 13,
+        "md": 15,
+        "lg": 17,
+        "xl": 20,
+        "xxl": 28,
+        "xxxl": 34
+      },
+      "weights": {
+        "regular": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      },
+      "leading": {
+        "tight": 1.0,
+        "snug": 1.1,
+        "normal": 1.2,
+        "relaxed": 1.3
+      }
+    },
+    "spacing": {
+      "0": 0,
+      "1": 4,
+      "2": 8,
+      "3": 12,
+      "4": 16,
+      "5": 20,
+      "6": 24,
+      "7": 28,
+      "8": 32,
+      "10": 40,
+      "12": 48,
+      "16": 64
+    },
+    "radii": {
+      "none": 0,
+      "xs": 8,
+      "sm": 10,
+      "md": 12,
+      "lg": 16,
+      "xl": 22,
+      "pill": 999
+    },
+    "shadows": {
+      "none": "none",
+      "soft": "0 2px 8px rgba(0,0,0,0.35)",
+      "elevated": "0 8px 24px rgba(0,0,0,0.45)"
+    },
+    "blurMaterials": {
+      "systemThin": { "backdropFilter": "blur(20px)", "bg": "rgba(22,22,24,0.6)" },
+      "systemThick": { "backdropFilter": "blur(30px)", "bg": "rgba(22,22,24,0.75)" }
+    },
+    "motion": {
+      "spring": { "stiffness": 500, "damping": 35, "mass": 1 },
+      "durations": { "fast": 120, "normal": 220, "slow": 350 },
+      "easings": {
+        "easeInOut": "cubic-bezier(0.25,0.1,0.25,1)",
+        "easeOutEmphasized": "cubic-bezier(0.2,0,0,1)"
+      }
+    },
+    "grid": {
+      "container": { "maxWidth": 480, "paddingX": 16 },
+      "columns": 12,
+      "gutter": 8
+    },
+    "icons": {
+      "set": "SF Symbols",
+      "grid": 24,
+      "padding": 2,
+      "stroke": 1.75,
+      "corner": 2,
+      "size": { "xs": 16, "sm": 18, "md": 20, "lg": 24, "xl": 28, "xxl": 32 },
+      "color": {
+        "default": "{colors.labelSecondary}",
+        "active": "{colors.tint}",
+        "disabled": "rgba(235,235,245,0.3)",
+        "destructive": "{brand.danger}",
+        "positive": "{brand.success}"
+      }
+    },
+    "states": {
+      "disabledOpacity": 0.5,
+      "hitSlop": { "top": 8, "right": 8, "bottom": 8, "left": 8 },
+      "tapHighlight": "rgba(255,255,255,0.06)"
+    },
+    "components": {
+      "Icon": {
+        "size": "{icons.size.md}",
+        "color": "{icons.color.default}",
+        "states": {
+          "active": { "color": "{icons.color.active}", "filled": true },
+          "disabled": { "color": "{icons.color.disabled}" }
+        }
+      },
+      "NavigationBar": {
+        "height": 44,
+        "bg": "{blurMaterials.systemThin}",
+        "title": { "fontFamily": "{typography.fontFamily.display}", "size": "{typography.sizes.lg}", "weight": "semibold", "color": "{colors.labelPrimary}" },
+        "button": { "color": "{colors.tint}", "size": "{icons.size.md}" },
+        "separator": { "color": "{colors.separator}", "height": 0.5 }
+      },
+      "TabBar": {
+        "height": 83,
+        "bg": "{blurMaterials.systemThick}",
+        "item": {
+          "color": "{icons.color.default}",
+          "activeColor": "{icons.color.active}",
+          "iconSize": "{icons.size.xl}",
+          "labelSize": 12,
+          "badge": { "bg": "{brand.danger}", "color": "#FFFFFF", "radius": 10, "paddingX": 6 }
+        },
+        "topBorder": { "color": "{colors.separator}", "height": 0.5 }
+      },
+      "SegmentedControl": {
+        "bg": "{colors.bgTertiary}",
+        "radius": "{radii.lg}",
+        "padding": 2,
+        "item": {
+          "radius": "{radii.md}",
+          "color": "{colors.labelSecondary}",
+          "active": { "bg": "{colors.bg}", "color": "{colors.labelPrimary}", "shadow": "{shadows.soft}" }
+        }
+      },
+      "Button": {
+        "height": 44,
+        "radius": "{radii.lg}",
+        "paddingX": 16,
+        "label": { "size": "{typography.sizes.lg}", "weight": "semibold" },
+        "variants": {
+          "filled": { "bg": "{brand.primary}", "color": "#0B0B0F" },
+          "gray": { "bg": "{colors.fillSecondary}", "color": "{colors.labelPrimary}" },
+          "outline": { "bg": "transparent", "border": "1px solid rgba(84,84,88,0.65)", "color": "{colors.labelPrimary}" },
+          "ghost": { "bg": "transparent", "color": "{colors.tint}" },
+          "danger": { "bg": "{brand.danger}", "color": "#FFFFFF" }
+        },
+        "states": {
+          "pressed": { "scale": 0.98, "bgOverlay": "rgba(255,255,255,0.05)" },
+          "disabled": { "opacity": "{states.disabledOpacity}" }
+        },
+        "leadingIcon": { "size": "{icons.size.lg}", "color": "{colors.labelPrimary}" },
+        "trailingIcon": { "size": "{icons.size.md}", "color": "{colors.labelSecondary}" }
+      },
+      "Input": {
+        "height": 44,
+        "radius": "{radii.md}",
+        "bg": "{colors.bgSecondary}",
+        "border": "1px solid rgba(84,84,88,0.36)",
+        "paddingX": 12,
+        "placeholder": { "color": "{colors.labelTertiary}" },
+        "text": { "color": "{colors.labelPrimary}", "size": "{typography.sizes.md}" },
+        "prefixIcon": { "color": "{colors.labelTertiary}" },
+        "states": {
+          "focused": { "border": "1px solid {brand.primary}", "shadow": "0 0 0 3px {colors.focusRing}" },
+          "invalid": { "border": "1px solid {brand.danger}" }
+        }
+      },
+      "Card": {
+        "bg": "{colors.bgElevated}",
+        "radius": "{radii.lg}",
+        "shadow": "{shadows.soft}",
+        "padding": 16,
+        "separator": { "color": "{colors.separator}", "height": 0.5 },
+        "title": { "size": "{typography.sizes.lg}", "weight": "semibold", "color": "{colors.labelPrimary}" },
+        "subtitle": { "size": "{typography.sizes.sm}", "color": "{colors.labelSecondary}" }
+      },
+      "List": {
+        "bg": "{colors.bgElevated}",
+        "item": {
+          "height": 52,
+          "paddingX": 16,
+          "title": { "size": 17, "color": "{colors.labelPrimary}" },
+          "subtitle": { "size": 13, "color": "{colors.labelSecondary}" },
+          "leadingIcon": { "size": "{icons.size.lg}", "color": "{icons.color.default}" },
+          "chevronColor": "{colors.fillPrimary}",
+          "separator": { "color": "{colors.separator}", "inset": 16, "height": 0.5 },
+          "pressedOverlay": "{states.tapHighlight}"
+        },
+        "sectionHeader": { "size": 13, "color": "{colors.labelSecondary}", "paddingX": 16, "paddingY": 8 }
+      },
+      "Modal": {
+        "bg": "{colors.bgElevated}",
+        "radiusTop": 24,
+        "grabber": { "width": 36, "height": 5, "radius": 3, "color": "{colors.fillPrimary}" },
+        "backdrop": "{colors.overlay}"
+      },
+      "Toast": {
+        "bg": "rgba(28,28,31,0.92)",
+        "radius": "{radii.lg}",
+        "padding": 12,
+        "shadow": "{shadows.elevated}",
+        "text": { "color": "{colors.labelPrimary}", "size": "{typography.sizes.md}" }
+      },
+      "Badge": {
+        "radius": 10,
+        "paddingX": 8,
+        "paddingY": 4,
+        "variants": {
+          "neutral": { "bg": "{colors.fillSecondary}", "color": "{colors.labelPrimary}" },
+          "success": { "bg": "{brand.success}", "color": "#0B0B0F" },
+          "warning": { "bg": "{brand.warning}", "color": "#0B0B0F" },
+          "danger": { "bg": "{brand.danger}", "color": "#FFFFFF" }
+        }
+      },
+      "TickerPill": {
+        "radius": "{radii.pill}",
+        "paddingX": 10,
+        "paddingY": 6,
+        "bg": "{colors.bgTertiary}",
+        "text": { "fontFamily": "{typography.fontFamily.mono}", "size": 13, "color": "{colors.labelPrimary}" }
+      },
+      "Chart": {
+        "bg": "{colors.bg}",
+        "gridColor": "rgba(235,235,245,0.08)",
+        "axisColor": "{colors.labelTertiary}",
+        "upColor": "{colors.chartUp}",
+        "downColor": "{colors.chartDown}",
+        "neutralColor": "{colors.chartNeutral}",
+        "crosshair": "rgba(255,214,10,0.35)"
+      },
+      "OrderRow": {
+        "height": 64,
+        "bg": "{colors.bgElevated}",
+        "radius": "{radii.md}",
+        "paddingX": 12,
+        "sideAccentWidth": 3,
+        "buyAccent": "{brand.success}",
+        "sellAccent": "{brand.danger}",
+        "title": { "size": 15, "color": "{colors.labelPrimary}" },
+        "meta": { "size": 13, "color": "{colors.labelSecondary}" },
+        "valuePositive": "{brand.success}",
+        "valueNegative": "{brand.danger}"
+      },
+      "Keypad": {
+        "bg": "{colors.bgSecondary}",
+        "button": {
+          "radius": 14,
+          "height": 56,
+          "bg": "{colors.bgElevated}",
+          "label": { "size": 24, "weight": "medium", "color": "{colors.labelPrimary}" },
+          "altLabel": { "size": 11, "color": "{colors.labelTertiary}" },
+          "pressedOverlay": "{states.tapHighlight}"
+        }
+      },
+      "ToastConfirm": {
+        "bg": "{colors.bgElevated}",
+        "radius": "{radii.lg}",
+        "title": { "size": 17, "weight": "semibold", "color": "{colors.labelPrimary}" },
+        "message": { "size": 13, "color": "{colors.labelSecondary}" },
+        "actions": {
+          "primary": { "use": "Button", "variant": "filled" },
+          "secondary": { "use": "Button", "variant": "gray" }
+        }
+      },
+      "SearchBar": {
+        "bg": "{colors.bgSecondary}",
+        "radius": 12,
+        "icon": { "color": "{colors.labelTertiary}" },
+        "placeholder": { "color": "{colors.labelTertiary}" },
+        "text": { "color": "{colors.labelPrimary}", "size": 15 }
+      }
+    },
+    "layouts": {
+      "Screen": {
+        "bg": "{colors.bg}",
+        "safeArea": true,
+        "paddingX": "{grid.container.paddingX}"
+      },
+      "Sheet": {
+        "bg": "{colors.bgElevated}",
+        "radiusTop": 24,
+        "inset": 8
+      }
+    },
+    "examples": {
+      "TradingHome": {
+        "nav": { "title": "Markets" },
+        "header": {
+          "balanceCard": { "use": "Card", "title": "Total Equity", "valueStyle": { "size": 28, "weight": "semibold" } },
+          "segmented": { "use": "SegmentedControl", "items": ["Watchlist","Top Movers","Positions"] }
+        },
+        "content": {
+          "list": { "use": "List", "item": { "title": "AAPL", "subtitle": "Apple Inc.", "trailing": { "price": "$229.10", "change": "+1.24%" } } }
+        },
+        "tabbar": {
+          "use": "TabBar",
+          "items": ["Home","Trade","Portfolio","Insights","Settings"],
+          "centerEmphasis": { "size": 58, "radius": 18, "bg": "{brand.primary}", "icon": "arrow.up.arrow.down.circle.fill", "shadow": "{shadows.elevated}" }
+        }
+      }
+    }
+  }
+  

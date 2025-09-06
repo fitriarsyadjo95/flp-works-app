@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <meta name="description" content="Your personal trading mentor, market toolkit, and daily challenge – all in your pocket." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>FLP AcademyWorks - Saved Content</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Brand colors from design.json
+                        primary: '#FFD60A',
+                        success: '#32D74B',
+                        warning: '#FFD60A',
+                        danger: '#FF453A',
+                        info: '#64D2FF',
+                        
+                        // Background colors
+                        bg: '#0B0B0F',
+                        'bg-elevated': '#141417',
+                        'bg-secondary': '#1C1C1F',
+                        'bg-tertiary': '#2C2C2E',
+                        
+                        // Text colors
+                        'label-primary': '#FFFFFF',
+                        'label-secondary': 'rgba(235,235,245,0.6)',
+                        'label-tertiary': 'rgba(235,235,245,0.3)',
+                        'label-quaternary': 'rgba(235,235,245,0.18)',
+                        
+                        // Fill colors
+                        'fill-primary': 'rgba(120,120,128,0.36)',
+                        'fill-secondary': 'rgba(120,120,128,0.32)',
+                        'fill-tertiary': 'rgba(120,120,128,0.24)',
+                        
+                        // Interaction colors
+                        separator: 'rgba(84,84,88,0.36)',
+                        overlay: 'rgba(0,0,0,0.6)',
+                        'focus-ring': 'rgba(255,214,10,0.45)',
+                        
+                        // Trading colors
+                        'chart-up': '#32D74B',
+                        'chart-down': '#FF453A',
+                        buy: '#32D74B',
+                        sell: '#FF453A'
+                    },
+                    fontFamily: {
+                        'sf-pro': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        'sf-display': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        'sf-ui': ['SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'elevated': '0 4px 16px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08)',
+                        'card': '0 2px 8px rgba(0,0,0,0.1)',
+                        'button': '0 1px 3px rgba(0,0,0,0.12)',
+                        'modal': '0 8px 32px rgba(0,0,0,0.24)'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui">
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 px-4 py-3 flex justify-between items-center" style="background: rgba(22,22,24,0.6); backdrop-filter: blur(20px);">
+        <div class="flex items-center gap-3">
+            <button onclick="history.back()" class="text-label-secondary opacity-80 hover:opacity-100 transition-opacity">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                    <path d="M19 12H5m7 7l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <div class="text-primary text-base font-sf-display font-semibold">Saved Content</div>
+        </div>
+        <button class="text-label-secondary opacity-80 hover:opacity-100 transition-opacity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="19" cy="12" r="1"></circle>
+                <circle cx="5" cy="12" r="1"></circle>
+            </svg>
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-24 max-w-md mx-auto px-4">
+        <!-- Stats -->
+        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-2xl font-sf-display font-bold text-label-primary">18</div>
+                    <div class="text-xs text-label-secondary">Items Saved</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-sf-display font-bold text-primary">12</div>
+                    <div class="text-xs text-label-secondary">Videos</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-sf-display font-bold text-info">6</div>
+                    <div class="text-xs text-label-secondary">Articles</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex bg-bg-elevated rounded-xl p-1 mb-6">
+            <button class="flex-1 bg-primary text-bg py-2 px-3 rounded-lg text-xs font-medium tab-btn" onclick="filterContent('all')">
+                All
+            </button>
+            <button class="flex-1 text-label-secondary py-2 px-3 rounded-lg text-xs font-medium tab-btn" onclick="filterContent('videos')">
+                Videos
+            </button>
+            <button class="flex-1 text-label-secondary py-2 px-3 rounded-lg text-xs font-medium tab-btn" onclick="filterContent('articles')">
+                Articles
+            </button>
+        </div>
+
+        <!-- Saved Items -->
+        <div class="space-y-4" id="savedContent">
+            <!-- Saved Video 1 -->
+            <div class="bg-bg-elevated rounded-2xl overflow-hidden saved-item" data-type="video">
+                <div class="relative">
+                    <div class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                        <div class="w-12 h-12 flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-white">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="absolute top-3 right-3">
+                        <button class="bg-black/50 text-white p-2 rounded-full">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-base font-sf-ui font-semibold text-label-primary mb-2">Master the 5-Minute Scalping Strategy</h3>
+                    <div class="flex items-center justify-between text-xs text-label-tertiary mb-3 font-sf-ui">
+                        <span class="flex items-center gap-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            32.8K views
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12,6 12,12 16,14"></polyline>
+                            </svg>
+                            12:30
+                        </span>
+                    </div>
+                    <div class="text-xs text-label-secondary">Saved 2 days ago</div>
+                </div>
+            </div>
+
+            <!-- Saved Article 1 -->
+            <div class="bg-bg-elevated rounded-2xl p-4 saved-item" data-type="article">
+                <div class="flex gap-3">
+                    <div class="w-16 h-16 bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6 text-primary">
+                            <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between mb-2">
+                            <h3 class="text-base font-sf-ui font-semibold text-label-primary">Understanding Market Psychology</h3>
+                            <button class="text-label-secondary p-1">
+                                <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                    <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="text-xs text-label-tertiary mb-2">Learn how emotions drive market movements and how to use this to your advantage...</p>
+                        <div class="flex items-center gap-3 text-xs text-label-secondary">
+                            <span>5 min read</span>
+                            <span>Saved 1 week ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- More saved items would continue here -->
+            <div class="bg-bg-elevated rounded-2xl overflow-hidden saved-item" data-type="video">
+                <div class="relative">
+                    <div class="h-48 bg-gradient-to-br from-blue-700 to-blue-800 flex items-center justify-center">
+                        <div class="w-12 h-12 flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-white">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="absolute top-3 right-3">
+                        <button class="bg-black/50 text-white p-2 rounded-full">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-base font-sf-ui font-semibold text-label-primary mb-2">Risk Management: The 2% Rule</h3>
+                    <div class="flex items-center justify-between text-xs text-label-tertiary mb-3 font-sf-ui">
+                        <span class="flex items-center gap-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            45.2K views
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12,6 12,12 16,14"></polyline>
+                            </svg>
+                            18:45
+                        </span>
+                    </div>
+                    <div class="text-xs text-label-secondary">Saved 3 days ago</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function filterContent(type) {
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-bg');
+                btn.classList.add('text-label-secondary');
+            });
+            event.target.classList.add('bg-primary', 'text-bg');
+            event.target.classList.remove('text-label-secondary');
+
+            // Filter content
+            const items = document.querySelectorAll('.saved-item');
+            items.forEach(item => {
+                if (type === 'all') {
+                    item.style.display = 'block';
+                } else if (type === 'videos' && item.dataset.type === 'video') {
+                    item.style.display = 'block';
+                } else if (type === 'articles' && item.dataset.type === 'article') {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

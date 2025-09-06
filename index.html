@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <meta name="description" content="Your personal trading mentor, market toolkit, and daily challenge – all in your pocket." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>FLP AcademyWorks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Brand colors from design.json
+                        primary: '#FFD60A',
+                        success: '#32D74B',
+                        warning: '#FFD60A',
+                        danger: '#FF453A',
+                        info: '#64D2FF',
+                        
+                        // Background colors
+                        bg: '#0B0B0F',
+                        'bg-elevated': '#141417',
+                        'bg-secondary': '#1C1C1F',
+                        'bg-tertiary': '#2C2C2E',
+                        
+                        // Text colors
+                        'label-primary': '#FFFFFF',
+                        'label-secondary': 'rgba(235,235,245,0.6)',
+                        'label-tertiary': 'rgba(235,235,245,0.3)',
+                        'label-quaternary': 'rgba(235,235,245,0.18)',
+                        
+                        // Fill colors
+                        'fill-primary': 'rgba(120,120,128,0.36)',
+                        'fill-secondary': 'rgba(120,120,128,0.32)',
+                        'fill-tertiary': 'rgba(120,120,128,0.24)',
+                        
+                        // Interaction colors
+                        separator: 'rgba(84,84,88,0.36)',
+                        overlay: 'rgba(0,0,0,0.6)',
+                        'focus-ring': 'rgba(255,214,10,0.45)',
+                        
+                        // Trading colors
+                        'chart-up': '#32D74B',
+                        'chart-down': '#FF453A',
+                        buy: '#32D74B',
+                        sell: '#FF453A'
+                    },
+                    fontFamily: {
+                        'sf-ui': ['SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                        'sf-display': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                        'sf-mono': ['SF Mono', 'ui-monospace', 'Menlo', 'Consolas', 'Liberation Mono', 'monospace']
+                    },
+                    fontSize: {
+                        'xs': ['11px', { lineHeight: '1.2' }],
+                        'sm': ['13px', { lineHeight: '1.2' }],
+                        'md': ['15px', { lineHeight: '1.2' }],
+                        'lg': ['17px', { lineHeight: '1.2' }],
+                        'xl': ['20px', { lineHeight: '1.2' }],
+                        '2xl': ['28px', { lineHeight: '1.1' }],
+                        '3xl': ['34px', { lineHeight: '1.0' }]
+                    },
+                    borderRadius: {
+                        'xs': '8px',
+                        'sm': '10px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '22px',
+                        'pill': '999px'
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 8px rgba(0,0,0,0.35)',
+                        'elevated': '0 8px 24px rgba(0,0,0,0.45)'
+                    },
+                    backdropBlur: {
+                        'system-thin': '20px',
+                        'system-thick': '30px'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui min-h-screen">
+    <!-- Splash Screen -->
+    <main class="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden">
+        <!-- iOS-style Background Animation -->
+        <div class="absolute inset-0 opacity-[0.08]">
+            <div class="absolute top-20 left-10 w-32 h-32 bg-primary rounded-full animate-pulse blur-sm"></div>
+            <div class="absolute top-40 right-16 w-24 h-24 bg-primary/60 rounded-full animate-bounce delay-300 blur-sm"></div>
+            <div class="absolute bottom-32 left-20 w-20 h-20 bg-primary/40 rounded-full animate-pulse delay-700 blur-sm"></div>
+            <div class="absolute bottom-20 right-10 w-28 h-28 bg-primary/50 rounded-full animate-bounce delay-1000 blur-sm"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="splashContent" class="text-center z-10 transition-all duration-300 ease-out">
+            <!-- Logo -->
+            <div class="mb-10 transform scale-100 animate-pulse">
+                <div class="flex justify-center mb-6">
+                    <img 
+                        src="download.jpeg" 
+                        alt="FLP AcademyWorks Logo" 
+                        class="w-28 h-28 object-cover rounded-xl shadow-elevated"
+                    >
+                </div>
+                <div class="text-primary text-xl font-sf-display font-bold mb-2">FLP</div>
+                <div class="text-xl font-sf-display font-semibold text-label-primary">AcademyWorks</div>
+            </div>
+
+            <!-- Tagline -->
+            <div class="mb-16 max-w-sm mx-auto">
+                <p class="text-base text-label-secondary leading-normal font-sf-ui font-medium">
+                    Your personal trading mentor, market toolkit, and daily challenge – all in your pocket.
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-3 w-full max-w-xs mx-auto">
+                <button 
+                    onclick="window.location.href='login.html'"
+                    class="w-full bg-primary text-bg font-sf-ui font-semibold py-3.5 px-4 rounded-lg hover:bg-primary/90 transition-all duration-200 active:scale-[0.98] shadow-soft"
+                >
+                    Get Started
+                </button>
+                
+                <button 
+                    onclick="window.location.href='signup.html'"
+                    class="w-full bg-fill-secondary text-label-primary font-sf-ui font-semibold py-3.5 px-4 rounded-lg hover:bg-fill-primary transition-all duration-200 active:scale-[0.98]"
+                >
+                    Create Account
+                </button>
+            </div>
+
+            <!-- Features Preview -->
+            <div class="mt-16 grid grid-cols-3 gap-8 max-w-md mx-auto">
+                <div class="text-center">
+                    <div class="w-6 h-6 mx-auto mb-2 opacity-80">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6 text-label-tertiary">
+                            <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path>
+                        </svg>
+                    </div>
+                    <div class="text-xs font-sf-ui text-label-tertiary">Live Signals</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-6 h-6 mx-auto mb-2 opacity-80">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6 text-label-tertiary">
+                            <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"></path>
+                        </svg>
+                    </div>
+                    <div class="text-xs font-sf-ui text-label-tertiary">Learn Trading</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-6 h-6 mx-auto mb-2 opacity-80">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6 text-label-tertiary">
+                            <path d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"></path>
+                        </svg>
+                    </div>
+                    <div class="text-xs font-sf-ui text-label-tertiary">MT4/MT5 Ready</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auto redirect notice -->
+        <div class="absolute bottom-8 left-0 right-0 text-center">
+            <p class="text-xs font-sf-ui text-label-quaternary">
+                <span id="redirectText">Redirecting in <span id="countdown">3</span> seconds...</span>
+            </p>
+        </div>
+    </main>
+
+    <script>
+        // Post-login splash experience
+        function showPostLoginSplash() {
+            const user = JSON.parse(localStorage.getItem('flp_user'));
+            const splashContent = document.getElementById('splashContent');
+            
+            console.log('Post-login splash triggered for:', user.name);
+            
+            // Update content immediately
+            try {
+                const titleElement = document.querySelector('.text-xl.font-sf-display');
+                const subtitleElement = document.querySelector('.text-base.text-label-secondary');
+                const buttonsElement = document.querySelector('.space-y-3');
+                const redirectElement = document.getElementById('redirectText');
+                
+                if (titleElement) titleElement.textContent = `Welcome back, ${user.name || 'Trader'}!`;
+                if (subtitleElement) subtitleElement.textContent = 'Loading your personalized trading dashboard...';
+                if (buttonsElement) buttonsElement.style.display = 'none';
+                if (redirectElement) redirectElement.innerHTML = 'Preparing your dashboard...';
+                
+                console.log('Content updated, redirecting in 2 seconds');
+                
+                // Simple redirect after 2 seconds
+                setTimeout(() => {
+                    console.log('Redirecting to home.html');
+                    window.location.href = 'home.html';
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Error in showPostLoginSplash:', error);
+                // Fallback redirect
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 1000);
+            }
+        }
+
+        // Check if user is already logged in
+        window.addEventListener('DOMContentLoaded', function() {
+            const user = localStorage.getItem('flp_user');
+            if (user) {
+                const userData = JSON.parse(user);
+                if (userData.isLoggedIn) {
+                    // User is logged in, show post-login splash then redirect to main app
+                    showPostLoginSplash();
+                    return;
+                }
+            }
+
+            // Auto-redirect to login after 3 seconds if not interacted
+            let countdown = 3;
+            const countdownElement = document.getElementById('countdown');
+            const redirectTextElement = document.getElementById('redirectText');
+            
+            const timer = setInterval(() => {
+                countdown--;
+                countdownElement.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    window.location.href = 'login.html';
+                }
+            }, 1000);
+
+            // Clear timer if user interacts with the page
+            let hasInteracted = false;
+            
+            function clearTimer() {
+                if (!hasInteracted) {
+                    hasInteracted = true;
+                    clearInterval(timer);
+                    redirectTextElement.style.display = 'none';
+                }
+            }
+
+            document.addEventListener('click', clearTimer);
+            document.addEventListener('touchstart', clearTimer);
+            document.addEventListener('keydown', clearTimer);
+        });
+    </script>
+</body>
+</html>

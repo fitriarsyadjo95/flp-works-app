@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <meta name="description" content="Your personal trading mentor, market toolkit, and daily challenge – all in your pocket." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>FLP AcademyWorks - Notifications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Brand colors from design.json
+                        primary: '#FFD60A',
+                        success: '#32D74B',
+                        warning: '#FFD60A',
+                        danger: '#FF453A',
+                        info: '#64D2FF',
+                        
+                        // Background colors
+                        bg: '#0B0B0F',
+                        'bg-elevated': '#141417',
+                        'bg-secondary': '#1C1C1F',
+                        'bg-tertiary': '#2C2C2E',
+                        
+                        // Text colors
+                        'label-primary': '#FFFFFF',
+                        'label-secondary': 'rgba(235,235,245,0.6)',
+                        'label-tertiary': 'rgba(235,235,245,0.3)',
+                        'label-quaternary': 'rgba(235,235,245,0.18)',
+                        
+                        // Fill colors
+                        'fill-primary': 'rgba(120,120,128,0.36)',
+                        'fill-secondary': 'rgba(120,120,128,0.32)',
+                        'fill-tertiary': 'rgba(120,120,128,0.24)',
+                        
+                        // Interaction colors
+                        separator: 'rgba(84,84,88,0.36)',
+                        overlay: 'rgba(0,0,0,0.6)',
+                        'focus-ring': 'rgba(255,214,10,0.45)',
+                        
+                        // Trading colors
+                        'chart-up': '#32D74B',
+                        'chart-down': '#FF453A',
+                        buy: '#32D74B',
+                        sell: '#FF453A'
+                    },
+                    fontFamily: {
+                        'sf-pro': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        'sf-display': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        'sf-ui': ['SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'elevated': '0 4px 16px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08)',
+                        'card': '0 2px 8px rgba(0,0,0,0.1)',
+                        'button': '0 1px 3px rgba(0,0,0,0.12)',
+                        'modal': '0 8px 32px rgba(0,0,0,0.24)'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui">
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 px-4 py-3 flex justify-between items-center" style="background: rgba(22,22,24,0.6); backdrop-filter: blur(20px);">
+        <div class="flex items-center gap-3">
+            <button onclick="history.back()" class="text-label-secondary opacity-80 hover:opacity-100 transition-opacity">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                    <path d="M19 12H5m7 7l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <div class="text-primary text-base font-sf-display font-semibold">Notifications</div>
+        </div>
+        <button onclick="markAllAsRead()" class="text-primary text-xs font-medium">
+            Mark All Read
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-24 max-w-md mx-auto px-4">
+        <!-- Summary Stats -->
+        <div class="flex gap-3 mb-6">
+            <div class="flex-1 bg-bg-elevated rounded-2xl p-4 text-center">
+                <div class="text-xl font-sf-display font-bold text-primary mb-1">3</div>
+                <div class="text-xs text-label-secondary">Unread</div>
+            </div>
+            <div class="flex-1 bg-bg-elevated rounded-2xl p-4 text-center">
+                <div class="text-xl font-sf-display font-bold text-info mb-1">12</div>
+                <div class="text-xs text-label-secondary">Today</div>
+            </div>
+            <div class="flex-1 bg-bg-elevated rounded-2xl p-4 text-center">
+                <div class="text-xl font-sf-display font-bold text-success mb-1">45</div>
+                <div class="text-xs text-label-secondary">This Week</div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex bg-bg-elevated rounded-2xl p-1 mb-6">
+            <button class="flex-1 bg-primary text-bg py-2 px-3 rounded-xl text-xs font-medium tab-btn" onclick="filterNotifications('all')">
+                All
+            </button>
+            <button class="flex-1 text-label-secondary py-2 px-3 rounded-xl text-xs font-medium tab-btn" onclick="filterNotifications('signals')">
+                Signals
+            </button>
+            <button class="flex-1 text-label-secondary py-2 px-3 rounded-xl text-xs font-medium tab-btn" onclick="filterNotifications('courses')">
+                Courses
+            </button>
+            <button class="flex-1 text-label-secondary py-2 px-3 rounded-xl text-xs font-medium tab-btn" onclick="filterNotifications('system')">
+                System
+            </button>
+        </div>
+
+        <!-- Notifications List -->
+        <div class="space-y-3" id="notificationsList">
+            <!-- Today -->
+            <div class="text-xs text-label-tertiary font-medium mb-3 mt-6">TODAY</div>
+
+            <!-- New Signal Notification (Unread) -->
+            <div class="bg-bg-elevated rounded-2xl p-4 notification-item border-l-4 border-l-primary" data-type="signals" data-read="false">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-primary">
+                            <path d="M9 11H3m3 8l-3-3 3-3m5-6h6m-3-8l3 3-3 3"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between mb-1">
+                            <div class="text-xs font-semibold text-label-primary">New Trading Signal</div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-primary rounded-full"></div>
+                                <div class="text-xs text-label-tertiary">2 min ago</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-label-secondary mb-2">EUR/USD BUY signal with 85% confidence. Entry at 1.0850, TP: 1.0920</div>
+                        <div class="flex gap-2">
+                            <button class="bg-primary text-bg px-3 py-1.5 rounded-lg text-xs font-medium">
+                                View Signal
+                            </button>
+                            <button class="bg-bg-secondary text-label-secondary px-3 py-1.5 rounded-lg text-xs">
+                                Dismiss
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Update (Unread) -->
+            <div class="bg-bg-elevated rounded-2xl p-4 notification-item border-l-4 border-l-info" data-type="courses" data-read="false">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 bg-info/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-info">
+                            <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between mb-1">
+                            <div class="text-xs font-semibold text-label-primary">New Course Available</div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-info rounded-full"></div>
+                                <div class="text-xs text-label-tertiary">1 hour ago</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-label-secondary mb-2">"Advanced Risk Management Strategies" is now available in your premium library</div>
+                        <button class="bg-info text-bg px-3 py-1.5 rounded-lg text-xs font-medium">
+                            Start Course
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price Alert (Unread) -->
+            <div class="bg-bg-elevated rounded-2xl p-4 notification-item border-l-4 border-l-success" data-type="signals" data-read="false">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 bg-success/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-success">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between mb-1">
+                            <div class="text-xs font-semibold text-label-primary">Price Target Hit</div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-success rounded-full"></div>
+                                <div class="text-xs text-label-tertiary">2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-label-secondary mb-2">GBP/JPY reached your target of 185.50. Profit: +$125.30</div>
+                        <button class="bg-success text-bg px-3 py-1.5 rounded-lg text-xs font-medium">
+                            View Trade
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Notification (Read) -->
+            <div class="bg-bg-elevated rounded-2xl p-4 notification-item opacity-70" data-type="system" data-read="true">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 bg-warning/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-warning">
+                            <path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 000 2l.08.15a2 2 0 010 2l-.08.15a2 2 0 000 2l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 000-2l-.08-.15a2 2 0 010-2l.08-.15a2 2 0 000-2l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between mb-1">
+                            <div class="text-xs font-semibold text-label-primary">App Update Available</div>
+                            <div class="text-xs text-label-tertiary">3 hours ago</div>
+                        </div>
+                        <div class="text-xs text-label-secondary">Version 2.1.4 is now available with bug fixes and improvements</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yesterday -->
+            <div class="text-xs text-label-tertiary font-medium mb-3 mt-6">YESTERDAY</div>
+
+            <!-- Account Sync (Read) -->
+            <div class="bg-bg-elevated rounded-2xl p-4 notification-item opacity-70" data-type="system" data-read="true">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 bg-success/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 text-success">
+                            <polyline points="20,6 9,17 4,12"></polyline>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between mb-1">
+                            <div class="text-xs font-semibold text-label-primary">Account Synced</div>
+                            <div class="text-xs text-label-tertiary">1 day ago</div>
+                        </div>
+                        <div class="text-xs text-label-secondary">Your MT4 account has been successfully synced with the latest data</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signal Results (Read) -->
+            <div class="bg-bg-elevated rounded-2xl p-4 notification-item opacity-70" data-type="signals" data-read="true">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-primary">
+                            <polyline points="22,6 12,16 2,10"></polyline>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between mb-1">
+                            <div class="text-xs font-semibold text-label-primary">Signal Closed</div>
+                            <div class="text-xs text-label-tertiary">1 day ago</div>
+                        </div>
+                        <div class="text-xs text-label-secondary">USD/CAD signal closed with +85 pips profit. Great job following the signal!</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Report (Read) -->
+            <div class="bg-bg-elevated rounded-2xl p-4 notification-item opacity-70" data-type="system" data-read="true">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 bg-info/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-info">
+                            <path d="M9 17H7A5 5 0 0 1 7 7h2m0 10a5 5 0 0 1 5-5h2a5 5 0 0 1 0 10h-2a5 5 0 0 1-5-5z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between mb-1">
+                            <div class="text-xs font-semibold text-label-primary">Weekly Report Ready</div>
+                            <div class="text-xs text-label-tertiary">1 day ago</div>
+                        </div>
+                        <div class="text-xs text-label-secondary">Your trading performance report for last week is now available</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coaching Session (Read) -->
+            <div class="bg-bg-elevated rounded-2xl p-4 notification-item opacity-70" data-type="courses" data-read="true">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-purple-400">
+                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between mb-1">
+                            <div class="text-xs font-semibold text-label-primary">Coaching Session Scheduled</div>
+                            <div class="text-xs text-label-tertiary">1 day ago</div>
+                        </div>
+                        <div class="text-xs text-label-secondary">Your monthly 1-on-1 coaching session is scheduled for tomorrow at 3:00 PM EST</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Earlier -->
+            <div class="text-xs text-label-tertiary font-medium mb-3 mt-6">EARLIER</div>
+
+            <!-- Referral Reward (Read) -->
+            <div class="bg-bg-elevated rounded-2xl p-4 notification-item opacity-70" data-type="system" data-read="true">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-primary">
+                            <path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between mb-1">
+                            <div class="text-xs font-semibold text-label-primary">Referral Reward Earned</div>
+                            <div class="text-xs text-label-tertiary">3 days ago</div>
+                        </div>
+                        <div class="text-xs text-label-secondary">You earned $15 for referring Sarah M. Your total referral earnings: $45</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function filterNotifications(type) {
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-bg');
+                btn.classList.add('text-label-secondary');
+            });
+            event.target.classList.add('bg-primary', 'text-bg');
+            event.target.classList.remove('text-label-secondary');
+
+            // Filter notifications
+            const notifications = document.querySelectorAll('.notification-item');
+            notifications.forEach(item => {
+                if (type === 'all') {
+                    item.style.display = 'block';
+                } else if (item.dataset.type === type) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Hide/show section headers based on visible items
+            const sections = document.querySelectorAll('.text-label-tertiary');
+            sections.forEach(section => {
+                const nextItems = [];
+                let next = section.nextElementSibling;
+                while (next && !next.classList.contains('text-label-tertiary')) {
+                    if (next.classList.contains('notification-item')) {
+                        nextItems.push(next);
+                    }
+                    next = next.nextElementSibling;
+                }
+                
+                const hasVisibleItems = nextItems.some(item => item.style.display !== 'none');
+                section.style.display = hasVisibleItems ? 'block' : 'none';
+            });
+        }
+
+        function markAllAsRead() {
+            const unreadItems = document.querySelectorAll('.notification-item[data-read="false"]');
+            unreadItems.forEach(item => {
+                item.dataset.read = 'true';
+                item.classList.add('opacity-70');
+                
+                // Remove unread indicator dot
+                const dot = item.querySelector('.w-2.h-2.bg-primary, .w-2.h-2.bg-info, .w-2.h-2.bg-success');
+                if (dot) {
+                    dot.style.display = 'none';
+                }
+                
+                // Remove colored border
+                item.classList.remove('border-l-primary', 'border-l-info', 'border-l-success');
+            });
+
+            // Update unread count
+            const unreadCount = document.querySelector('.text-primary.mb-1');
+            if (unreadCount) {
+                unreadCount.textContent = '0';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <meta name="description" content="Your personal trading mentor, market toolkit, and daily challenge – all in your pocket." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>FLP AcademyWorks - Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Brand colors from design.json
+                        primary: '#FFD60A',
+                        success: '#32D74B',
+                        warning: '#FFD60A',
+                        danger: '#FF453A',
+                        info: '#64D2FF',
+                        
+                        // Background colors
+                        bg: '#0B0B0F',
+                        'bg-elevated': '#141417',
+                        'bg-secondary': '#1C1C1F',
+                        'bg-tertiary': '#2C2C2E',
+                        
+                        // Text colors
+                        'label-primary': '#FFFFFF',
+                        'label-secondary': 'rgba(235,235,245,0.6)',
+                        'label-tertiary': 'rgba(235,235,245,0.3)',
+                        'label-quaternary': 'rgba(235,235,245,0.18)',
+                        
+                        // Fill colors
+                        'fill-primary': 'rgba(120,120,128,0.36)',
+                        'fill-secondary': 'rgba(120,120,128,0.32)',
+                        'fill-tertiary': 'rgba(120,120,128,0.24)',
+                        
+                        // Interaction colors
+                        separator: 'rgba(84,84,88,0.36)',
+                        overlay: 'rgba(0,0,0,0.6)',
+                        'focus-ring': 'rgba(255,214,10,0.45)',
+                        
+                        // Trading colors
+                        'chart-up': '#32D74B',
+                        'chart-down': '#FF453A',
+                        buy: '#32D74B',
+                        sell: '#FF453A'
+                    },
+                    fontFamily: {
+                        'sf-pro': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        'sf-display': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        'sf-ui': ['SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'elevated': '0 4px 16px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08)',
+                        'card': '0 2px 8px rgba(0,0,0,0.1)',
+                        'button': '0 1px 3px rgba(0,0,0,0.12)',
+                        'modal': '0 8px 32px rgba(0,0,0,0.24)'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui">
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 px-4 py-3 flex justify-between items-center" style="background: rgba(22,22,24,0.6); backdrop-filter: blur(20px);">
+        <div class="flex items-center gap-3">
+            <button onclick="history.back()" class="text-label-secondary opacity-80 hover:opacity-100 transition-opacity">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                    <path d="M19 12H5m7 7l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <div class="text-primary text-base font-sf-display font-semibold">Settings</div>
+        </div>
+        <button class="text-label-secondary opacity-80 hover:opacity-100 transition-opacity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="19" cy="12" r="1"></circle>
+                <circle cx="5" cy="12" r="1"></circle>
+            </svg>
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-24 max-w-md mx-auto px-4">
+        <!-- Profile Settings -->
+        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
+            <h3 class="text-base font-semibold mb-4">Profile</h3>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span class="text-xs font-semibold text-primary">AJ</span>
+                        </div>
+                        <div>
+                            <div class="text-xs font-medium">Alex Johnson</div>
+                            <div class="text-xs text-label-secondary">alex.johnson@email.com</div>
+                        </div>
+                    </div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-label-secondary">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                
+                <div class="border-t border-separator pt-4">
+                    <button class="w-full flex items-center justify-between py-2">
+                        <span class="text-xs">Edit Profile</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
+                            <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
+                        </svg>
+                    </button>
+                    <button class="w-full flex items-center justify-between py-2">
+                        <span class="text-xs">Change Password</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
+                            <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
+            <h3 class="text-base font-semibold mb-4">Notifications</h3>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-medium">Trading Signals</div>
+                        <div class="text-xs text-label-secondary">Get notified of new signals</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-medium">Price Alerts</div>
+                        <div class="text-xs text-label-secondary">Alert when targets are hit</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-medium">New Courses</div>
+                        <div class="text-xs text-label-secondary">When new content is available</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer">
+                        <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-medium">Marketing Updates</div>
+                        <div class="text-xs text-label-secondary">Promotions and news</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer">
+                        <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trading Preferences -->
+        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
+            <h3 class="text-base font-semibold mb-4">Trading Preferences</h3>
+            <div class="space-y-4">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-medium">Risk Tolerance</span>
+                        <span class="text-xs text-primary">Moderate</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="flex-1 bg-fill-secondary text-label-secondary py-2 rounded-lg text-xs">Low</button>
+                        <button class="flex-1 bg-primary text-bg py-2 rounded-lg text-xs font-medium">Moderate</button>
+                        <button class="flex-1 bg-fill-secondary text-label-secondary py-2 rounded-lg text-xs">High</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-medium">Default Position Size</span>
+                        <span class="text-xs text-label-secondary">2% of account</span>
+                    </div>
+                    <input type="range" min="1" max="5" value="2" class="w-full h-2 bg-fill-secondary rounded-lg appearance-none cursor-pointer slider">
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-medium">Auto-Execute Signals</div>
+                        <div class="text-xs text-label-secondary">Automatically place trades</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer">
+                        <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- App Settings -->
+        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
+            <h3 class="text-base font-semibold mb-4">App Settings</h3>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-medium">Dark Mode</div>
+                        <div class="text-xs text-label-secondary">Currently enabled</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+                
+                <button class="w-full flex items-center justify-between py-2">
+                    <span class="text-xs">Language</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-label-secondary">English</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
+                            <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
+                        </svg>
+                    </div>
+                </button>
+                
+                <button class="w-full flex items-center justify-between py-2">
+                    <span class="text-xs">Currency Display</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-label-secondary">USD ($)</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
+                            <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
+                        </svg>
+                    </div>
+                </button>
+                
+                <button class="w-full flex items-center justify-between py-2">
+                    <span class="text-xs">Time Zone</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-label-secondary">EST</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
+                            <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Privacy & Security -->
+        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
+            <h3 class="text-base font-semibold mb-4">Privacy & Security</h3>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-medium">Biometric Login</div>
+                        <div class="text-xs text-label-secondary">Use Face ID or Touch ID</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-medium">Analytics</div>
+                        <div class="text-xs text-label-secondary">Help improve the app</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+                
+                <button class="w-full flex items-center justify-between py-2">
+                    <span class="text-xs">Privacy Policy</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
+                        <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
+                    </svg>
+                </button>
+                
+                <button class="w-full flex items-center justify-between py-2">
+                    <span class="text-xs">Terms of Service</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
+                        <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Data & Storage -->
+        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
+            <h3 class="text-base font-semibold mb-4">Data & Storage</h3>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-medium">Cache Size</div>
+                        <div class="text-xs text-label-secondary">156 MB used</div>
+                    </div>
+                    <button class="bg-bg-secondary text-label-secondary px-3 py-1.5 rounded-lg text-xs">
+                        Clear
+                    </button>
+                </div>
+                
+                <button class="w-full flex items-center justify-between py-2">
+                    <span class="text-xs">Download for Offline</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-label-secondary">12 items</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
+                            <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
+                        </svg>
+                    </div>
+                </button>
+                
+                <button class="w-full flex items-center justify-between py-2">
+                    <span class="text-xs">Export Data</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
+                        <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="bg-danger/10 border border-danger/20 rounded-2xl p-6">
+            <h3 class="text-base font-semibold text-danger mb-4">Danger Zone</h3>
+            <div class="space-y-3">
+                <button class="w-full bg-danger/20 text-danger py-3 rounded-xl text-xs font-medium border border-danger/30">
+                    Reset All Settings
+                </button>
+                <button class="w-full bg-danger text-white py-3 rounded-xl text-xs font-semibold">
+                    Delete Account
+                </button>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

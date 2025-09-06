@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <meta name="description" content="Your personal trading mentor, market toolkit, and daily challenge – all in your pocket." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>FLP AcademyWorks - Help & Support</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Brand colors from design.json
+                        primary: '#FFD60A',
+                        success: '#32D74B',
+                        warning: '#FFD60A',
+                        danger: '#FF453A',
+                        info: '#64D2FF',
+                        
+                        // Background colors
+                        bg: '#0B0B0F',
+                        'bg-elevated': '#141417',
+                        'bg-secondary': '#1C1C1F',
+                        'bg-tertiary': '#2C2C2E',
+                        
+                        // Text colors
+                        'label-primary': '#FFFFFF',
+                        'label-secondary': 'rgba(235,235,245,0.6)',
+                        'label-tertiary': 'rgba(235,235,245,0.3)',
+                        'label-quaternary': 'rgba(235,235,245,0.18)',
+                        
+                        // Fill colors
+                        'fill-primary': 'rgba(120,120,128,0.36)',
+                        'fill-secondary': 'rgba(120,120,128,0.32)',
+                        'fill-tertiary': 'rgba(120,120,128,0.24)',
+                        
+                        // Interaction colors
+                        separator: 'rgba(84,84,88,0.36)',
+                        overlay: 'rgba(0,0,0,0.6)',
+                        'focus-ring': 'rgba(255,214,10,0.45)',
+                        
+                        // Trading colors
+                        'chart-up': '#32D74B',
+                        'chart-down': '#FF453A',
+                        buy: '#32D74B',
+                        sell: '#FF453A'
+                    },
+                    fontFamily: {
+                        'sf-pro': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        'sf-display': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        'sf-ui': ['SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'elevated': '0 4px 16px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08)',
+                        'card': '0 2px 8px rgba(0,0,0,0.1)',
+                        'button': '0 1px 3px rgba(0,0,0,0.12)',
+                        'modal': '0 8px 32px rgba(0,0,0,0.24)'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui">
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 px-4 py-3 flex justify-between items-center" style="background: rgba(22,22,24,0.6); backdrop-filter: blur(20px);">
+        <div class="flex items-center gap-3">
+            <button onclick="history.back()" class="text-label-secondary opacity-80 hover:opacity-100 transition-opacity">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                    <path d="M19 12H5m7 7l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <div class="text-primary text-base font-sf-display font-semibold">Help & Support</div>
+        </div>
+        <button class="text-label-secondary opacity-80 hover:opacity-100 transition-opacity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-24 max-w-md mx-auto px-4">
+        <!-- Search Bar -->
+        <div class="bg-bg-elevated rounded-2xl p-4 mb-6">
+            <div class="relative">
+                <input type="text" placeholder="Search help articles..." class="w-full bg-bg text-label-primary py-3 px-4 pl-10 rounded-xl border border-separator focus:border-primary focus:outline-none text-xs">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-label-secondary">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="M21 21l-4.35-4.35"></path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
+            <h3 class="text-base font-semibold mb-4">Quick Actions</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <button class="bg-primary/20 text-primary p-4 rounded-xl text-center">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6 mx-auto mb-2">
+                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path>
+                    </svg>
+                    <div class="text-xs font-medium">Live Chat</div>
+                </button>
+                <button class="bg-info/20 text-info p-4 rounded-xl text-center">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6 mx-auto mb-2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <div class="text-xs font-medium">Email Us</div>
+                </button>
+                <button class="bg-success/20 text-success p-4 rounded-xl text-center">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6 mx-auto mb-2">
+                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
+                    </svg>
+                    <div class="text-xs font-medium">Call Support</div>
+                </button>
+                <button class="bg-purple-500/20 text-purple-400 p-4 rounded-xl text-center">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6 mx-auto mb-2">
+                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"></path>
+                    </svg>
+                    <div class="text-xs font-medium">Report Bug</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Popular FAQs -->
+        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
+            <h3 class="text-base font-semibold mb-4">Popular Questions</h3>
+            <div class="space-y-3">
+                <button class="w-full text-left p-3 bg-bg rounded-xl hover:bg-bg-secondary transition-colors">
+                    <div class="text-xs font-medium mb-1">How do I connect my MT4/MT5 platform?</div>
+                    <div class="text-xs text-label-secondary">Learn how to sync your trading accounts</div>
+                </button>
+                
+                <button class="w-full text-left p-3 bg-bg rounded-xl hover:bg-bg-secondary transition-colors">
+                    <div class="text-xs font-medium mb-1">Why aren't I receiving trading signals?</div>
+                    <div class="text-xs text-label-secondary">Troubleshooting notification issues</div>
+                </button>
+                
+                <button class="w-full text-left p-3 bg-bg rounded-xl hover:bg-bg-secondary transition-colors">
+                    <div class="text-xs font-medium mb-1">How to upgrade to Premium?</div>
+                    <div class="text-xs text-label-secondary">Compare plans and billing options</div>
+                </button>
+                
+                <button class="w-full text-left p-3 bg-bg rounded-xl hover:bg-bg-secondary transition-colors">
+                    <div class="text-xs font-medium mb-1">What's the refund policy?</div>
+                    <div class="text-xs text-label-secondary">Terms and conditions for refunds</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Help Categories -->
+        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
+            <h3 class="text-base font-semibold mb-4">Browse by Category</h3>
+            <div class="space-y-3">
+                <button class="w-full flex items-center justify-between p-3 bg-bg rounded-xl hover:bg-bg-secondary transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-primary">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <div class="text-xs font-medium">Getting Started</div>
+                            <div class="text-xs text-label-secondary">12 articles</div>
+                        </div>
+                    </div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
+                        <path d="M9 18l6-6-6-6"></path>
+                    </svg>
+                </button>
+                
+                <button class="w-full flex items-center justify-between p-3 bg-bg rounded-xl hover:bg-bg-secondary transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-info/20 rounded-lg flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-info">
+                                <path d="M9 11H3m3 8l-3-3 3-3m5-6h6m-3-8l3 3-3 3"></path>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <div class="text-xs font-medium">Trading Signals</div>
+                            <div class="text-xs text-label-secondary">8 articles</div>
+                        </div>
+                    </div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
+                        <path d="M9 18l6-6-6-6"></path>
+                    </svg>
+                </button>
+                
+                <button class="w-full flex items-center justify-between p-3 bg-bg rounded-xl hover:bg-bg-secondary transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-success/20 rounded-lg flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-success">
+                                <rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
+                                <path d="M12 18h.01"></path>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <div class="text-xs font-medium">Platform Integration</div>
+                            <div class="text-xs text-label-secondary">15 articles</div>
+                        </div>
+                    </div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
+                        <path d="M9 18l6-6-6-6"></path>
+                    </svg>
+                </button>
+                
+                <button class="w-full flex items-center justify-between p-3 bg-bg rounded-xl hover:bg-bg-secondary transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-warning/20 rounded-lg flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-warning">
+                                <path d="M5.166 2.621v.858c-1.035.148-2.059.33-3.071.543a.75.75 0 00-.584.859 6.753 6.753 0 006.138 5.6 6.73 6.73 0 002.743 1.346A6.707 6.707 0 019.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 00-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 00.75-.75 2.25 2.25 0 00-2.25-2.25H16.5v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.706 6.706 0 01-1.112-3.173 6.73 6.73 0 002.743-1.347 6.753 6.753 0 006.139-5.6.75.75 0 00-.585-.858 47.077 47.077 0 00-3.07-.543V2.62a.75.75 0 00-.658-.744 49.22 49.22 0 00-6.093-.377c-2.063 0-4.096.128-6.093.377a.75.75 0 00-.657.744z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <div class="text-xs font-medium">Premium Features</div>
+                            <div class="text-xs text-label-secondary">6 articles</div>
+                        </div>
+                    </div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
+                        <path d="M9 18l6-6-6-6"></path>
+                    </svg>
+                </button>
+                
+                <button class="w-full flex items-center justify-between p-3 bg-bg rounded-xl hover:bg-bg-secondary transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-danger/20 rounded-lg flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-danger">
+                                <path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 000 2l.08.15a2 2 0 010 2l-.08.15a2 2 0 000 2l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 000-2l-.08-.15a2 2 0 010-2l.08-.15a2 2 0 000-2l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <div class="text-xs font-medium">Account & Billing</div>
+                            <div class="text-xs text-label-secondary">9 articles</div>
+                        </div>
+                    </div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
+                        <path d="M9 18l6-6-6-6"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
+            <h3 class="text-base font-semibold mb-4">Contact Information</h3>
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-primary">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-xs font-medium">Email Support</div>
+                        <div class="text-xs text-primary">support@flpacademy.com</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-success/20 rounded-xl flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-success">
+                            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-xs font-medium">Phone Support</div>
+                        <div class="text-xs text-success">+1 (555) 123-4567</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-info/20 rounded-xl flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-info">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12,6 12,12 16,14"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-xs font-medium">Business Hours</div>
+                        <div class="text-xs text-label-secondary">Mon-Fri 9AM-6PM EST</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- App Version -->
+        <div class="text-center text-xs text-label-tertiary">
+            <div>FLP AcademyWorks v2.1.3</div>
+            <div>Build 2024.12.01</div>
+        </div>
+    </main>
+</body>
+</html>
