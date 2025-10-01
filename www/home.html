@@ -8,6 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>FLP AcademyWorks - Home</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/course-storage.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -107,8 +108,12 @@
     <!-- Main Content -->
     <main class="pt-16 pb-20 max-w-md mx-auto">
         <!-- Video Feed -->
-        <div class="space-y-4 px-4">
-            <!-- Video Card 1 -->
+        <div class="space-y-4 px-4" id="videosContainer">
+            <!-- Loading -->
+            <div id="videosLoading" class="text-center py-8 text-label-secondary">Loading courses...</div>
+            <!-- Videos will be loaded dynamically -->
+            <!-- Video Card 1 (hidden template) -->
+            <div class="hidden video-card-template">
             <div class="bg-bg-elevated rounded-lg overflow-hidden shadow-soft border border-separator/20">
                 <div class="aspect-video bg-gradient-to-br from-bg-secondary to-bg-tertiary flex items-center justify-center">
                     <div class="w-16 h-16 opacity-60">
@@ -384,13 +389,181 @@
             return userData;
         }
 
+        // Load courses from API
+        async function loadCourses() {
+            try {
+                const response = await fetch('/api/content/courses/public?limit=6');
+                const data = await response.json();
+
+                if (data.success && data.courses) {
+                    renderCourses(data.courses);
+                } else {
+                    showError('Failed to load courses');
+                }
+            } catch (error) {
+                console.error('Error loading courses:', error);
+                showError('Error loading courses');
+            }
+        }
+
+        function renderCourses(courses) {
+            const container = document.getElementById('videosContainer');
+            const loadingEl = document.getElementById('videosLoading');
+
+            if (loadingEl) loadingEl.remove();
+
+            if (!courses || courses.length === 0) {
+                container.innerHTML = '<div class="text-center py-8 text-label-secondary">No courses available yet</div>';
+                return;
+            }
+
+            container.innerHTML = courses.map(course => `
+                <div class="bg-bg-elevated rounded-lg overflow-hidden shadow-soft border border-separator/20" data-course-id="${course.id}">
+                    <a href="course-video.html?id=${course.id}" class="block aspect-video bg-gradient-to-br from-bg-secondary to-bg-tertiary flex items-center justify-center relative" style="cursor: pointer;">
+                        ${course.thumbnail_url ?
+                            `<img src="${course.thumbnail_url}" alt="${course.title}" class="w-full h-full object-cover" />` :
+                            `<div class="w-16 h-16 opacity-60">
+                                <svg viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16 text-label-secondary">
+                                    <path d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z"></path>
+                                </svg>
+                            </div>`
+                        }
+                        ${course.duration ? `<div class="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">${course.duration}</div>` : ''}
+                    </a>
+                    <div class="p-4">
+                        <h3 class="text-base font-sf-ui font-semibold text-label-primary mb-2">${course.title}</h3>
+                        <div class="flex items-center justify-between text-xs text-label-tertiary mb-3 font-sf-ui">
+                            <span class="flex items-center gap-1">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                    <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                ${course.views || 0} views
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12,6 12,12 16,14"></polyline>
+                                </svg>
+                                ${course.duration || 'N/A'}
+                            </span>
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="course-video.html?id=${course.id}" class="bg-primary text-bg px-4 py-2.5 rounded-lg font-sf-ui font-semibold text-xs flex-1 active:scale-[0.98] transition-transform text-center">
+                                Watch Now
+                            </a>
+                            <button onclick="event.stopPropagation(); toggleSaveCourse('${course.id}', ${JSON.stringify(course).replace(/"/g, '&quot;')})" class="bg-fill-secondary text-label-primary px-4 py-2.5 rounded-lg font-sf-ui font-medium text-xs active:scale-[0.98] transition-transform save-btn-${course.id}">
+                                ${courseStorage.isInWatchLater(course.id) ? 'Saved' : 'Save'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showError(message) {
+            const container = document.getElementById('videosContainer');
+            container.innerHTML = `<div class="text-center py-8 text-danger">${message}</div>`;
+        }
+
+        function openCourseVideo(courseId) {
+            fetch(`/api/content/courses/public/${courseId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.course && data.course.video_url) {
+                        showVideoModal(data.course);
+                    } else {
+                        alert('Video not available');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading video:', error);
+                    alert('Error loading video');
+                });
+        }
+
+        function showVideoModal(course) {
+            const videoId = extractYouTubeId(course.video_url);
+            if (!videoId) {
+                alert('Invalid video URL');
+                return;
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="w-full max-w-4xl">
+                    <div class="bg-gray-900 rounded-lg overflow-hidden">
+                        <div class="aspect-video">
+                            <iframe
+                                src="https://www.youtube.com/embed/${videoId}?autoplay=1"
+                                class="w-full h-full"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="p-4">
+                            <h2 class="text-xl font-bold text-white mb-2">${course.title}</h2>
+                            <p class="text-sm text-label-secondary mb-4">${course.description || ''}</p>
+                            <button onclick="this.closest('.fixed').remove()" class="w-full bg-primary text-black py-2 rounded-lg font-medium hover:bg-primary/90">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+
+            document.body.appendChild(modal);
+        }
+
+        function extractYouTubeId(url) {
+            if (!url) return null;
+            if (url.includes('/embed/')) {
+                const match = url.match(/\/embed\/([^?&]+)/);
+                return match ? match[1] : null;
+            }
+            if (url.includes('youtube.com/watch')) {
+                const urlParams = new URLSearchParams(url.split('?')[1]);
+                return urlParams.get('v');
+            }
+            if (url.includes('youtu.be/')) {
+                const match = url.match(/youtu\.be\/([^?&]+)/);
+                return match ? match[1] : null;
+            }
+            return null;
+        }
+
+        // Toggle save course to watch later
+        function toggleSaveCourse(courseId, courseData) {
+            const btn = document.querySelector(`.save-btn-${courseId}`);
+            const isSaved = courseStorage.isInWatchLater(courseId);
+
+            if (isSaved) {
+                courseStorage.removeFromWatchLater(courseId);
+                btn.textContent = 'Save';
+            } else {
+                courseStorage.addToWatchLater(courseData);
+                btn.textContent = 'Saved';
+            }
+        }
+
         // Initialize page
         window.addEventListener('DOMContentLoaded', function() {
             const userData = checkAuth();
             if (userData) {
                 // Hide loading screen
                 document.getElementById('loadingScreen').style.display = 'none';
-                
+
+                // Load courses
+                loadCourses();
+
                 // Update UI with user data if needed
                 console.log('User logged in:', userData.name);
             }

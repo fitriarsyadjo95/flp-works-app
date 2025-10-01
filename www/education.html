@@ -125,9 +125,13 @@
         </div>
 
         <!-- Course Cards -->
-        <div class="px-4 mt-6 space-y-4">
-            <!-- Course Card 1 -->
-            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg course-card" data-tags="strategy,beginner">
+        <div class="px-4 mt-6 space-y-4" id="coursesContainer">
+            <!-- Loading state -->
+            <div id="coursesLoading" class="text-center py-8">
+                <div class="text-label-secondary">Loading courses...</div>
+            </div>
+            <!-- Courses will be loaded dynamically -->
+            <div class="hidden bg-gray-900 rounded-lg overflow-hidden shadow-lg course-card" data-tags="strategy,beginner">
                 <div class="aspect-video bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center relative">
                     <div class="w-12 h-12 flex items-center justify-center">
                         <svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-white">
@@ -543,12 +547,180 @@
             return userData;
         }
 
+        // Load courses from API
+        async function loadCourses() {
+            try {
+                const response = await fetch('/api/content/courses/public');
+                const data = await response.json();
+
+                if (data.success && data.courses) {
+                    renderCourses(data.courses);
+                } else {
+                    showError('Failed to load courses');
+                }
+            } catch (error) {
+                console.error('Error loading courses:', error);
+                showError('Error loading courses');
+            }
+        }
+
+        function renderCourses(courses) {
+            const container = document.getElementById('coursesContainer');
+            const loadingEl = document.getElementById('coursesLoading');
+
+            if (loadingEl) loadingEl.remove();
+
+            if (!courses || courses.length === 0) {
+                container.innerHTML = '<div class="text-center py-8 text-label-secondary">No courses available yet</div>';
+                return;
+            }
+
+            container.innerHTML = courses.map(course => {
+                const difficultyColors = {
+                    'Beginner': 'bg-green-600/20 text-green-300',
+                    'Intermediate': 'bg-blue-600/20 text-blue-300',
+                    'Advanced': 'bg-purple-600/20 text-purple-300'
+                };
+
+                const categoryColors = {
+                    'Forex Basics': 'bg-blue-600/20 text-blue-300',
+                    'Technical Analysis': 'bg-teal-600/20 text-teal-300',
+                    'Risk Management': 'bg-red-600/20 text-red-300',
+                    'Psychology': 'bg-orange-600/20 text-orange-300',
+                    'Strategy': 'bg-indigo-600/20 text-indigo-300'
+                };
+
+                return `
+                    <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg course-card" data-course-id="${course.id}">
+                        <a href="course-video.html?id=${course.id}" class="block aspect-video bg-gradient-to-br from-blue-600/20 to-purple-700/20 flex items-center justify-center relative" style="cursor: pointer;">
+                            ${course.thumbnail_url ?
+                                `<img src="${course.thumbnail_url}" alt="${course.title}" class="w-full h-full object-cover" />` :
+                                `<div class="w-12 h-12 flex items-center justify-center">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-white">
+                                        <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                </div>`
+                            }
+                            ${course.duration ? `<div class="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">${course.duration}</div>` : ''}
+                        </a>
+                        <div class="p-4">
+                            <h3 class="text-base font-semibold mb-2">${course.title}</h3>
+                            <p class="text-sm text-label-secondary mb-3 line-clamp-2">${course.description || 'No description available'}</p>
+                            <div class="flex gap-2 mb-3">
+                                <span class="px-2 py-1 rounded text-xs ${categoryColors[course.category] || 'bg-gray-600/20 text-gray-300'}">${course.category}</span>
+                                <span class="px-2 py-1 rounded text-xs ${difficultyColors[course.difficulty] || 'bg-gray-600/20 text-gray-300'}">${course.difficulty}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-gray-400">
+                                <span class="flex items-center gap-1">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                        <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    ${course.views || 0} views
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showError(message) {
+            const container = document.getElementById('coursesContainer');
+            container.innerHTML = `<div class="text-center py-8 text-danger">${message}</div>`;
+        }
+
+        // Open course video in modal
+        function openCourseVideo(courseId) {
+            fetch(`/api/content/courses/public/${courseId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.course && data.course.video_url) {
+                        showVideoModal(data.course);
+                    } else {
+                        alert('Video not available');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading video:', error);
+                    alert('Error loading video');
+                });
+        }
+
+        function showVideoModal(course) {
+            // Extract YouTube video ID
+            const videoId = extractYouTubeId(course.video_url);
+            if (!videoId) {
+                alert('Invalid video URL');
+                return;
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="w-full max-w-4xl">
+                    <div class="bg-gray-900 rounded-lg overflow-hidden">
+                        <div class="aspect-video">
+                            <iframe
+                                src="https://www.youtube.com/embed/${videoId}?autoplay=1"
+                                class="w-full h-full"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="p-4">
+                            <h2 class="text-xl font-bold text-white mb-2">${course.title}</h2>
+                            <p class="text-sm text-label-secondary mb-4">${course.description || ''}</p>
+                            <button onclick="this.closest('.fixed').remove()" class="w-full bg-primary text-black py-2 rounded-lg font-medium hover:bg-primary/90">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+
+            document.body.appendChild(modal);
+        }
+
+        function extractYouTubeId(url) {
+            if (!url) return null;
+
+            // Already an embed URL
+            if (url.includes('/embed/')) {
+                const match = url.match(/\/embed\/([^?&]+)/);
+                return match ? match[1] : null;
+            }
+
+            // Standard watch URL
+            if (url.includes('youtube.com/watch')) {
+                const urlParams = new URLSearchParams(url.split('?')[1]);
+                return urlParams.get('v');
+            }
+
+            // Short URL
+            if (url.includes('youtu.be/')) {
+                const match = url.match(/youtu\.be\/([^?&]+)/);
+                return match ? match[1] : null;
+            }
+
+            return null;
+        }
+
         // Initialize page
         window.addEventListener('DOMContentLoaded', function() {
             const userData = checkAuth();
             if (userData) {
                 // Hide loading screen
                 document.getElementById('loadingScreen').style.display = 'none';
+                // Load courses from API
+                loadCourses();
             }
         });
     </script>

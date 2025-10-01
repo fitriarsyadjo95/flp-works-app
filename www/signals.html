@@ -102,6 +102,7 @@
 
         <!-- Live Signals Tab -->
         <div id="live-tab" class="px-4 mt-4 space-y-4">
+            <!-- Real-time signals will be injected here by signal-client.js -->
             <!-- Signal Card 1 - BUY -->
             <div class="bg-gray-900 rounded-lg p-4 border-l-4 border-green-500">
                 <div class="flex justify-between items-start mb-3">
@@ -491,8 +492,20 @@
             if (userData) {
                 // Hide loading screen
                 document.getElementById('loadingScreen').style.display = 'none';
+
+                // Initialize signal client if available
+                if (typeof SignalClient !== 'undefined') {
+                    window.signalClient = new SignalClient();
+                    window.signalClient.connect();
+                }
             }
         });
     </script>
+
+    <!-- Socket.IO Client -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+    <!-- Signal Client -->
+    <script src="assets/js/signal-client.js"></script>
 </body>
 </html>

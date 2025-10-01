@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <meta name="description" content="Watch trading course videos" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Course Video - FLP AcademyWorks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind-config.js"></script>
+    <script src="assets/js/course-storage.js"></script>
+    <style>
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1C1C1F; }
+        ::-webkit-scrollbar-thumb { background: #3C3C3F; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-bg flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="text-primary text-2xl font-bold mb-4">FLP</div>
+            <div class="text-white">Loading video...</div>
+        </div>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-40 px-4 py-3 flex items-center gap-3" style="background: rgba(11,11,15,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(84,84,88,0.36);">
+        <button onclick="goBack()" class="text-label-secondary hover:text-white transition-colors">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+        </button>
+        <div class="flex-1">
+            <div class="text-white font-semibold text-sm line-clamp-1" id="navTitle">Course Video</div>
+        </div>
+        <button onclick="toggleBookmark()" id="bookmarkBtn" class="text-label-secondary hover:text-primary transition-colors">
+            <svg id="bookmarkIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-14 pb-6">
+        <!-- Video Player -->
+        <div class="bg-black">
+            <div class="video-container" id="videoContainer">
+                <!-- YouTube iframe will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Course Details -->
+        <div class="px-4 py-6">
+            <!-- Title & Category -->
+            <div class="mb-4">
+                <h1 class="text-2xl font-bold text-white mb-2" id="courseTitle">Loading...</h1>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="px-3 py-1 rounded-full text-xs font-medium" id="categoryBadge">Category</span>
+                    <span class="px-3 py-1 rounded-full text-xs font-medium" id="difficultyBadge">Difficulty</span>
+                    <span class="text-label-tertiary text-xs" id="durationText">Duration</span>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="flex items-center gap-4 mb-6 text-sm text-label-secondary">
+                <span class="flex items-center gap-1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                        <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span id="viewsCount">0 views</span>
+                </span>
+                <span class="flex items-center gap-1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                        <path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span id="courseDuration">--:--</span>
+                </span>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-6">
+                <h2 class="text-lg font-semibold text-white mb-3">About this course</h2>
+                <p class="text-label-secondary leading-relaxed" id="courseDescription">Loading description...</p>
+            </div>
+
+            <!-- Tags -->
+            <div class="mb-6" id="tagsContainer">
+                <h2 class="text-lg font-semibold text-white mb-3">Tags</h2>
+                <div class="flex flex-wrap gap-2" id="tagsList">
+                    <!-- Tags will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <button id="saveBtn" onclick="toggleSaveVideo()" class="bg-fill-secondary text-label-primary py-3 rounded-lg font-semibold text-sm hover:bg-fill-primary transition-colors flex items-center justify-center gap-2">
+                    <svg id="saveIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span id="saveText">Save</span>
+                </button>
+                <button id="completeBtn" onclick="markAsCompleted()" class="bg-primary text-bg py-3 rounded-lg font-semibold text-sm hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+                    <span id="completeIcon">✓</span>
+                    <span id="completeText">Complete</span>
+                </button>
+                <button onclick="shareVideo()" class="bg-fill-secondary text-label-primary py-3 rounded-lg font-semibold text-sm hover:bg-fill-primary transition-colors flex items-center justify-center gap-2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
+                        <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/>
+                    </svg>
+                    Share
+                </button>
+            </div>
+
+            <!-- Related Courses -->
+            <div id="relatedCoursesSection">
+                <h2 class="text-lg font-semibold text-white mb-4">Related Courses</h2>
+                <div class="space-y-3" id="relatedCoursesList">
+                    <!-- Related courses will be inserted here -->
+                    <div class="text-center py-4 text-label-tertiary text-sm">Loading related courses...</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentCourse = null;
+        let isBookmarked = false;
+        let isSaved = false;
+        let isCompleted = false;
+
+        // Get course ID from URL
+        function getCourseIdFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        // Load course data
+        async function loadCourse() {
+            const courseId = getCourseIdFromURL();
+            if (!courseId) {
+                alert('No course ID provided');
+                goBack();
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/content/courses/public/${courseId}`);
+                const data = await response.json();
+
+                if (data.success && data.course) {
+                    currentCourse = data.course;
+                    displayCourse(data.course);
+                    loadRelatedCourses(data.course.category, courseId);
+                } else {
+                    alert('Course not found');
+                    goBack();
+                }
+            } catch (error) {
+                console.error('Error loading course:', error);
+                alert('Failed to load course');
+                goBack();
+            }
+        }
+
+        // Display course details
+        function displayCourse(course) {
+            // Check if saved, bookmarked, or completed
+            isSaved = courseStorage.isInWatchLater(course.id);
+            isBookmarked = courseStorage.isBookmarked(course.id);
+            const progress = courseStorage.getCourseProgress(course.id);
+            isCompleted = progress.completed;
+
+            // Update button states
+            updateSaveButton();
+            updateBookmarkButton();
+            updateCompleteButton();
+
+            // Set title
+            document.getElementById('navTitle').textContent = course.title;
+            document.getElementById('courseTitle').textContent = course.title;
+
+            // Load video
+            const videoId = extractYouTubeId(course.video_url);
+            if (videoId) {
+                const videoContainer = document.getElementById('videoContainer');
+                videoContainer.innerHTML = `
+                    <iframe
+                        src="https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                        allowfullscreen>
+                    </iframe>
+                `;
+            }
+
+            // Set category badge
+            const categoryColors = {
+                'Forex Basics': 'bg-blue-600/20 text-blue-300',
+                'Technical Analysis': 'bg-teal-600/20 text-teal-300',
+                'Risk Management': 'bg-red-600/20 text-red-300',
+                'Psychology': 'bg-orange-600/20 text-orange-300',
+                'Strategy': 'bg-indigo-600/20 text-indigo-300'
+            };
+            const categoryBadge = document.getElementById('categoryBadge');
+            categoryBadge.textContent = course.category;
+            categoryBadge.className = `px-3 py-1 rounded-full text-xs font-medium ${categoryColors[course.category] || 'bg-gray-600/20 text-gray-300'}`;
+
+            // Set difficulty badge
+            const difficultyColors = {
+                'Beginner': 'bg-green-600/20 text-green-300',
+                'Intermediate': 'bg-blue-600/20 text-blue-300',
+                'Advanced': 'bg-purple-600/20 text-purple-300'
+            };
+            const difficultyBadge = document.getElementById('difficultyBadge');
+            difficultyBadge.textContent = course.difficulty;
+            difficultyBadge.className = `px-3 py-1 rounded-full text-xs font-medium ${difficultyColors[course.difficulty] || 'bg-gray-600/20 text-gray-300'}`;
+
+            // Set duration
+            if (course.duration) {
+                document.getElementById('durationText').textContent = course.duration;
+                document.getElementById('courseDuration').textContent = course.duration;
+            }
+
+            // Set description
+            document.getElementById('courseDescription').textContent = course.description || 'No description available';
+
+            // Set views
+            document.getElementById('viewsCount').textContent = `${course.views || 0} views`;
+
+            // Set tags
+            if (course.tags) {
+                const tags = typeof course.tags === 'string' ? JSON.parse(course.tags) : course.tags;
+                const tagsList = document.getElementById('tagsList');
+                tagsList.innerHTML = tags.map(tag => `
+                    <span class="px-3 py-1 bg-fill-secondary text-label-secondary rounded-full text-xs">#${tag}</span>
+                `).join('');
+            } else {
+                document.getElementById('tagsContainer').style.display = 'none';
+            }
+
+            // Hide loading screen
+            document.getElementById('loadingScreen').style.display = 'none';
+        }
+
+        // Load related courses
+        async function loadRelatedCourses(category, excludeId) {
+            try {
+                const response = await fetch(`/api/content/courses/public?category=${encodeURIComponent(category)}&limit=5`);
+                const data = await response.json();
+
+                if (data.success && data.courses) {
+                    const relatedCourses = data.courses.filter(c => c.id !== excludeId);
+                    displayRelatedCourses(relatedCourses);
+                }
+            } catch (error) {
+                console.error('Error loading related courses:', error);
+                document.getElementById('relatedCoursesList').innerHTML = '<div class="text-center py-4 text-label-tertiary text-sm">No related courses found</div>';
+            }
+        }
+
+        // Display related courses
+        function displayRelatedCourses(courses) {
+            const container = document.getElementById('relatedCoursesList');
+
+            if (courses.length === 0) {
+                container.innerHTML = '<div class="text-center py-4 text-label-tertiary text-sm">No related courses found</div>';
+                return;
+            }
+
+            container.innerHTML = courses.map(course => `
+                <a href="course-video.html?id=${course.id}" class="flex gap-3 bg-bg-elevated rounded-lg p-3 hover:bg-bg-secondary transition-colors">
+                    <div class="w-32 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gradient-to-br from-blue-600/20 to-purple-700/20 flex items-center justify-center">
+                        ${course.thumbnail_url ?
+                            `<img src="${course.thumbnail_url}" alt="${course.title}" class="w-full h-full object-cover" />` :
+                            `<svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-label-tertiary">
+                                <path d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z"></path>
+                            </svg>`
+                        }
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-semibold text-sm text-white mb-1 line-clamp-2">${course.title}</h3>
+                        <div class="flex items-center gap-2 text-xs text-label-tertiary">
+                            <span>${course.duration || 'N/A'}</span>
+                            <span>•</span>
+                            <span>${course.views || 0} views</span>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        // Extract YouTube ID from URL
+        function extractYouTubeId(url) {
+            if (!url) return null;
+            if (url.includes('/embed/')) {
+                const match = url.match(/\/embed\/([^?&]+)/);
+                return match ? match[1] : null;
+            }
+            if (url.includes('youtube.com/watch')) {
+                const urlParams = new URLSearchParams(url.split('?')[1]);
+                return urlParams.get('v');
+            }
+            if (url.includes('youtu.be/')) {
+                const match = url.match(/youtu\.be\/([^?&]+)/);
+                return match ? match[1] : null;
+            }
+            return null;
+        }
+
+        // Go back to previous page
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = 'education.html';
+            }
+        }
+
+        // Toggle save to watch later
+        function toggleSaveVideo() {
+            if (!currentCourse) return;
+
+            if (isSaved) {
+                const result = courseStorage.removeFromWatchLater(currentCourse.id);
+                if (result.success) {
+                    isSaved = false;
+                    updateSaveButton();
+                    showToast('Removed from Watch Later', 'info');
+                }
+            } else {
+                const result = courseStorage.addToWatchLater(currentCourse);
+                if (result.success) {
+                    isSaved = true;
+                    updateSaveButton();
+                    showToast('Added to Watch Later', 'success');
+                }
+            }
+        }
+
+        // Update save button UI
+        function updateSaveButton() {
+            const saveIcon = document.getElementById('saveIcon');
+            const saveText = document.getElementById('saveText');
+            const saveBtn = document.getElementById('saveBtn');
+
+            if (isSaved) {
+                saveIcon.setAttribute('fill', 'currentColor');
+                saveText.textContent = 'Saved';
+                saveBtn.classList.add('bg-primary', 'text-bg');
+                saveBtn.classList.remove('bg-fill-secondary', 'text-label-primary');
+            } else {
+                saveIcon.setAttribute('fill', 'none');
+                saveText.textContent = 'Save';
+                saveBtn.classList.remove('bg-primary', 'text-bg');
+                saveBtn.classList.add('bg-fill-secondary', 'text-label-primary');
+            }
+        }
+
+        // Toggle bookmark
+        function toggleBookmark() {
+            if (!currentCourse) return;
+
+            const result = courseStorage.toggleBookmark(currentCourse.id, currentCourse);
+            isBookmarked = result.bookmarked;
+            updateBookmarkButton();
+            showToast(result.message, result.bookmarked ? 'success' : 'info');
+        }
+
+        // Update bookmark button UI
+        function updateBookmarkButton() {
+            const icon = document.getElementById('bookmarkIcon');
+            if (isBookmarked) {
+                icon.setAttribute('fill', 'currentColor');
+            } else {
+                icon.setAttribute('fill', 'none');
+            }
+        }
+
+        // Mark as completed
+        function markAsCompleted() {
+            if (!currentCourse) return;
+
+            if (isCompleted) {
+                showToast('Course already completed!', 'info');
+                return;
+            }
+
+            const result = courseStorage.markAsCompleted(currentCourse.id, currentCourse.title);
+            if (result.success) {
+                isCompleted = true;
+                updateCompleteButton();
+                showToast('🎉 Course marked as completed!', 'success');
+
+                // Add confetti effect (optional)
+                celebrateCompletion();
+            }
+        }
+
+        // Update complete button UI
+        function updateCompleteButton() {
+            const completeBtn = document.getElementById('completeBtn');
+            const completeText = document.getElementById('completeText');
+            const completeIcon = document.getElementById('completeIcon');
+
+            if (isCompleted) {
+                completeBtn.classList.add('bg-success');
+                completeBtn.classList.remove('bg-primary');
+                completeText.textContent = 'Completed';
+                completeIcon.textContent = '✓';
+            }
+        }
+
+        // Celebrate completion with animation
+        function celebrateCompletion() {
+            // Simple celebration - could add confetti library here
+            const completeBtn = document.getElementById('completeBtn');
+            completeBtn.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                completeBtn.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        // Share video
+        async function shareVideo() {
+            if (!currentCourse) return;
+
+            const shareData = {
+                title: `${currentCourse.title} - FLP AcademyWorks`,
+                text: `Learn trading with this course: ${currentCourse.title}\n\n${currentCourse.description || ''}`,
+                url: window.location.href
+            };
+
+            // Try native share first
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                    showToast('Shared successfully!', 'success');
+                } catch (error) {
+                    // User cancelled or share failed
+                    if (error.name !== 'AbortError') {
+                        copyToClipboard();
+                    }
+                }
+            } else {
+                // Fallback: copy link
+                copyToClipboard();
+            }
+        }
+
+        // Copy link to clipboard
+        async function copyToClipboard() {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                showToast('📋 Link copied to clipboard!', 'success');
+            } catch (error) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = window.location.href;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast('📋 Link copied to clipboard!', 'success');
+                } catch (err) {
+                    showToast('Failed to copy link', 'error');
+                }
+                document.body.removeChild(textArea);
+            }
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-success',
+                error: 'bg-danger',
+                info: 'bg-info'
+            };
+            toast.className = `fixed bottom-20 left-4 right-4 ${colors[type] || 'bg-info'} text-white px-4 py-3 rounded-lg shadow-lg z-50 fade-in`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Check authentication
+        function checkAuth() {
+            const user = localStorage.getItem('flp_user');
+            if (!user) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            const userData = JSON.parse(user);
+            if (!userData.isLoggedIn) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            return userData;
+        }
+
+        // Initialize page
+        window.addEventListener('DOMContentLoaded', function() {
+            const userData = checkAuth();
+            if (userData) {
+                loadCourse();
+            }
+        });
+    </script>
+</body>
+</html>

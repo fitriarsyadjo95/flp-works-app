@@ -1,0 +1,22 @@
+{
+  "appId": "com.flpacademyworks.app",
+  "appName": "FLP AcademyWorks",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#0B0B0F",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "dark",
+      "backgroundColor": "#0B0B0F"
+    }
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "backgroundColor": "#0B0B0F",
+    "allowsLinkPreview": false
+  }
+}

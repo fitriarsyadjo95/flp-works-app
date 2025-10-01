@@ -8,8 +8,24 @@
     "dev": "node server.js"
   },
   "dependencies": {
+    "@capacitor/app": "^7.1.0",
+    "@capacitor/cli": "^7.4.3",
+    "@capacitor/core": "^7.4.3",
+    "@capacitor/haptics": "^7.0.2",
+    "@capacitor/ios": "^7.4.3",
+    "@capacitor/preferences": "^7.0.2",
+    "@capacitor/share": "^7.0.2",
+    "@capacitor/splash-screen": "^7.0.3",
+    "@capacitor/status-bar": "^7.0.3",
+    "better-sqlite3": "^12.4.1",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
     "express": "^4.18.2",
-    "path": "^0.12.7"
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "path": "^0.12.7",
+    "socket.io": "^4.8.1",
+    "uuid": "^13.0.0"
   },
   "engines": {
     "node": ">=16.0.0"

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <title>Edit Course - FLP Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind-config.js"></script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1C1C1F; }
+        ::-webkit-scrollbar-thumb { background: #3C3C3F; border-radius: 4px; }
+
+        @media (max-width: 1024px) {
+            #adminSidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+            #adminSidebar:not(.-translate-x-full) { transform: translateX(0); }
+            main { margin-left: 0 !important; }
+            #adminTopbar { left: 0 !important; }
+        }
+
+        .preview-card {
+            position: relative;
+            aspect-ratio: 16/9;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui">
+    <!-- Sidebar and Topbar injected by admin-layout.js -->
+
+    <!-- Main Content -->
+    <main class="ml-64 pt-20 pb-8 px-6 max-w-7xl">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-white mb-2" id="pageTitle">Edit Course</h1>
+            <p class="text-label-secondary">Update course details and metadata</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Main Form -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Basic Information -->
+                <div class="bg-bg-elevated rounded-xl p-6 border border-separator/20">
+                    <h2 class="text-xl font-semibold text-white mb-4">Basic Information</h2>
+
+                    <form id="courseForm" class="space-y-4">
+                        <input type="hidden" id="courseId" />
+
+                        <!-- Title -->
+                        <div>
+                            <label class="block text-sm font-medium text-label-secondary mb-2">Course Title *</label>
+                            <input
+                                type="text"
+                                id="courseTitle"
+                                required
+                                maxlength="200"
+                                class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white placeholder-label-tertiary focus:outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="e.g., Forex Trading Basics for Beginners"
+                            />
+                            <div class="text-xs text-label-tertiary mt-1" id="titleCount">0/200</div>
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label class="block text-sm font-medium text-label-secondary mb-2">Description *</label>
+                            <textarea
+                                id="courseDescription"
+                                required
+                                rows="4"
+                                maxlength="500"
+                                class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white placeholder-label-tertiary focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                                placeholder="Describe what students will learn in this course..."
+                            ></textarea>
+                            <div class="text-xs text-label-tertiary mt-1" id="descCount">0/500</div>
+                        </div>
+
+                        <!-- YouTube Video URL -->
+                        <div>
+                            <label class="block text-sm font-medium text-label-secondary mb-2">YouTube Video URL *</label>
+                            <input
+                                type="url"
+                                id="courseVideo"
+                                required
+                                class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white placeholder-label-tertiary focus:outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="https://www.youtube.com/watch?v=..."
+                            />
+                            <div class="text-xs text-label-tertiary mt-1">Supports youtube.com/watch, youtu.be, and embed URLs</div>
+                        </div>
+
+                        <!-- Thumbnail URL -->
+                        <div>
+                            <label class="block text-sm font-medium text-label-secondary mb-2">Thumbnail URL</label>
+                            <input
+                                type="url"
+                                id="courseThumbnail"
+                                class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white placeholder-label-tertiary focus:outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="Leave blank to auto-generate from YouTube"
+                            />
+                            <button type="button" onclick="autoGenerateThumbnail()" class="mt-2 text-sm text-primary hover:text-primary/80">
+                                Auto-generate from YouTube video
+                            </button>
+                        </div>
+
+                        <!-- Duration -->
+                        <div>
+                            <label class="block text-sm font-medium text-label-secondary mb-2">Duration</label>
+                            <input
+                                type="text"
+                                id="courseDuration"
+                                pattern="[0-9]{1,2}:[0-9]{2}"
+                                class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white placeholder-label-tertiary focus:outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="e.g., 15:30 or 1:25:45"
+                            />
+                            <div class="text-xs text-label-tertiary mt-1">Format: MM:SS or HH:MM:SS</div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Categorization -->
+                <div class="bg-bg-elevated rounded-xl p-6 border border-separator/20">
+                    <h2 class="text-xl font-semibold text-white mb-4">Categorization</h2>
+
+                    <div class="space-y-4">
+                        <!-- Category -->
+                        <div>
+                            <label class="block text-sm font-medium text-label-secondary mb-2">Category *</label>
+                            <select
+                                id="courseCategory"
+                                required
+                                class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                            >
+                                <option value="">Select Category</option>
+                                <option value="Forex Basics">Forex Basics</option>
+                                <option value="Technical Analysis">Technical Analysis</option>
+                                <option value="Risk Management">Risk Management</option>
+                                <option value="Psychology">Psychology</option>
+                                <option value="Strategy">Strategy</option>
+                                <option value="Platform Tutorial">Platform Tutorial</option>
+                            </select>
+                        </div>
+
+                        <!-- Difficulty -->
+                        <div>
+                            <label class="block text-sm font-medium text-label-secondary mb-2">Difficulty Level *</label>
+                            <select
+                                id="courseDifficulty"
+                                required
+                                class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                            >
+                                <option value="">Select Difficulty</option>
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                            </select>
+                        </div>
+
+                        <!-- Tags -->
+                        <div>
+                            <label class="block text-sm font-medium text-label-secondary mb-2">Tags</label>
+                            <input
+                                type="text"
+                                id="courseTags"
+                                class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white placeholder-label-tertiary focus:outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="forex, beginner, trading (comma-separated)"
+                            />
+                            <div class="text-xs text-label-tertiary mt-1">Separate tags with commas</div>
+                            <div id="tagsPreview" class="flex flex-wrap gap-2 mt-3"></div>
+                        </div>
+
+                        <!-- Order Index -->
+                        <div>
+                            <label class="block text-sm font-medium text-label-secondary mb-2">Display Order</label>
+                            <input
+                                type="number"
+                                id="courseOrder"
+                                min="0"
+                                value="0"
+                                class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                            />
+                            <div class="text-xs text-label-tertiary mt-1">Lower numbers appear first</div>
+                        </div>
+
+                        <!-- Published Status -->
+                        <div class="flex items-center justify-between p-4 bg-bg-secondary rounded-lg">
+                            <div>
+                                <div class="font-medium text-white">Published</div>
+                                <div class="text-sm text-label-tertiary">Make this course visible to users</div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="coursePublished" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-3">
+                    <button
+                        type="button"
+                        onclick="saveCourse()"
+                        class="flex-1 bg-primary text-black py-3 px-6 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+                    >
+                        Save Changes
+                    </button>
+                    <button
+                        type="button"
+                        onclick="window.location.href='admin-content.html'"
+                        class="px-6 py-3 bg-bg-secondary text-white rounded-lg hover:bg-bg-tertiary transition-colors"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+
+            <!-- Preview & Stats -->
+            <div class="space-y-6">
+                <!-- Preview Card -->
+                <div class="bg-bg-elevated rounded-xl p-6 border border-separator/20">
+                    <h2 class="text-xl font-semibold text-white mb-4">Preview</h2>
+
+                    <div class="bg-gray-900 rounded-lg overflow-hidden">
+                        <div class="preview-card bg-gradient-to-br from-blue-600/20 to-purple-700/20 flex items-center justify-center" id="thumbnailPreview">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 text-label-tertiary">
+                                <path d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z"></path>
+                            </svg>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold text-white mb-2" id="previewTitle">Course Title</h3>
+                            <p class="text-sm text-label-secondary mb-3 line-clamp-2" id="previewDescription">Course description will appear here...</p>
+                            <div class="flex gap-2" id="previewBadges">
+                                <!-- Badges will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course Stats -->
+                <div class="bg-bg-elevated rounded-xl p-6 border border-separator/20">
+                    <h2 class="text-xl font-semibold text-white mb-4">Statistics</h2>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-label-secondary">Views</span>
+                            <span class="text-white font-semibold" id="courseViews">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-label-secondary">Created</span>
+                            <span class="text-white font-semibold" id="courseCreated">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-label-secondary">Last Updated</span>
+                            <span class="text-white font-semibold" id="courseUpdated">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-bg-elevated rounded-xl p-6 border border-separator/20">
+                    <h2 class="text-xl font-semibold text-white mb-4">Quick Actions</h2>
+
+                    <div class="space-y-2">
+                        <button onclick="viewOnFrontend()" class="w-full text-left px-4 py-3 bg-bg-secondary rounded-lg hover:bg-bg-tertiary transition-colors text-sm">
+                            👁️ View on Frontend
+                        </button>
+                        <button onclick="duplicateCourse()" class="w-full text-left px-4 py-3 bg-bg-secondary rounded-lg hover:bg-bg-tertiary transition-colors text-sm">
+                            📋 Duplicate Course
+                        </button>
+                        <button onclick="deleteCourse()" class="w-full text-left px-4 py-3 bg-danger/20 text-danger rounded-lg hover:bg-danger/30 transition-colors text-sm">
+                            🗑️ Delete Course
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="assets/js/admin-layout.js"></script>
+    <script>
+        const adminLayout = new AdminLayout('content');
+
+        let currentCourse = null;
+
+        // Get course ID from URL
+        function getCourseIdFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('admin_token');
+            const expires = localStorage.getItem('admin_expires');
+
+            if (!token || !expires || Date.now() > parseInt(expires)) {
+                window.location.href = '/admin-login.html';
+                return null;
+            }
+
+            return token;
+        }
+
+        // Load categories into dropdown
+        async function loadCategories() {
+            const token = checkAuth();
+            if (!token) return;
+
+            try {
+                const response = await fetch('/api/content/categories', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.categories) {
+                    const select = document.getElementById('courseCategory');
+
+                    // Keep the default option
+                    const defaultOption = select.querySelector('option[value=""]');
+                    select.innerHTML = '';
+                    select.appendChild(defaultOption);
+
+                    // Add categories from database
+                    data.categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.name;
+                        option.textContent = `${category.icon} ${category.name}`;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+
+        // Load course data
+        async function loadCourse() {
+            const courseId = getCourseIdFromURL();
+            if (!courseId) {
+                alert('No course ID provided');
+                window.location.href = 'admin-content.html';
+                return;
+            }
+
+            const token = checkAuth();
+            if (!token) return;
+
+            try {
+                // Load categories first
+                await loadCategories();
+
+                const response = await fetch(`/api/content/courses/${courseId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.course) {
+                    currentCourse = data.course;
+                    populateForm(data.course);
+                } else {
+                    alert('Course not found');
+                    window.location.href = 'admin-content.html';
+                }
+            } catch (error) {
+                console.error('Error loading course:', error);
+                alert('Failed to load course');
+            }
+        }
+
+        // Populate form with course data
+        function populateForm(course) {
+            document.getElementById('pageTitle').textContent = `Edit: ${course.title}`;
+            document.getElementById('courseId').value = course.id;
+            document.getElementById('courseTitle').value = course.title;
+            document.getElementById('courseDescription').value = course.description || '';
+            document.getElementById('courseVideo').value = course.video_url || '';
+            document.getElementById('courseThumbnail').value = course.thumbnail_url || '';
+            document.getElementById('courseDuration').value = course.duration || '';
+            document.getElementById('courseCategory').value = course.category || '';
+            document.getElementById('courseDifficulty').value = course.difficulty || '';
+            document.getElementById('courseTags').value = course.tags || '';
+            document.getElementById('courseOrder').value = course.order_index || 0;
+            document.getElementById('coursePublished').checked = course.is_published == 1;
+
+            // Update stats
+            document.getElementById('courseViews').textContent = course.views || 0;
+            document.getElementById('courseCreated').textContent = new Date(course.created_at).toLocaleDateString();
+            document.getElementById('courseUpdated').textContent = new Date(course.updated_at).toLocaleDateString();
+
+            // Update character counts
+            updateCharCount('courseTitle', 'titleCount', 200);
+            updateCharCount('courseDescription', 'descCount', 500);
+
+            // Update preview
+            updatePreview();
+        }
+
+        // Update character count
+        function updateCharCount(inputId, countId, max) {
+            const input = document.getElementById(inputId);
+            const count = document.getElementById(countId);
+            count.textContent = `${input.value.length}/${max}`;
+        }
+
+        // Update preview
+        function updatePreview() {
+            const title = document.getElementById('courseTitle').value || 'Course Title';
+            const description = document.getElementById('courseDescription').value || 'Course description will appear here...';
+            const category = document.getElementById('courseCategory').value;
+            const difficulty = document.getElementById('courseDifficulty').value;
+            const thumbnail = document.getElementById('courseThumbnail').value;
+
+            document.getElementById('previewTitle').textContent = title;
+            document.getElementById('previewDescription').textContent = description;
+
+            // Update thumbnail preview
+            const thumbnailPreview = document.getElementById('thumbnailPreview');
+            if (thumbnail) {
+                thumbnailPreview.innerHTML = `<img src="${thumbnail}" alt="${title}" class="w-full h-full object-cover" />`;
+            } else {
+                thumbnailPreview.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 text-label-tertiary">
+                    <path d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z"></path>
+                </svg>`;
+            }
+
+            // Update badges
+            const badgesContainer = document.getElementById('previewBadges');
+            let badges = '';
+            if (category) badges += `<span class="px-2 py-1 rounded text-xs bg-primary/20 text-primary">${category}</span>`;
+            if (difficulty) badges += `<span class="px-2 py-1 rounded text-xs bg-info/20 text-info">${difficulty}</span>`;
+            badgesContainer.innerHTML = badges;
+
+            // Update tags preview
+            const tags = document.getElementById('courseTags').value;
+            if (tags) {
+                const tagsArray = tags.split(',').map(t => t.trim()).filter(t => t);
+                const tagsPreview = document.getElementById('tagsPreview');
+                tagsPreview.innerHTML = tagsArray.map(tag =>
+                    `<span class="px-3 py-1 bg-fill-secondary text-label-secondary rounded-full text-xs">#${tag}</span>`
+                ).join('');
+            }
+        }
+
+        // Auto-generate thumbnail from YouTube
+        function autoGenerateThumbnail() {
+            const videoUrl = document.getElementById('courseVideo').value;
+            if (!videoUrl) {
+                alert('Please enter a YouTube video URL first');
+                return;
+            }
+
+            const videoId = extractYouTubeId(videoUrl);
+            if (videoId) {
+                const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+                document.getElementById('courseThumbnail').value = thumbnailUrl;
+                updatePreview();
+            } else {
+                alert('Invalid YouTube URL');
+            }
+        }
+
+        // Extract YouTube ID
+        function extractYouTubeId(url) {
+            if (!url) return null;
+            if (url.includes('/embed/')) {
+                const match = url.match(/\/embed\/([^?&]+)/);
+                return match ? match[1] : null;
+            }
+            if (url.includes('youtube.com/watch')) {
+                const urlParams = new URLSearchParams(url.split('?')[1]);
+                return urlParams.get('v');
+            }
+            if (url.includes('youtu.be/')) {
+                const match = url.match(/youtu\.be\/([^?&]+)/);
+                return match ? match[1] : null;
+            }
+            return null;
+        }
+
+        // Save course
+        async function saveCourse() {
+            const token = checkAuth();
+            if (!token) return;
+
+            const courseId = document.getElementById('courseId').value;
+            const courseData = {
+                title: document.getElementById('courseTitle').value,
+                description: document.getElementById('courseDescription').value,
+                video_url: document.getElementById('courseVideo').value,
+                thumbnail_url: document.getElementById('courseThumbnail').value,
+                duration: document.getElementById('courseDuration').value,
+                category: document.getElementById('courseCategory').value,
+                difficulty: document.getElementById('courseDifficulty').value,
+                tags: document.getElementById('courseTags').value,
+                order_index: parseInt(document.getElementById('courseOrder').value),
+                is_published: document.getElementById('coursePublished').checked ? 1 : 0
+            };
+
+            try {
+                const response = await fetch(`/api/content/courses/${courseId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(courseData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Course updated successfully!');
+                    window.location.href = 'admin-content.html';
+                } else {
+                    alert('Failed to update course: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error saving course:', error);
+                alert('Error saving course');
+            }
+        }
+
+        // View on frontend
+        function viewOnFrontend() {
+            const courseId = document.getElementById('courseId').value;
+            window.open(`/course-video.html?id=${courseId}`, '_blank');
+        }
+
+        // Duplicate course
+        async function duplicateCourse() {
+            if (!confirm('Create a duplicate of this course?')) return;
+
+            const token = checkAuth();
+            if (!token) return;
+
+            const courseId = document.getElementById('courseId').value;
+
+            try {
+                const response = await fetch(`/api/content/courses/${courseId}/duplicate`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Course duplicated successfully!');
+                    window.location.href = `admin-course-edit.html?id=${data.course.id}`;
+                } else {
+                    alert('Failed to duplicate course');
+                }
+            } catch (error) {
+                console.error('Error duplicating course:', error);
+                alert('Error duplicating course');
+            }
+        }
+
+        // Delete course
+        async function deleteCourse() {
+            if (!confirm('Are you sure you want to delete this course? This action cannot be undone.')) return;
+
+            const token = checkAuth();
+            if (!token) return;
+
+            const courseId = document.getElementById('courseId').value;
+
+            try {
+                const response = await fetch(`/api/content/courses/${courseId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Course deleted successfully!');
+                    window.location.href = 'admin-content.html';
+                } else {
+                    alert('Failed to delete course');
+                }
+            } catch (error) {
+                console.error('Error deleting course:', error);
+                alert('Error deleting course');
+            }
+        }
+
+        // Add event listeners for live updates
+        document.getElementById('courseTitle').addEventListener('input', () => {
+            updateCharCount('courseTitle', 'titleCount', 200);
+            updatePreview();
+        });
+
+        document.getElementById('courseDescription').addEventListener('input', () => {
+            updateCharCount('courseDescription', 'descCount', 500);
+            updatePreview();
+        });
+
+        document.getElementById('courseCategory').addEventListener('change', updatePreview);
+        document.getElementById('courseDifficulty').addEventListener('change', updatePreview);
+        document.getElementById('courseTags').addEventListener('input', updatePreview);
+        document.getElementById('courseThumbnail').addEventListener('input', updatePreview);
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', function() {
+            const token = checkAuth();
+            if (token) {
+                loadCourse();
+            }
+        });
+    </script>
+</body>
+</html>

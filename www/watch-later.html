@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <meta name="description" content="Your saved courses" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Watch Later - FLP AcademyWorks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind-config.js"></script>
+    <script src="assets/js/course-storage.js"></script>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-bg flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="text-primary text-2xl font-bold mb-4">FLP</div>
+            <div class="text-white">Loading...</div>
+        </div>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 px-4 py-3 flex justify-between items-center" style="background: rgba(22,22,24,0.6); backdrop-filter: blur(20px);">
+        <div class="flex items-center gap-3">
+            <button onclick="goBack()" class="text-label-secondary hover:text-white transition-colors">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+            </button>
+            <div class="text-primary text-base font-sf-display font-semibold">Watch Later</div>
+        </div>
+        <button onclick="clearAll()" class="text-danger text-sm font-medium hover:text-danger/80">
+            Clear All
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16 pb-20 max-w-md mx-auto px-4">
+        <!-- Stats -->
+        <div class="mt-4 grid grid-cols-3 gap-3 mb-6">
+            <div class="bg-bg-elevated rounded-lg p-3 text-center">
+                <div class="text-2xl font-bold text-primary" id="savedCount">0</div>
+                <div class="text-xs text-label-tertiary">Saved</div>
+            </div>
+            <div class="bg-bg-elevated rounded-lg p-3 text-center">
+                <div class="text-2xl font-bold text-success" id="completedCount">0</div>
+                <div class="text-xs text-label-tertiary">Completed</div>
+            </div>
+            <div class="bg-bg-elevated rounded-lg p-3 text-center">
+                <div class="text-2xl font-bold text-info" id="inProgressCount">0</div>
+                <div class="text-xs text-label-tertiary">In Progress</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex gap-2 mb-4">
+            <button onclick="showTab('saved')" id="savedTab" class="flex-1 py-2 px-4 rounded-lg bg-primary text-bg font-semibold text-sm">
+                Watch Later
+            </button>
+            <button onclick="showTab('completed')" id="completedTab" class="flex-1 py-2 px-4 rounded-lg bg-bg-elevated text-label-secondary font-medium text-sm">
+                Completed
+            </button>
+        </div>
+
+        <!-- Saved Courses -->
+        <div id="savedCoursesContainer">
+            <!-- Courses will be inserted here -->
+        </div>
+
+        <!-- Completed Courses -->
+        <div id="completedCoursesContainer" class="hidden">
+            <!-- Completed courses will be inserted here -->
+        </div>
+    </main>
+
+    <!-- iOS-style Tab Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 border-t border-separator/50" style="background: rgba(22,22,24,0.75); backdrop-filter: blur(30px);">
+        <div class="flex justify-around items-center py-3 relative">
+            <a href="home.html" class="text-label-secondary text-center flex-1 opacity-70">
+                <div class="flex justify-center mb-1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                        <path d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"></path>
+                    </svg>
+                </div>
+                <div class="text-xs font-sf-ui">Home</div>
+            </a>
+            <a href="signals.html" class="text-label-secondary text-center flex-1 opacity-70">
+                <div class="flex justify-center mb-1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                        <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path>
+                    </svg>
+                </div>
+                <div class="text-xs font-sf-ui">Signals</div>
+            </a>
+
+            <!-- Floating Trade Button -->
+            <div class="flex-1 flex justify-center">
+                <button
+                    onclick="window.location.href='trading-platforms.html'"
+                    class="bg-primary text-bg rounded-full w-14 h-14 shadow-xl flex items-center justify-center font-bold hover:scale-110 transition-all duration-200 -mt-7 border-4 border-bg-elevated"
+                >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">
+                        <path d="M12 5v14m7-7H5"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <a href="education.html" class="text-label-secondary text-center flex-1 opacity-70">
+                <div class="flex justify-center mb-1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                        <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"></path>
+                    </svg>
+                </div>
+                <div class="text-xs font-sf-ui">Learn</div>
+            </a>
+            <a href="profile.html" class="text-label-secondary text-center flex-1 opacity-70">
+                <div class="flex justify-center mb-1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                        <path d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <div class="text-xs font-sf-ui">Me</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        let currentTab = 'saved';
+
+        // Show tab
+        function showTab(tab) {
+            currentTab = tab;
+
+            // Update tabs
+            document.getElementById('savedTab').className = tab === 'saved'
+                ? 'flex-1 py-2 px-4 rounded-lg bg-primary text-bg font-semibold text-sm'
+                : 'flex-1 py-2 px-4 rounded-lg bg-bg-elevated text-label-secondary font-medium text-sm';
+
+            document.getElementById('completedTab').className = tab === 'completed'
+                ? 'flex-1 py-2 px-4 rounded-lg bg-primary text-bg font-semibold text-sm'
+                : 'flex-1 py-2 px-4 rounded-lg bg-bg-elevated text-label-secondary font-medium text-sm';
+
+            // Update containers
+            document.getElementById('savedCoursesContainer').classList.toggle('hidden', tab !== 'saved');
+            document.getElementById('completedCoursesContainer').classList.toggle('hidden', tab !== 'completed');
+        }
+
+        // Load data
+        function loadData() {
+            const watchLater = courseStorage.getWatchLater();
+            const stats = courseStorage.getStats();
+            const completedCourses = courseStorage.getCompletedCourses();
+
+            // Update stats
+            document.getElementById('savedCount').textContent = watchLater.length;
+            document.getElementById('completedCount').textContent = stats.completed;
+            document.getElementById('inProgressCount').textContent = stats.inProgress;
+
+            // Render saved courses
+            renderSavedCourses(watchLater);
+
+            // Render completed courses
+            renderCompletedCourses(completedCourses);
+
+            // Hide loading
+            document.getElementById('loadingScreen').style.display = 'none';
+        }
+
+        // Render saved courses
+        function renderSavedCourses(courses) {
+            const container = document.getElementById('savedCoursesContainer');
+
+            if (courses.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-16 h-16 text-label-tertiary mx-auto mb-4">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        <div class="text-label-tertiary mb-2">No saved courses</div>
+                        <div class="text-label-quaternary text-sm">Save courses to watch them later</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = courses.map(course => `
+                <a href="course-video.html?id=${course.id}" class="flex gap-3 bg-bg-elevated rounded-lg p-3 mb-3 hover:bg-bg-secondary transition-colors">
+                    <div class="w-32 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gradient-to-br from-blue-600/20 to-purple-700/20 flex items-center justify-center">
+                        ${course.thumbnail_url ?
+                            `<img src="${course.thumbnail_url}" alt="${course.title}" class="w-full h-full object-cover" />` :
+                            `<svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-label-tertiary">
+                                <path d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z"></path>
+                            </svg>`
+                        }
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-semibold text-sm text-white mb-1 line-clamp-2">${course.title}</h3>
+                        <div class="flex items-center gap-2 text-xs text-label-tertiary mb-2">
+                            <span>${course.duration || 'N/A'}</span>
+                            <span>•</span>
+                            <span>${course.difficulty || 'N/A'}</span>
+                        </div>
+                        <button onclick="event.preventDefault(); event.stopPropagation(); removeCourse('${course.id}')" class="text-xs text-danger hover:text-danger/80">
+                            Remove
+                        </button>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        // Render completed courses
+        function renderCompletedCourses(courses) {
+            const container = document.getElementById('completedCoursesContainer');
+
+            if (courses.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-16 h-16 text-label-tertiary mx-auto mb-4">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div class="text-label-tertiary mb-2">No completed courses</div>
+                        <div class="text-label-quaternary text-sm">Complete courses to see them here</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = courses.map(course => `
+                <div class="bg-bg-elevated rounded-lg p-4 mb-3">
+                    <div class="flex items-start justify-between mb-2">
+                        <h3 class="font-semibold text-white flex-1">${course.title}</h3>
+                        <span class="text-success text-2xl">✓</span>
+                    </div>
+                    <div class="text-xs text-label-tertiary">
+                        Completed ${new Date(course.completedAt).toLocaleDateString()}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Remove course
+        function removeCourse(courseId) {
+            if (confirm('Remove this course from watch later?')) {
+                courseStorage.removeFromWatchLater(courseId);
+                loadData();
+            }
+        }
+
+        // Clear all
+        function clearAll() {
+            if (confirm('Clear all saved courses? This cannot be undone.')) {
+                courseStorage.clearWatchLater();
+                loadData();
+            }
+        }
+
+        // Go back
+        function goBack() {
+            window.history.back();
+        }
+
+        // Check auth
+        function checkAuth() {
+            const user = localStorage.getItem('flp_user');
+            if (!user) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            const userData = JSON.parse(user);
+            if (!userData.isLoggedIn) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            return userData;
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', function() {
+            const userData = checkAuth();
+            if (userData) {
+                loadData();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <title>Categories - FLP Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind-config.js"></script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1C1C1F; }
+        ::-webkit-scrollbar-thumb { background: #3C3C3F; border-radius: 4px; }
+
+        @media (max-width: 1024px) {
+            #adminSidebar { transform: translateX(-100%); }
+            main { margin-left: 0 !important; }
+        }
+    </style>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui">
+    <!-- Sidebar and Topbar injected by admin-layout.js -->
+
+    <main class="ml-64 pt-20 pb-8 px-6 max-w-7xl">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-white mb-2">Categories</h1>
+                <p class="text-label-secondary">Manage course categorizations</p>
+            </div>
+            <button onclick="openCreateModal()" class="bg-primary text-black px-6 py-3 rounded-lg font-semibold hover:bg-primary/90">
+                + New Category
+            </button>
+        </div>
+
+        <!-- Category Grid -->
+        <div id="categoriesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Categories will be loaded here -->
+        </div>
+    </main>
+
+    <!-- Create/Edit Modal -->
+    <div id="categoryModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div class="bg-bg-elevated rounded-xl max-w-md w-full p-6">
+            <h2 class="text-2xl font-bold text-white mb-4" id="modalTitle">New Category</h2>
+
+            <form id="categoryForm" class="space-y-4">
+                <input type="hidden" id="categoryId" />
+
+                <div>
+                    <label class="block text-sm font-medium text-label-secondary mb-2">Name *</label>
+                    <input type="text" id="categoryName" required class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-label-secondary mb-2">Description</label>
+                    <textarea id="categoryDescription" rows="3" class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary resize-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-label-secondary mb-2">Icon (Emoji)</label>
+                    <input type="text" id="categoryIcon" maxlength="2" placeholder="📚" class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-label-secondary mb-2">Color</label>
+                    <div class="flex gap-2">
+                        <input type="color" id="categoryColor" value="#FFD60A" class="w-16 h-12 rounded cursor-pointer" />
+                        <input type="text" id="categoryColorText" value="#FFD60A" class="flex-1 px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary" />
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-label-secondary mb-2">Display Order</label>
+                    <input type="number" id="categoryOrder" min="0" value="0" class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary" />
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" class="flex-1 bg-primary text-black py-3 rounded-lg font-semibold hover:bg-primary/90">
+                        Save
+                    </button>
+                    <button type="button" onclick="closeModal()" class="px-6 py-3 bg-bg-secondary text-white rounded-lg hover:bg-bg-tertiary">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/admin-layout.js"></script>
+    <script>
+        const adminLayout = new AdminLayout('content');
+        adminLayout.setPageTitle('Categories', 'Manage course categorizations');
+
+        function checkAuth() {
+            const token = localStorage.getItem('admin_token');
+            const expires = localStorage.getItem('admin_expires');
+            if (!token || !expires || Date.now() > parseInt(expires)) {
+                window.location.href = '/admin-login.html';
+                return null;
+            }
+            return token;
+        }
+
+        async function loadCategories() {
+            const token = checkAuth();
+            if (!token) return;
+
+            try {
+                const [categoriesRes, statsRes] = await Promise.all([
+                    fetch('/api/content/categories', { headers: { 'Authorization': `Bearer ${token}` }}),
+                    fetch('/api/content/categories/stats', { headers: { 'Authorization': `Bearer ${token}` }})
+                ]);
+
+                const categoriesData = await categoriesRes.json();
+                const statsData = await statsRes.json();
+
+                if (categoriesData.success) {
+                    renderCategories(categoriesData.categories, statsData.stats || []);
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+
+        function renderCategories(categories, stats) {
+            const grid = document.getElementById('categoriesGrid');
+
+            if (categories.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-label-tertiary">No categories yet. Create your first one!</div>`;
+                return;
+            }
+
+            grid.innerHTML = categories.map(category => {
+                const stat = stats.find(s => s.id === category.id);
+                const courseCount = stat ? stat.course_count : 0;
+
+                return `
+                    <div class="bg-bg-elevated rounded-xl p-6 border border-separator/20 hover:border-primary/30 transition-colors">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="text-3xl">${category.icon || '📚'}</div>
+                                <div>
+                                    <h3 class="font-semibold text-white">${category.name}</h3>
+                                    <p class="text-sm text-label-tertiary">${courseCount} courses</p>
+                                </div>
+                            </div>
+                            <div class="w-8 h-8 rounded-full" style="background: ${category.color}"></div>
+                        </div>
+
+                        ${category.description ? `<p class="text-sm text-label-secondary mb-4">${category.description}</p>` : ''}
+
+                        <div class="flex gap-2">
+                            <button onclick='editCategory(${JSON.stringify(category)})' class="flex-1 px-3 py-2 bg-primary/20 text-primary rounded-lg hover:bg-primary/30 text-sm font-medium">
+                                Edit
+                            </button>
+                            <button onclick="deleteCategory('${category.id}')" class="px-3 py-2 bg-danger/20 text-danger rounded-lg hover:bg-danger/30 text-sm font-medium">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openCreateModal() {
+            document.getElementById('modalTitle').textContent = 'New Category';
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryId').value = '';
+            document.getElementById('categoryColor').value = '#FFD60A';
+            document.getElementById('categoryColorText').value = '#FFD60A';
+            document.getElementById('categoryModal').classList.remove('hidden');
+        }
+
+        function editCategory(category) {
+            document.getElementById('modalTitle').textContent = 'Edit Category';
+            document.getElementById('categoryId').value = category.id;
+            document.getElementById('categoryName').value = category.name;
+            document.getElementById('categoryDescription').value = category.description || '';
+            document.getElementById('categoryIcon').value = category.icon || '';
+            document.getElementById('categoryColor').value = category.color || '#FFD60A';
+            document.getElementById('categoryColorText').value = category.color || '#FFD60A';
+            document.getElementById('categoryOrder').value = category.order_index || 0;
+            document.getElementById('categoryModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('categoryModal').classList.add('hidden');
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm('Delete this category? Courses using this category will not be deleted.')) return;
+
+            const token = checkAuth();
+            if (!token) return;
+
+            try {
+                const response = await fetch(`/api/content/categories/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    loadCategories();
+                } else {
+                    alert('Failed to delete category');
+                }
+            } catch (error) {
+                console.error('Error deleting category:', error);
+                alert('Error deleting category');
+            }
+        }
+
+        document.getElementById('categoryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const token = checkAuth();
+            if (!token) return;
+
+            const categoryId = document.getElementById('categoryId').value;
+            const categoryData = {
+                name: document.getElementById('categoryName').value,
+                description: document.getElementById('categoryDescription').value,
+                icon: document.getElementById('categoryIcon').value,
+                color: document.getElementById('categoryColor').value,
+                order_index: parseInt(document.getElementById('categoryOrder').value)
+            };
+
+            try {
+                const url = categoryId
+                    ? `/api/content/categories/${categoryId}`
+                    : '/api/content/categories';
+
+                const response = await fetch(url, {
+                    method: categoryId ? 'PATCH' : 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(categoryData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    closeModal();
+                    loadCategories();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error saving category:', error);
+                alert('Error saving category');
+            }
+        });
+
+        document.getElementById('categoryColor').addEventListener('input', (e) => {
+            document.getElementById('categoryColorText').value = e.target.value;
+        });
+
+        document.getElementById('categoryColorText').addEventListener('input', (e) => {
+            document.getElementById('categoryColor').value = e.target.value;
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (checkAuth()) loadCategories();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <title>Admin Login - FLP AcademyWorks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind-config.js"></script>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md px-6">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="text-primary text-4xl font-bold mb-2">FLP</div>
+            <h1 class="text-2xl font-semibold text-white mb-1">Admin Panel</h1>
+            <p class="text-label-secondary text-sm">Sign in to manage your platform</p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="bg-bg-elevated rounded-2xl p-8 shadow-elevated border border-separator/20">
+            <form id="loginForm" class="space-y-6">
+                <!-- Username -->
+                <div>
+                    <label for="username" class="block text-sm font-medium text-label-primary mb-2">
+                        Username
+                    </label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        required
+                        autocomplete="username"
+                        class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white placeholder-label-tertiary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        placeholder="Enter your username"
+                    />
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-label-primary mb-2">
+                        Password
+                    </label>
+                    <div class="relative">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            autocomplete="current-password"
+                            class="w-full px-4 py-3 bg-bg-secondary border border-separator rounded-lg text-white placeholder-label-tertiary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                            placeholder="Enter your password"
+                        />
+                        <button
+                            type="button"
+                            id="togglePassword"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-label-secondary hover:text-label-primary transition-colors"
+                        >
+                            <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">
+                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="flex items-center">
+                    <input
+                        type="checkbox"
+                        id="rememberMe"
+                        class="w-4 h-4 text-primary bg-bg-secondary border-separator rounded focus:ring-2 focus:ring-primary"
+                    />
+                    <label for="rememberMe" class="ml-2 text-sm text-label-secondary">
+                        Remember me for 8 hours
+                    </label>
+                </div>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="hidden bg-danger/10 border border-danger/50 rounded-lg p-3">
+                    <p class="text-danger text-sm"></p>
+                </div>
+
+                <!-- Login Button -->
+                <button
+                    type="submit"
+                    id="loginButton"
+                    class="w-full bg-primary text-black font-semibold py-3 rounded-lg hover:bg-primary/90 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-bg-elevated disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <span id="buttonText">Sign In</span>
+                    <span id="buttonLoading" class="hidden">
+                        <svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </span>
+                </button>
+            </form>
+
+            <!-- Back to App -->
+            <div class="mt-6 text-center">
+                <a href="/" class="text-sm text-label-secondary hover:text-primary transition-colors">
+                    ← Back to App
+                </a>
+            </div>
+        </div>
+
+        <!-- Security Notice -->
+        <div class="mt-6 text-center text-xs text-label-tertiary">
+            <p>🔒 Secure admin access only</p>
+            <p class="mt-1">All login attempts are logged and monitored</p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+
+            if (type === 'text') {
+                eyeIcon.innerHTML = `
+                    <path d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"></path>
+                `;
+            } else {
+                eyeIcon.innerHTML = `
+                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                `;
+            }
+        });
+
+        // Handle form submission
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const loginButton = document.getElementById('loginButton');
+        const buttonText = document.getElementById('buttonText');
+        const buttonLoading = document.getElementById('buttonLoading');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Reset error
+            errorMessage.classList.add('hidden');
+
+            // Get form data
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Validation
+            if (!username || !password) {
+                showError('Please enter both username and password');
+                return;
+            }
+
+            // Show loading state
+            loginButton.disabled = true;
+            buttonText.classList.add('hidden');
+            buttonLoading.classList.remove('hidden');
+
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Save token
+                    localStorage.setItem('admin_token', data.token);
+                    localStorage.setItem('admin_user', JSON.stringify(data.user));
+                    localStorage.setItem('admin_expires', data.expiresAt);
+
+                    // Redirect to admin dashboard
+                    window.location.href = '/admin.html';
+                } else {
+                    showError(data.message || 'Invalid credentials');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Connection error. Please try again.');
+            } finally {
+                // Reset button state
+                loginButton.disabled = false;
+                buttonText.classList.remove('hidden');
+                buttonLoading.classList.add('hidden');
+            }
+        });
+
+        function showError(message) {
+            errorMessage.querySelector('p').textContent = message;
+            errorMessage.classList.remove('hidden');
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                errorMessage.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Check if already logged in
+        const adminToken = localStorage.getItem('admin_token');
+        const adminExpires = localStorage.getItem('admin_expires');
+
+        if (adminToken && adminExpires) {
+            const expiresAt = parseInt(adminExpires);
+            if (Date.now() < expiresAt) {
+                // Still valid, redirect to dashboard
+                window.location.href = '/admin.html';
+            } else {
+                // Expired, clear storage
+                localStorage.removeItem('admin_token');
+                localStorage.removeItem('admin_user');
+                localStorage.removeItem('admin_expires');
+            }
+        }
+
+        // Auto-focus username field
+        document.getElementById('username').focus();
+    </script>
+</body>
+</html>

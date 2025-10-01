@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <title>Admin Dashboard - FLP AcademyWorks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind-config.js"></script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1C1C1F; }
+        ::-webkit-scrollbar-thumb { background: #3C3C3F; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4C4C4F; }
+
+        /* Sidebar responsive */
+        @media (max-width: 1024px) {
+            #adminSidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            #adminSidebar:not(.-translate-x-full) {
+                transform: translateX(0);
+            }
+            main { margin-left: 0 !important; }
+            #adminTopbar { left: 0 !important; }
+        }
+    </style>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui">
+    <!-- Sidebar and Topbar will be injected by admin-layout.js -->
+
+    <!-- Main Content -->
+    <main class="ml-64 pt-20 pb-8 px-6 max-w-7xl">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-white mb-2">Dashboard Overview</h1>
+            <p class="text-label-secondary">Monitor your platform's performance and activity</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Signals -->
+            <div class="bg-bg-elevated rounded-xl p-6 border border-separator/20">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-label-secondary text-sm font-medium">Total Signals</div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-8 h-8 text-primary">
+                        <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <div class="text-3xl font-bold text-white mb-1" id="totalSignals">0</div>
+                <div class="text-sm text-success">+<span id="signals24h">0</span> in last 24h</div>
+            </div>
+
+            <!-- Active Signals -->
+            <div class="bg-bg-elevated rounded-xl p-6 border border-separator/20">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-label-secondary text-sm font-medium">Active Signals</div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-8 h-8 text-info">
+                        <path d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <div class="text-3xl font-bold text-white mb-1" id="activeSignals">0</div>
+                <div class="text-sm text-label-secondary">Currently open</div>
+            </div>
+
+            <!-- Win Rate -->
+            <div class="bg-bg-elevated rounded-xl p-6 border border-separator/20">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-label-secondary text-sm font-medium">Win Rate</div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-8 h-8 text-success">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="text-3xl font-bold text-white mb-1"><span id="winRate">0</span>%</div>
+                <div class="text-sm">
+                    <span class="text-success" id="winCount">0</span> wins /
+                    <span class="text-danger" id="lossCount">0</span> losses
+                </div>
+            </div>
+
+            <!-- Total Profit -->
+            <div class="bg-bg-elevated rounded-xl p-6 border border-separator/20">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-label-secondary text-sm font-medium">Total Profit</div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-8 h-8 text-primary">
+                        <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="text-3xl font-bold text-white mb-1"><span id="totalProfit">+0</span>%</div>
+                <div class="text-sm text-label-secondary">Average: <span id="avgProfit">0</span>%</div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Recent Activity -->
+            <div class="bg-bg-elevated rounded-xl p-6 border border-separator/20">
+                <h2 class="text-xl font-semibold text-white mb-4">Recent Signals</h2>
+                <div id="recentSignals" class="space-y-3 max-h-80 overflow-y-auto">
+                    <!-- Signals will be dynamically added here -->
+                    <div class="text-center text-label-tertiary py-8">
+                        Loading signals...
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Status -->
+            <div class="bg-bg-elevated rounded-xl p-6 border border-separator/20">
+                <h2 class="text-xl font-semibold text-white mb-4">System Status</h2>
+                <div class="space-y-4">
+                    <!-- Server Uptime -->
+                    <div class="flex items-center justify-between py-3 border-b border-separator/20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 bg-success rounded-full"></div>
+                            <div class="text-sm text-label-primary">Server Status</div>
+                        </div>
+                        <div class="text-sm font-medium text-success">Online</div>
+                    </div>
+
+                    <!-- Server Uptime -->
+                    <div class="flex items-center justify-between py-3 border-b border-separator/20">
+                        <div class="text-sm text-label-secondary">Uptime</div>
+                        <div class="text-sm font-medium text-white" id="serverUptime">0h 0m</div>
+                    </div>
+
+                    <!-- Active Sessions -->
+                    <div class="flex items-center justify-between py-3 border-b border-separator/20">
+                        <div class="text-sm text-label-secondary">Active Admin Sessions</div>
+                        <div class="text-sm font-medium text-white" id="activeSessions">0</div>
+                    </div>
+
+                    <!-- Memory Usage -->
+                    <div class="flex items-center justify-between py-3 border-b border-separator/20">
+                        <div class="text-sm text-label-secondary">Memory Usage</div>
+                        <div class="text-sm font-medium text-white" id="memoryUsage">0 MB</div>
+                    </div>
+
+                    <!-- Node Version -->
+                    <div class="flex items-center justify-between py-3">
+                        <div class="text-sm text-label-secondary">Node.js Version</div>
+                        <div class="text-sm font-medium text-white" id="nodeVersion">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-bg-elevated rounded-xl p-6 border border-separator/20">
+            <h2 class="text-xl font-semibold text-white mb-4">Quick Actions</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="/admin-signals.html" class="flex flex-col items-center justify-center p-6 bg-bg-secondary hover:bg-bg-tertiary rounded-lg transition-colors border border-separator/20">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-8 h-8 text-primary mb-3">
+                        <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <div class="text-sm font-medium text-white">Manage Signals</div>
+                </a>
+
+                <button onclick="exportSignals()" class="flex flex-col items-center justify-center p-6 bg-bg-secondary hover:bg-bg-tertiary rounded-lg transition-colors border border-separator/20">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-8 h-8 text-info mb-3">
+                        <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    <div class="text-sm font-medium text-white">Export Data</div>
+                </button>
+
+                <a href="/admin-settings.html" class="flex flex-col items-center justify-center p-6 bg-bg-secondary hover:bg-bg-tertiary rounded-lg transition-colors border border-separator/20">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-8 h-8 text-warning mb-3">
+                        <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <div class="text-sm font-medium text-white">Settings</div>
+                </a>
+
+                <button onclick="refreshDashboard()" class="flex flex-col items-center justify-center p-6 bg-bg-secondary hover:bg-bg-tertiary rounded-lg transition-colors border border-separator/20">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-8 h-8 text-success mb-3">
+                        <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    <div class="text-sm font-medium text-white">Refresh Data</div>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Authentication check
+        function checkAuth() {
+            const token = localStorage.getItem('admin_token');
+            const expires = localStorage.getItem('admin_expires');
+
+            if (!token || !expires) {
+                window.location.href = '/admin-login.html';
+                return null;
+            }
+
+            if (Date.now() > parseInt(expires)) {
+                localStorage.clear();
+                window.location.href = '/admin-login.html';
+                return null;
+            }
+
+            return token;
+        }
+
+        // Load dashboard data
+        async function loadDashboard() {
+            const token = checkAuth();
+            if (!token) return;
+
+            try {
+                const response = await fetch('/api/admin/dashboard', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.status === 401) {
+                    localStorage.clear();
+                    window.location.href = '/admin-login.html';
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    updateDashboard(data.dashboard);
+                }
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+            }
+        }
+
+        // Update dashboard UI
+        function updateDashboard(dashboard) {
+            // Stats
+            document.getElementById('totalSignals').textContent = dashboard.signals.total;
+            document.getElementById('activeSignals').textContent = dashboard.signals.active;
+            document.getElementById('signals24h').textContent = dashboard.signals.last24h;
+            document.getElementById('winRate').textContent = dashboard.signals.winRate.toFixed(1);
+            document.getElementById('winCount').textContent = dashboard.performance.winningSignals;
+            document.getElementById('lossCount').textContent = dashboard.performance.losingSignals;
+
+            const profit = dashboard.performance.totalProfitPercent;
+            const profitEl = document.getElementById('totalProfit');
+            profitEl.textContent = (profit >= 0 ? '+' : '') + profit.toFixed(2);
+            profitEl.className = profit >= 0 ? 'text-success' : 'text-danger';
+
+            document.getElementById('avgProfit').textContent = dashboard.performance.averageProfit.toFixed(2);
+
+            // System status
+            const uptime = dashboard.system.serverUptime;
+            const hours = Math.floor(uptime / 3600);
+            const minutes = Math.floor((uptime % 3600) / 60);
+            document.getElementById('serverUptime').textContent = `${hours}h ${minutes}m`;
+            document.getElementById('activeSessions').textContent = dashboard.system.activeSessions;
+
+            const memMB = (dashboard.system.memoryUsage.heapUsed / 1024 / 1024).toFixed(1);
+            document.getElementById('memoryUsage').textContent = `${memMB} MB`;
+            document.getElementById('nodeVersion').textContent = dashboard.system.nodeVersion;
+
+            // Recent signals
+            renderRecentSignals(dashboard.recentSignals);
+        }
+
+        // Render recent signals
+        function renderRecentSignals(signals) {
+            const container = document.getElementById('recentSignals');
+
+            if (!signals || signals.length === 0) {
+                container.innerHTML = '<div class="text-center text-label-tertiary py-8">No recent signals</div>';
+                return;
+            }
+
+            container.innerHTML = signals.map(signal => `
+                <div class="flex items-center justify-between p-3 bg-bg-secondary rounded-lg border border-separator/20 hover:border-primary/30 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-1 h-12 rounded ${signal.action === 'BUY' ? 'bg-success' : 'bg-danger'}"></div>
+                        <div>
+                            <div class="font-semibold text-white">${signal.pair}</div>
+                            <div class="text-xs text-label-secondary">${formatTime(signal.createdAt)}</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="px-2 py-1 rounded text-xs font-semibold ${
+                            signal.action === 'BUY'
+                                ? 'bg-success/20 text-success'
+                                : 'bg-danger/20 text-danger'
+                        }">
+                            ${signal.action}
+                        </div>
+                        <div class="text-xs text-label-secondary mt-1">${signal.confidence}% conf</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Format timestamp
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`;
+            return date.toLocaleDateString();
+        }
+
+        // Export signals
+        async function exportSignals() {
+            const token = checkAuth();
+            if (!token) return;
+
+            try {
+                const response = await fetch('/api/admin/signals/export/csv', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `signals-export-${Date.now()}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+
+                    alert('Signals exported successfully!');
+                }
+            } catch (error) {
+                console.error('Export failed:', error);
+                alert('Failed to export signals');
+            }
+        }
+
+        // Refresh dashboard
+        function refreshDashboard() {
+            loadDashboard();
+        }
+
+        // Initialize
+        loadDashboard();
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadDashboard, 30000);
+    </script>
+
+    <!-- Admin Layout with Sidebar -->
+    <script src="assets/js/admin-layout.js"></script>
+    <script>
+        const adminLayout = new AdminLayout('dashboard');
+        adminLayout.setPageTitle('Dashboard', 'Monitor your platform performance');
+    </script>
+</body>
+</html>
