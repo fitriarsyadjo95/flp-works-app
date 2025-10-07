@@ -68,11 +68,11 @@
     <!-- Top Navigation -->
     <nav class="fixed top-0 left-0 right-0 z-50 px-4 py-3 flex justify-between items-center" style="background: rgba(22,22,24,0.6); backdrop-filter: blur(20px);">
         <div class="flex items-center gap-3">
-            <button onclick="history.back()" class="text-label-secondary opacity-80 hover:opacity-100 transition-opacity">
+            <a href="profile.html" class="text-label-secondary opacity-80 hover:opacity-100 transition-opacity">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
                     <path d="M19 12H5m7 7l-7-7 7-7"></path>
                 </svg>
-            </button>
+            </a>
             <div class="text-primary text-base font-sf-display font-semibold">Trading Platforms</div>
         </div>
         <button class="text-label-secondary opacity-80 hover:opacity-100 transition-opacity">
@@ -295,5 +295,17 @@
             </div>
         </div>
     </main>
+
+    <script>
+        function goBack() {
+            // Check if there's history to go back to
+            if (window.history.length > 1 && document.referrer) {
+                window.history.back();
+            } else {
+                // Default to home page if no history
+                window.location.href = 'home.html';
+            }
+        }
+    </script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 /**
- * Course Storage Manager
+ * Course Storage Manager - Hybrid Local & Backend Storage
  * Handles watch later, bookmarks, and progress tracking
+ * Syncs with backend API for persistence across devices
  */
 
 class CourseStorage {
@@ -8,23 +9,164 @@ class CourseStorage {
         this.WATCH_LATER_KEY = 'flp_watch_later';
         this.PROGRESS_KEY = 'flp_course_progress';
         this.BOOKMARKS_KEY = 'flp_bookmarks';
+        this.API_BASE = '/api/content/user';
+        this.userId = this.getUserId();
     }
 
-    // ==================== WATCH LATER ====================
+    /**
+     * Get or generate user ID
+     */
+    getUserId() {
+        // Try to get from logged-in user
+        const userData = localStorage.getItem('flp_user');
+        if (userData) {
+            try {
+                const user = JSON.parse(userData);
+                return user.id || user.email || `user_${user.name}`;
+            } catch (e) {
+                console.error('Error parsing user data:', e);
+            }
+        }
+
+        // Use or generate anonymous ID
+        let anonId = localStorage.getItem('flp_anon_id');
+        if (!anonId) {
+            anonId = `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            localStorage.setItem('flp_anon_id', anonId);
+        }
+        return anonId;
+    }
 
     /**
-     * Add course to watch later
+     * Make API request with user ID header
      */
-    addToWatchLater(course) {
-        const watchLater = this.getWatchLater();
+    async apiRequest(endpoint, options = {}) {
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `User ${this.userId}`,
+            ...options.headers
+        };
 
-        // Check if already exists
+        const response = await fetch(`${this.API_BASE}${endpoint}`, {
+            ...options,
+            headers
+        });
+
+        if (!response.ok) {
+            throw new Error(`API request failed: ${response.statusText}`);
+        }
+
+        return response.json();
+    }
+
+    // ==================== WATCH LATER (SAVED CONTENT) ====================
+
+    /**
+     * Add course to watch later - Syncs with backend
+     */
+    async addToWatchLater(course) {
+        try {
+            // Add to backend
+            const result = await this.apiRequest(`/saved/${course.id}`, {
+                method: 'POST'
+            });
+
+            // Also store locally for offline access
+            const watchLater = this.getWatchLaterLocal();
+            const exists = watchLater.find(c => c.id === course.id);
+
+            if (!exists) {
+                const courseData = {
+                    ...course,
+                    addedAt: new Date().toISOString()
+                };
+                watchLater.unshift(courseData);
+                localStorage.setItem(this.WATCH_LATER_KEY, JSON.stringify(watchLater));
+            }
+
+            return { success: true, message: 'Added to watch later', saved: true };
+        } catch (error) {
+            console.error('Add to watch later error:', error);
+            // Fallback to local storage only
+            return this.addToWatchLaterLocal(course);
+        }
+    }
+
+    /**
+     * Remove course from watch later - Syncs with backend
+     */
+    async removeFromWatchLater(courseId) {
+        try {
+            // Remove from backend
+            await this.apiRequest(`/saved/${courseId}`, {
+                method: 'DELETE'
+            });
+
+            // Also remove locally
+            let watchLater = this.getWatchLaterLocal();
+            watchLater = watchLater.filter(c => c.id !== courseId);
+            localStorage.setItem(this.WATCH_LATER_KEY, JSON.stringify(watchLater));
+
+            return { success: true, message: 'Removed from watch later', saved: false };
+        } catch (error) {
+            console.error('Remove from watch later error:', error);
+            // Fallback to local storage only
+            return this.removeFromWatchLaterLocal(courseId);
+        }
+    }
+
+    /**
+     * Get all watch later courses - Fetches from backend
+     */
+    async getWatchLater() {
+        try {
+            const result = await this.apiRequest('/saved');
+            // Update local storage
+            if (result.success && result.courses) {
+                localStorage.setItem(this.WATCH_LATER_KEY, JSON.stringify(result.courses));
+                return result.courses;
+            }
+        } catch (error) {
+            console.error('Get watch later error:', error);
+        }
+        // Fallback to local storage
+        return this.getWatchLaterLocal();
+    }
+
+    /**
+     * Check if course is in watch later - Checks backend
+     */
+    async isInWatchLater(courseId) {
+        try {
+            const result = await this.apiRequest(`/saved/${courseId}/check`);
+            return result.saved || false;
+        } catch (error) {
+            console.error('Check watch later error:', error);
+            // Fallback to local check
+            const watchLater = this.getWatchLaterLocal();
+            return watchLater.some(c => c.id === courseId);
+        }
+    }
+
+    /**
+     * Clear all watch later
+     */
+    async clearWatchLater() {
+        // Note: Backend doesn't have bulk delete yet, so we delete locally
+        localStorage.removeItem(this.WATCH_LATER_KEY);
+        return { success: true, message: 'Watch later cleared' };
+    }
+
+    // ==================== LOCAL STORAGE FALLBACKS ====================
+
+    addToWatchLaterLocal(course) {
+        const watchLater = this.getWatchLaterLocal();
         const exists = watchLater.find(c => c.id === course.id);
+
         if (exists) {
             return { success: false, message: 'Already in watch later' };
         }
 
-        // Add course with timestamp
         const courseData = {
             ...course,
             addedAt: new Date().toISOString()
@@ -33,104 +175,135 @@ class CourseStorage {
         watchLater.unshift(courseData);
         localStorage.setItem(this.WATCH_LATER_KEY, JSON.stringify(watchLater));
 
-        return { success: true, message: 'Added to watch later' };
+        return { success: true, message: 'Added to watch later (offline)' };
     }
 
-    /**
-     * Remove course from watch later
-     */
-    removeFromWatchLater(courseId) {
-        let watchLater = this.getWatchLater();
+    removeFromWatchLaterLocal(courseId) {
+        let watchLater = this.getWatchLaterLocal();
         watchLater = watchLater.filter(c => c.id !== courseId);
         localStorage.setItem(this.WATCH_LATER_KEY, JSON.stringify(watchLater));
 
-        return { success: true, message: 'Removed from watch later' };
+        return { success: true, message: 'Removed from watch later (offline)' };
     }
 
-    /**
-     * Get all watch later courses
-     */
-    getWatchLater() {
+    getWatchLaterLocal() {
         const data = localStorage.getItem(this.WATCH_LATER_KEY);
         return data ? JSON.parse(data) : [];
-    }
-
-    /**
-     * Check if course is in watch later
-     */
-    isInWatchLater(courseId) {
-        const watchLater = this.getWatchLater();
-        return watchLater.some(c => c.id === courseId);
-    }
-
-    /**
-     * Clear all watch later
-     */
-    clearWatchLater() {
-        localStorage.removeItem(this.WATCH_LATER_KEY);
-        return { success: true, message: 'Watch later cleared' };
     }
 
     // ==================== PROGRESS TRACKING ====================
 
     /**
-     * Mark course as completed
+     * Mark course as completed - Syncs with backend
      */
-    markAsCompleted(courseId, courseTitle) {
-        const progress = this.getProgress();
+    async markAsCompleted(courseId, courseTitle) {
+        try {
+            await this.apiRequest(`/progress/${courseId}`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    progress_percent: 100,
+                    completed: true
+                })
+            });
 
-        progress[courseId] = {
-            completed: true,
-            completedAt: new Date().toISOString(),
-            title: courseTitle,
-            progress: 100
-        };
+            // Also update locally
+            const progress = this.getProgressLocal();
+            progress[courseId] = {
+                completed: true,
+                completedAt: new Date().toISOString(),
+                title: courseTitle,
+                progress: 100
+            };
+            localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(progress));
 
-        localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(progress));
-
-        return { success: true, message: 'Course marked as completed' };
+            return { success: true, message: 'Course marked as completed' };
+        } catch (error) {
+            console.error('Mark as completed error:', error);
+            return this.markAsCompletedLocal(courseId, courseTitle);
+        }
     }
 
     /**
-     * Update course progress percentage
+     * Update course progress percentage - Syncs with backend
      */
-    updateProgress(courseId, courseTitle, percentage) {
-        const progress = this.getProgress();
+    async updateProgress(courseId, courseTitle, percentage) {
+        try {
+            await this.apiRequest(`/progress/${courseId}`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    progress_percent: percentage,
+                    completed: percentage >= 100
+                })
+            });
 
-        progress[courseId] = {
-            completed: percentage >= 100,
-            completedAt: percentage >= 100 ? new Date().toISOString() : null,
-            title: courseTitle,
-            progress: percentage,
-            lastUpdated: new Date().toISOString()
-        };
+            // Also update locally
+            const progress = this.getProgressLocal();
+            progress[courseId] = {
+                completed: percentage >= 100,
+                completedAt: percentage >= 100 ? new Date().toISOString() : null,
+                title: courseTitle,
+                progress: percentage,
+                lastUpdated: new Date().toISOString()
+            };
+            localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(progress));
 
-        localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(progress));
-
-        return { success: true, message: 'Progress updated' };
+            return { success: true, message: 'Progress updated' };
+        } catch (error) {
+            console.error('Update progress error:', error);
+            return this.updateProgressLocal(courseId, courseTitle, percentage);
+        }
     }
 
     /**
-     * Get course progress
+     * Get course progress - Fetches from backend
      */
-    getCourseProgress(courseId) {
-        const progress = this.getProgress();
-        return progress[courseId] || { completed: false, progress: 0 };
+    async getCourseProgress(courseId) {
+        try {
+            const result = await this.apiRequest(`/progress/${courseId}`);
+            if (result.success && result.progress) {
+                return {
+                    completed: result.progress.completed || false,
+                    progress: result.progress.progress_percent || 0
+                };
+            }
+        } catch (error) {
+            console.error('Get course progress error:', error);
+        }
+        // Fallback to local
+        return this.getCourseProgressLocal(courseId);
     }
 
     /**
-     * Get all progress data
+     * Get all progress data - Fetches from backend
      */
-    getProgress() {
-        const data = localStorage.getItem(this.PROGRESS_KEY);
-        return data ? JSON.parse(data) : {};
+    async getProgress() {
+        try {
+            const result = await this.apiRequest('/progress');
+            if (result.success && result.history) {
+                // Convert to local format
+                const progress = {};
+                result.history.forEach(item => {
+                    progress[item.course_id] = {
+                        completed: item.completed,
+                        progress: item.progress_percent,
+                        title: item.title,
+                        lastUpdated: item.last_watched
+                    };
+                });
+                localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(progress));
+                return progress;
+            }
+        } catch (error) {
+            console.error('Get progress error:', error);
+        }
+        return this.getProgressLocal();
     }
 
     /**
      * Get completed courses
      */
-    getCompletedCourses() {
-        const progress = this.getProgress();
+    async getCompletedCourses() {
+        const progress = await this.getProgress();
         return Object.entries(progress)
             .filter(([_, data]) => data.completed)
             .map(([id, data]) => ({ id, ...data }));
@@ -139,24 +312,81 @@ class CourseStorage {
     /**
      * Get in-progress courses
      */
-    getInProgressCourses() {
-        const progress = this.getProgress();
+    async getInProgressCourses() {
+        const progress = await this.getProgress();
         return Object.entries(progress)
             .filter(([_, data]) => !data.completed && data.progress > 0)
             .map(([id, data]) => ({ id, ...data }));
     }
 
     /**
-     * Get statistics
+     * Get statistics - Fetches from backend
      */
-    getStats() {
-        const progress = this.getProgress();
+    async getStats() {
+        try {
+            const result = await this.apiRequest('/stats');
+            if (result.success && result.stats) {
+                return {
+                    total: result.stats.inProgress + result.stats.completed,
+                    completed: result.stats.completed,
+                    inProgress: result.stats.inProgress,
+                    saved: result.stats.saved,
+                    averageProgress: result.stats.averageProgress || 0
+                };
+            }
+        } catch (error) {
+            console.error('Get stats error:', error);
+        }
+        // Fallback to local stats
+        return this.getStatsLocal();
+    }
+
+    // ==================== LOCAL PROGRESS FALLBACKS ====================
+
+    markAsCompletedLocal(courseId, courseTitle) {
+        const progress = this.getProgressLocal();
+        progress[courseId] = {
+            completed: true,
+            completedAt: new Date().toISOString(),
+            title: courseTitle,
+            progress: 100
+        };
+        localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(progress));
+        return { success: true, message: 'Course marked as completed (offline)' };
+    }
+
+    updateProgressLocal(courseId, courseTitle, percentage) {
+        const progress = this.getProgressLocal();
+        progress[courseId] = {
+            completed: percentage >= 100,
+            completedAt: percentage >= 100 ? new Date().toISOString() : null,
+            title: courseTitle,
+            progress: percentage,
+            lastUpdated: new Date().toISOString()
+        };
+        localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(progress));
+        return { success: true, message: 'Progress updated (offline)' };
+    }
+
+    getCourseProgressLocal(courseId) {
+        const progress = this.getProgressLocal();
+        return progress[courseId] || { completed: false, progress: 0 };
+    }
+
+    getProgressLocal() {
+        const data = localStorage.getItem(this.PROGRESS_KEY);
+        return data ? JSON.parse(data) : {};
+    }
+
+    getStatsLocal() {
+        const progress = this.getProgressLocal();
         const entries = Object.values(progress);
 
         return {
             total: entries.length,
             completed: entries.filter(p => p.completed).length,
             inProgress: entries.filter(p => !p.completed && p.progress > 0).length,
+            saved: this.getWatchLaterLocal().length,
             averageProgress: entries.length > 0
                 ? entries.reduce((sum, p) => sum + p.progress, 0) / entries.length
                 : 0
@@ -166,19 +396,17 @@ class CourseStorage {
     // ==================== BOOKMARKS ====================
 
     /**
-     * Toggle bookmark
+     * Toggle bookmark (local only for now)
      */
     toggleBookmark(courseId, courseData = null) {
         const bookmarks = this.getBookmarks();
         const index = bookmarks.findIndex(b => b.id === courseId);
 
         if (index !== -1) {
-            // Remove bookmark
             bookmarks.splice(index, 1);
             localStorage.setItem(this.BOOKMARKS_KEY, JSON.stringify(bookmarks));
             return { success: true, bookmarked: false, message: 'Bookmark removed' };
         } else {
-            // Add bookmark
             if (courseData) {
                 bookmarks.unshift({
                     ...courseData,
@@ -190,17 +418,11 @@ class CourseStorage {
         }
     }
 
-    /**
-     * Check if course is bookmarked
-     */
     isBookmarked(courseId) {
         const bookmarks = this.getBookmarks();
         return bookmarks.some(b => b.id === courseId);
     }
 
-    /**
-     * Get all bookmarks
-     */
     getBookmarks() {
         const data = localStorage.getItem(this.BOOKMARKS_KEY);
         return data ? JSON.parse(data) : [];
@@ -208,21 +430,15 @@ class CourseStorage {
 
     // ==================== UTILITY ====================
 
-    /**
-     * Export all data
-     */
-    exportData() {
+    async exportData() {
         return {
-            watchLater: this.getWatchLater(),
-            progress: this.getProgress(),
+            watchLater: await this.getWatchLater(),
+            progress: await this.getProgress(),
             bookmarks: this.getBookmarks(),
             exportedAt: new Date().toISOString()
         };
     }
 
-    /**
-     * Import data
-     */
     importData(data) {
         if (data.watchLater) {
             localStorage.setItem(this.WATCH_LATER_KEY, JSON.stringify(data.watchLater));
@@ -236,9 +452,6 @@ class CourseStorage {
         return { success: true, message: 'Data imported successfully' };
     }
 
-    /**
-     * Clear all data
-     */
     clearAll() {
         localStorage.removeItem(this.WATCH_LATER_KEY);
         localStorage.removeItem(this.PROGRESS_KEY);
