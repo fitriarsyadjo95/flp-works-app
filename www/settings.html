@@ -92,32 +92,65 @@
             <div class="space-y-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                            <span class="text-xs font-semibold text-primary">AJ</span>
+                        <div id="profileAvatar" class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span class="text-xs font-semibold text-primary">?</span>
                         </div>
                         <div>
-                            <div class="text-xs font-medium">Alex Johnson</div>
-                            <div class="text-xs text-label-secondary">alex.johnson@email.com</div>
+                            <div id="profileName" class="text-xs font-medium">Loading...</div>
+                            <div id="profileEmail" class="text-xs text-label-secondary">Loading...</div>
                         </div>
                     </div>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-label-secondary">
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+                    <button onclick="toggleEditMode()" class="text-label-secondary hover:text-primary transition-colors">
+                        <svg id="editIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
+                            <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
+                        </svg>
+                    </button>
                 </div>
-                
-                <div class="border-t border-separator pt-4">
-                    <button class="w-full flex items-center justify-between py-2">
-                        <span class="text-xs">Edit Profile</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
-                            <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
-                        </svg>
-                    </button>
-                    <button class="w-full flex items-center justify-between py-2">
-                        <span class="text-xs">Change Password</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
-                            <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
-                        </svg>
-                    </button>
+
+                <!-- Editable Profile Form (Hidden by default) -->
+                <div id="profileEditForm" class="hidden border-t border-separator pt-4 space-y-3">
+                    <div>
+                        <label class="text-xs text-label-secondary mb-1 block">Username</label>
+                        <input
+                            id="editUsername"
+                            type="text"
+                            class="w-full bg-bg-secondary text-label-primary px-3 py-2 rounded-lg text-xs border border-separator focus:border-primary focus:outline-none"
+                            placeholder="Enter username"
+                        >
+                    </div>
+                    <div>
+                        <label class="text-xs text-label-secondary mb-1 block">Email</label>
+                        <input
+                            id="editEmail"
+                            type="email"
+                            class="w-full bg-bg-secondary text-label-primary px-3 py-2 rounded-lg text-xs border border-separator focus:border-primary focus:outline-none"
+                            placeholder="Enter email"
+                        >
+                    </div>
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="saveProfile()" class="flex-1 bg-primary text-bg py-2 rounded-lg text-xs font-medium">
+                            Save Changes
+                        </button>
+                        <button onclick="toggleEditMode()" class="flex-1 bg-bg-secondary text-label-secondary py-2 rounded-lg text-xs">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Profile Stats -->
+                <div class="border-t border-separator pt-4 grid grid-cols-3 gap-4">
+                    <div class="text-center">
+                        <div id="savedCount" class="text-primary text-base font-bold">0</div>
+                        <div class="text-label-secondary text-xs">Saved</div>
+                    </div>
+                    <div class="text-center">
+                        <div id="completedCount" class="text-success text-base font-bold">0</div>
+                        <div class="text-label-secondary text-xs">Completed</div>
+                    </div>
+                    <div class="text-center">
+                        <div id="inProgressCount" class="text-info text-base font-bold">0</div>
+                        <div class="text-label-secondary text-xs">In Progress</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -163,43 +196,6 @@
                     <div>
                         <div class="text-xs font-medium">Marketing Updates</div>
                         <div class="text-xs text-label-secondary">Promotions and news</div>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" value="" class="sr-only peer">
-                        <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <!-- Trading Preferences -->
-        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
-            <h3 class="text-base font-semibold mb-4">Trading Preferences</h3>
-            <div class="space-y-4">
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-medium">Risk Tolerance</span>
-                        <span class="text-xs text-primary">Moderate</span>
-                    </div>
-                    <div class="flex gap-2">
-                        <button class="flex-1 bg-fill-secondary text-label-secondary py-2 rounded-lg text-xs">Low</button>
-                        <button class="flex-1 bg-primary text-bg py-2 rounded-lg text-xs font-medium">Moderate</button>
-                        <button class="flex-1 bg-fill-secondary text-label-secondary py-2 rounded-lg text-xs">High</button>
-                    </div>
-                </div>
-                
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-medium">Default Position Size</span>
-                        <span class="text-xs text-label-secondary">2% of account</span>
-                    </div>
-                    <input type="range" min="1" max="5" value="2" class="w-full h-2 bg-fill-secondary rounded-lg appearance-none cursor-pointer slider">
-                </div>
-                
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="text-xs font-medium">Auto-Execute Signals</div>
-                        <div class="text-xs text-label-secondary">Automatically place trades</div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" value="" class="sr-only peer">
@@ -338,23 +334,135 @@
                 <button class="w-full bg-danger/20 text-danger py-3 rounded-xl text-xs font-medium border border-danger/30">
                     Reset All Settings
                 </button>
-                <button class="w-full bg-danger text-white py-3 rounded-xl text-xs font-semibold">
+                <button onclick="deleteAccount()" class="w-full bg-danger text-white py-3 rounded-xl text-xs font-semibold">
                     Delete Account
                 </button>
             </div>
         </div>
     </main>
 
+    <script src="assets/js/course-storage.js"></script>
     <script>
-        function goBack() {
-            // Check if there's history to go back to
-            if (window.history.length > 1 && document.referrer) {
-                window.history.back();
-            } else {
-                // Default to home page if no history
-                window.location.href = 'home.html';
+        const storage = new CourseStorage();
+        let currentUser = null;
+        let isEditMode = false;
+
+        // Load user profile and stats
+        async function loadProfile() {
+            try {
+                // Get user from localStorage
+                const userData = localStorage.getItem('flp_user');
+                if (userData) {
+                    currentUser = JSON.parse(userData);
+                } else {
+                    // Create anonymous user
+                    currentUser = {
+                        id: storage.userId,
+                        username: 'Anonymous User',
+                        email: 'Not logged in'
+                    };
+                }
+
+                // Update UI with user data
+                updateProfileDisplay();
+
+                // Load stats from backend
+                const stats = await storage.getStats();
+                document.getElementById('savedCount').textContent = stats.saved || 0;
+                document.getElementById('completedCount').textContent = stats.completed || 0;
+                document.getElementById('inProgressCount').textContent = stats.inProgress || 0;
+            } catch (error) {
+                console.error('Error loading profile:', error);
             }
         }
+
+        function updateProfileDisplay() {
+            // Update avatar
+            const initials = currentUser.username
+                ? currentUser.username.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
+                : '?';
+            document.getElementById('profileAvatar').innerHTML = `
+                <span class="text-xs font-semibold text-primary">${initials}</span>
+            `;
+
+            // Update name and email
+            document.getElementById('profileName').textContent = currentUser.username || 'No name';
+            document.getElementById('profileEmail').textContent = currentUser.email || 'No email';
+        }
+
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const form = document.getElementById('profileEditForm');
+
+            if (isEditMode) {
+                // Populate form with current values
+                document.getElementById('editUsername').value = currentUser.username || '';
+                document.getElementById('editEmail').value = currentUser.email || '';
+                form.classList.remove('hidden');
+            } else {
+                form.classList.add('hidden');
+            }
+        }
+
+        async function saveProfile() {
+            try {
+                const newUsername = document.getElementById('editUsername').value.trim();
+                const newEmail = document.getElementById('editEmail').value.trim();
+
+                if (!newUsername || !newEmail) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                // Update local user object
+                currentUser.username = newUsername;
+                currentUser.email = newEmail;
+
+                // Save to localStorage
+                localStorage.setItem('flp_user', JSON.stringify(currentUser));
+
+                // Update display
+                updateProfileDisplay();
+
+                // Close edit mode
+                toggleEditMode();
+
+                // Show success message
+                showMessage('Profile updated successfully!', 'success');
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                showMessage('Failed to update profile', 'error');
+            }
+        }
+
+        function deleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                // Clear all local data
+                localStorage.removeItem('flp_user');
+                localStorage.removeItem('flp_anon_id');
+                localStorage.removeItem('flp_watch_later');
+                localStorage.removeItem('flp_course_progress');
+                localStorage.removeItem('flp_bookmarks');
+
+                // Redirect to home
+                window.location.href = 'index.html';
+            }
+        }
+
+        function showMessage(message, type) {
+            const bgColor = type === 'success' ? 'bg-success' : 'bg-danger';
+            const toast = document.createElement('div');
+            toast.className = `fixed top-20 left-1/2 transform -translate-x-1/2 ${bgColor} text-white px-4 py-2 rounded-lg text-xs font-medium z-50 shadow-elevated`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Load profile on page load
+        loadProfile();
     </script>
 </body>
 </html>
