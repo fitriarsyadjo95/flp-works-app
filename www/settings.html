@@ -189,53 +189,6 @@
             </div>
         </div>
 
-        <!-- App Settings -->
-        <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
-            <h3 class="text-base font-semibold mb-4">App Settings</h3>
-            <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="text-xs font-medium">Dark Mode</div>
-                        <div class="text-xs text-label-secondary">Currently enabled</div>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input id="toggle-dark-mode" type="checkbox" value="" class="sr-only peer" checked>
-                        <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                    </label>
-                </div>
-                
-                <button class="w-full flex items-center justify-between py-2">
-                    <span class="text-xs">Language</span>
-                    <div class="flex items-center gap-2">
-                        <span id="current-language" class="text-xs text-label-secondary">English</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
-                            <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
-                        </svg>
-                    </div>
-                </button>
-                
-                <button class="w-full flex items-center justify-between py-2">
-                    <span class="text-xs">Currency Display</span>
-                    <div class="flex items-center gap-2">
-                        <span id="current-currency" class="text-xs text-label-secondary">USD ($)</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
-                            <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
-                        </svg>
-                    </div>
-                </button>
-                
-                <button class="w-full flex items-center justify-between py-2">
-                    <span class="text-xs">Time Zone</span>
-                    <div class="flex items-center gap-2">
-                        <span id="current-timezone" class="text-xs text-label-secondary">EST</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
-                            <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
-                        </svg>
-                    </div>
-                </button>
-            </div>
-        </div>
-
         <!-- Privacy & Security -->
         <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
             <h3 class="text-base font-semibold mb-4">Privacy & Security</h3>
@@ -291,23 +244,6 @@
                         Clear
                     </button>
                 </div>
-                
-                <button class="w-full flex items-center justify-between py-2">
-                    <span class="text-xs">Download for Offline</span>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs text-label-secondary">12 items</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
-                            <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
-                        </svg>
-                    </div>
-                </button>
-                
-                <button id="btn-export-data" class="w-full flex items-center justify-between py-2">
-                    <span class="text-xs">Export Data</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
-                        <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
-                    </svg>
-                </button>
             </div>
         </div>
 
@@ -315,9 +251,6 @@
         <div class="bg-danger/10 border border-danger/20 rounded-2xl p-6">
             <h3 class="text-base font-semibold text-danger mb-4">Danger Zone</h3>
             <div class="space-y-3">
-                <button id="btn-reset-settings" class="w-full bg-danger/20 text-danger py-3 rounded-xl text-xs font-medium border border-danger/30">
-                    Reset All Settings
-                </button>
                 <button onclick="deleteAccount()" class="w-full bg-danger text-white py-3 rounded-xl text-xs font-semibold">
                     Delete Account
                 </button>

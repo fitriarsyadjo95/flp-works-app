@@ -96,12 +96,6 @@ class SettingsManager {
         this.setToggle('toggle-new-courses', this.settings.notifications.newCourses);
         this.setToggle('toggle-marketing', this.settings.notifications.marketing);
 
-        // App settings
-        this.setToggle('toggle-dark-mode', this.settings.app.darkMode);
-        document.getElementById('current-language').textContent = this.settings.app.language.toUpperCase();
-        document.getElementById('current-currency').textContent = this.settings.app.currency;
-        document.getElementById('current-timezone').textContent = this.settings.app.timezone;
-
         // Privacy settings
         this.setToggle('toggle-biometric', this.settings.privacy.biometricLogin);
         this.setToggle('toggle-analytics', this.settings.privacy.analyticsEnabled);
@@ -297,11 +291,6 @@ function setupEventListeners() {
         settingsManager.updateNotifications({ marketing: e.target.checked });
     });
 
-    // App settings
-    document.getElementById('toggle-dark-mode')?.addEventListener('change', (e) => {
-        settingsManager.updateAppSettings({ darkMode: e.target.checked });
-    });
-
     // Privacy settings
     document.getElementById('toggle-biometric')?.addEventListener('change', (e) => {
         settingsManager.updatePrivacySettings({ biometricLogin: e.target.checked });
@@ -319,26 +308,6 @@ function setupEventListeners() {
                 showMessage('Cache cleared successfully', 'success');
             } catch (error) {
                 showMessage('Failed to clear cache', 'error');
-            }
-        }
-    });
-
-    document.getElementById('btn-export-data')?.addEventListener('click', async () => {
-        try {
-            await settingsManager.exportData();
-            showMessage('Data exported successfully', 'success');
-        } catch (error) {
-            showMessage('Failed to export data', 'error');
-        }
-    });
-
-    document.getElementById('btn-reset-settings')?.addEventListener('click', async () => {
-        if (confirm('Reset all settings to defaults? This cannot be undone.')) {
-            try {
-                await settingsManager.resetAllSettings();
-                showMessage('Settings reset successfully', 'success');
-            } catch (error) {
-                showMessage('Failed to reset settings', 'error');
             }
         }
     });
