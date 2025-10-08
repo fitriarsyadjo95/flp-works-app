@@ -375,63 +375,10 @@
         </div>
     </nav>
 
-    <script>
-        // Trading Platform Function
-        function openTradingPlatform() {
-            // Show platform selection modal
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-gray-900 rounded-lg p-6 w-full max-w-sm">
-                    <h3 class="text-white text-lg font-bold mb-4 text-center">Choose Trading Platform</h3>
-                    <div class="space-y-3">
-                        <button onclick="openPlatform('mt4')" class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
-                            <span class="flex items-center gap-2">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
-                                    <rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
-                                    <path d="M12 18h.01"></path>
-                                </svg>
-                                Open MetaTrader 4
-                            </span>
-                        </button>
-                        <button onclick="openPlatform('mt5')" class="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors">
-                            <span class="flex items-center gap-2">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
-                                    <rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
-                                    <path d="M12 18h.01"></path>
-                                </svg>
-                                Open MetaTrader 5
-                            </span>
-                        </button>
-                        <button onclick="closeModal()" class="w-full bg-gray-700 text-gray-300 py-2 rounded-lg hover:bg-gray-600 transition-colors">
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            // Close modal function
-            window.closeModal = function() {
-                document.body.removeChild(modal);
-            }
-            
-            // Open platform function
-            window.openPlatform = function(platform) {
-                const url = platform === 'mt4' ? 'mt4://' : 'mt5://';
-                window.open(url, '_blank');
-                closeModal();
-            }
-            
-            // Close on backdrop click
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    closeModal();
-                }
-            });
-        }
+    <!-- Trading Platform Launcher -->
+    <script src="assets/js/trading-platform.js"></script>
 
+    <script>
         // Authentication check
         function checkAuth() {
             const user = localStorage.getItem('flp_user');
