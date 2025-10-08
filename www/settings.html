@@ -136,22 +136,6 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Profile Stats -->
-                <div class="border-t border-separator pt-4 grid grid-cols-3 gap-4">
-                    <div class="text-center">
-                        <div id="savedCount" class="text-primary text-base font-bold">0</div>
-                        <div class="text-label-secondary text-xs">Saved</div>
-                    </div>
-                    <div class="text-center">
-                        <div id="completedCount" class="text-success text-base font-bold">0</div>
-                        <div class="text-label-secondary text-xs">Completed</div>
-                    </div>
-                    <div class="text-center">
-                        <div id="inProgressCount" class="text-info text-base font-bold">0</div>
-                        <div class="text-label-secondary text-xs">In Progress</div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -365,12 +349,6 @@
 
                 // Update UI with user data
                 updateProfileDisplay();
-
-                // Load stats from backend
-                const stats = await storage.getStats();
-                document.getElementById('savedCount').textContent = stats.saved || 0;
-                document.getElementById('completedCount').textContent = stats.completed || 0;
-                document.getElementById('inProgressCount').textContent = stats.inProgress || 0;
             } catch (error) {
                 console.error('Error loading profile:', error);
             }
