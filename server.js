@@ -12,11 +12,12 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 5001;
 const isProduction = process.env.NODE_ENV === 'production';
 
-// Import signals API, admin API, content API, and posts API
+// Import signals API, admin API, content API, posts API, and settings API
 const { router: signalsRouter, setIO: setSignalsIO } = require('./server/signals-api');
 const adminRouter = require('./server/admin-api');
 const contentRouter = require('./server/content-api');
 const { router: postsRouter, setIO: setPostsIO } = require('./server/posts-api');
+const settingsRouter = require('./server/settings-api');
 
 // Security middleware
 app.use(helmet({
@@ -117,6 +118,7 @@ app.use('/api/signals', signalsRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/content', contentRouter);
 app.use('/api/posts', postsRouter);
+app.use('/api/settings', settingsRouter);
 
 // Serve static files from www directory
 app.use(express.static('www', {

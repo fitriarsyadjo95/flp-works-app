@@ -149,40 +149,40 @@
                         <div class="text-xs text-label-secondary">Get notified of new signals</div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <input id="toggle-signals" type="checkbox" value="" class="sr-only peer" checked>
                         <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                 </div>
-                
+
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="text-xs font-medium">Price Alerts</div>
                         <div class="text-xs text-label-secondary">Alert when targets are hit</div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <input id="toggle-price-alerts" type="checkbox" value="" class="sr-only peer" checked>
                         <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                 </div>
-                
+
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="text-xs font-medium">New Courses</div>
                         <div class="text-xs text-label-secondary">When new content is available</div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" value="" class="sr-only peer">
+                        <input id="toggle-new-courses" type="checkbox" value="" class="sr-only peer">
                         <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                 </div>
-                
+
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="text-xs font-medium">Marketing Updates</div>
                         <div class="text-xs text-label-secondary">Promotions and news</div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" value="" class="sr-only peer">
+                        <input id="toggle-marketing" type="checkbox" value="" class="sr-only peer">
                         <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                 </div>
@@ -199,7 +199,7 @@
                         <div class="text-xs text-label-secondary">Currently enabled</div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <input id="toggle-dark-mode" type="checkbox" value="" class="sr-only peer" checked>
                         <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                 </div>
@@ -207,7 +207,7 @@
                 <button class="w-full flex items-center justify-between py-2">
                     <span class="text-xs">Language</span>
                     <div class="flex items-center gap-2">
-                        <span class="text-xs text-label-secondary">English</span>
+                        <span id="current-language" class="text-xs text-label-secondary">English</span>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
                             <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
                         </svg>
@@ -217,7 +217,7 @@
                 <button class="w-full flex items-center justify-between py-2">
                     <span class="text-xs">Currency Display</span>
                     <div class="flex items-center gap-2">
-                        <span class="text-xs text-label-secondary">USD ($)</span>
+                        <span id="current-currency" class="text-xs text-label-secondary">USD ($)</span>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
                             <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
                         </svg>
@@ -227,7 +227,7 @@
                 <button class="w-full flex items-center justify-between py-2">
                     <span class="text-xs">Time Zone</span>
                     <div class="flex items-center gap-2">
-                        <span class="text-xs text-label-secondary">EST</span>
+                        <span id="current-timezone" class="text-xs text-label-secondary">EST</span>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
                             <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
                         </svg>
@@ -246,7 +246,7 @@
                         <div class="text-xs text-label-secondary">Use Face ID or Touch ID</div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <input id="toggle-biometric" type="checkbox" value="" class="sr-only peer" checked>
                         <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                 </div>
@@ -257,7 +257,7 @@
                         <div class="text-xs text-label-secondary">Help improve the app</div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <input id="toggle-analytics" type="checkbox" value="" class="sr-only peer" checked>
                         <div class="relative w-11 h-6 bg-fill-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                 </div>
@@ -287,7 +287,7 @@
                         <div class="text-xs font-medium">Cache Size</div>
                         <div class="text-xs text-label-secondary">156 MB used</div>
                     </div>
-                    <button class="bg-bg-secondary text-label-secondary px-3 py-1.5 rounded-lg text-xs">
+                    <button id="btn-clear-cache" class="bg-bg-secondary text-label-secondary px-3 py-1.5 rounded-lg text-xs">
                         Clear
                     </button>
                 </div>
@@ -302,7 +302,7 @@
                     </div>
                 </button>
                 
-                <button class="w-full flex items-center justify-between py-2">
+                <button id="btn-export-data" class="w-full flex items-center justify-between py-2">
                     <span class="text-xs">Export Data</span>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 text-label-secondary">
                         <path d="M9 12l6-6m0 0l6 6m-6-6v18"></path>
@@ -315,7 +315,7 @@
         <div class="bg-danger/10 border border-danger/20 rounded-2xl p-6">
             <h3 class="text-base font-semibold text-danger mb-4">Danger Zone</h3>
             <div class="space-y-3">
-                <button class="w-full bg-danger/20 text-danger py-3 rounded-xl text-xs font-medium border border-danger/30">
+                <button id="btn-reset-settings" class="w-full bg-danger/20 text-danger py-3 rounded-xl text-xs font-medium border border-danger/30">
                     Reset All Settings
                 </button>
                 <button onclick="deleteAccount()" class="w-full bg-danger text-white py-3 rounded-xl text-xs font-semibold">
@@ -325,122 +325,6 @@
         </div>
     </main>
 
-    <script src="assets/js/course-storage.js"></script>
-    <script>
-        const storage = new CourseStorage();
-        let currentUser = null;
-        let isEditMode = false;
-
-        // Load user profile and stats
-        async function loadProfile() {
-            try {
-                // Get user from localStorage
-                const userData = localStorage.getItem('flp_user');
-                if (userData) {
-                    currentUser = JSON.parse(userData);
-                } else {
-                    // Create anonymous user
-                    currentUser = {
-                        id: storage.userId,
-                        username: 'Anonymous User',
-                        email: 'Not logged in'
-                    };
-                }
-
-                // Update UI with user data
-                updateProfileDisplay();
-            } catch (error) {
-                console.error('Error loading profile:', error);
-            }
-        }
-
-        function updateProfileDisplay() {
-            // Update avatar
-            const initials = currentUser.username
-                ? currentUser.username.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
-                : '?';
-            document.getElementById('profileAvatar').innerHTML = `
-                <span class="text-xs font-semibold text-primary">${initials}</span>
-            `;
-
-            // Update name and email
-            document.getElementById('profileName').textContent = currentUser.username || 'No name';
-            document.getElementById('profileEmail').textContent = currentUser.email || 'No email';
-        }
-
-        function toggleEditMode() {
-            isEditMode = !isEditMode;
-            const form = document.getElementById('profileEditForm');
-
-            if (isEditMode) {
-                // Populate form with current values
-                document.getElementById('editUsername').value = currentUser.username || '';
-                document.getElementById('editEmail').value = currentUser.email || '';
-                form.classList.remove('hidden');
-            } else {
-                form.classList.add('hidden');
-            }
-        }
-
-        async function saveProfile() {
-            try {
-                const newUsername = document.getElementById('editUsername').value.trim();
-                const newEmail = document.getElementById('editEmail').value.trim();
-
-                if (!newUsername || !newEmail) {
-                    alert('Please fill in all fields');
-                    return;
-                }
-
-                // Update local user object
-                currentUser.username = newUsername;
-                currentUser.email = newEmail;
-
-                // Save to localStorage
-                localStorage.setItem('flp_user', JSON.stringify(currentUser));
-
-                // Update display
-                updateProfileDisplay();
-
-                // Close edit mode
-                toggleEditMode();
-
-                // Show success message
-                showMessage('Profile updated successfully!', 'success');
-            } catch (error) {
-                console.error('Error saving profile:', error);
-                showMessage('Failed to update profile', 'error');
-            }
-        }
-
-        function deleteAccount() {
-            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-                // Clear all local data
-                localStorage.removeItem('flp_user');
-                localStorage.removeItem('flp_anon_id');
-                localStorage.removeItem('flp_watch_later');
-                localStorage.removeItem('flp_course_progress');
-                localStorage.removeItem('flp_bookmarks');
-
-                // Redirect to home
-                window.location.href = 'index.html';
-            }
-        }
-
-        function showMessage(message, type) {
-            const bgColor = type === 'success' ? 'bg-success' : 'bg-danger';
-            const toast = document.createElement('div');
-            toast.className = `fixed top-20 left-1/2 transform -translate-x-1/2 ${bgColor} text-white px-4 py-2 rounded-lg text-xs font-medium z-50 shadow-elevated`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
-        }
-
-        // Load profile on page load
-        loadProfile();
-    </script>
+    <script src="assets/js/settings.js"></script>
 </body>
 </html>
