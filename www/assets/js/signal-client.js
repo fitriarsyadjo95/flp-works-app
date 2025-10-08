@@ -141,29 +141,50 @@ class SignalClient {
     }
 
     /**
-     * Display signals in UI
+     * Display signals in UI (today's signals only)
      */
     displaySignals(signals) {
-        const container = document.getElementById('live-tab');
+        const container = document.getElementById('liveSignalsContainer');
+        const loading = document.getElementById('liveLoading');
+        const empty = document.getElementById('liveEmpty');
+
         if (!container) return;
 
-        // Clear existing mock data
+        // Hide loading
+        if (loading) loading.classList.add('hidden');
+
+        // Clear existing signals
         container.innerHTML = '';
 
-        // Add "No signals" message if empty
-        if (signals.length === 0) {
-            container.innerHTML = `
-                <div class="text-center py-12">
-                    <div class="text-label-tertiary text-sm mb-2">No active signals</div>
-                    <div class="text-label-quaternary text-xs">Waiting for new signals...</div>
-                </div>
-            `;
+        // Filter for today's signals only
+        const todaySignals = this.filterTodaySignals(signals);
+
+        // Show empty state if no signals
+        if (todaySignals.length === 0) {
+            if (empty) empty.classList.remove('hidden');
             return;
         }
 
+        // Hide empty state
+        if (empty) empty.classList.add('hidden');
+
         // Display each signal
-        signals.forEach(signal => {
+        todaySignals.forEach(signal => {
             this.addSignalToUI(signal);
+        });
+    }
+
+    /**
+     * Filter signals to only include today's signals
+     */
+    filterTodaySignals(signals) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        return signals.filter(signal => {
+            const signalDate = new Date(signal.createdAt || signal.created_at);
+            signalDate.setHours(0, 0, 0, 0);
+            return signalDate.getTime() === today.getTime();
         });
     }
 
@@ -171,8 +192,13 @@ class SignalClient {
      * Add signal card to UI
      */
     addSignalToUI(signal) {
-        const container = document.getElementById('live-tab');
+        const container = document.getElementById('liveSignalsContainer');
         if (!container) return;
+
+        // Check if signal is from today
+        if (!this.isToday(signal.createdAt || signal.created_at)) {
+            return; // Don't add signals from other days
+        }
 
         const borderColor = signal.action === 'BUY' ? 'border-green-500' : 'border-red-500';
         const actionColor = signal.action === 'BUY' ? 'bg-green-500' : 'bg-red-500';
@@ -392,6 +418,17 @@ ${signal.reasoning ? `\n💡 ${signal.reasoning}` : ''}
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    /**
+     * Check if a date is today
+     */
+    isToday(dateString) {
+        const date = new Date(dateString);
+        const today = new Date();
+        return date.getDate() === today.getDate() &&
+               date.getMonth() === today.getMonth() &&
+               date.getFullYear() === today.getFullYear();
     }
 
     /**
