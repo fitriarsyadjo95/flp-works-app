@@ -25,10 +25,12 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: [
         "'self'",
-        "'unsafe-inline'", // Required for Tailwind CDN - remove in production build
+        "'unsafe-inline'", // Required for Tailwind CDN and inline scripts
         "https://cdn.tailwindcss.com",
-        "https://cdn.jsdelivr.net"
+        "https://cdn.jsdelivr.net",
+        "https://cdn.socket.io"
       ],
+      scriptSrcAttr: ["'unsafe-inline'"], // Allow inline event handlers (onclick, etc)
       styleSrc: [
         "'self'",
         "'unsafe-inline'", // Required for Tailwind
