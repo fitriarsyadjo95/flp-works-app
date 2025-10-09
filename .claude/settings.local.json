@@ -27,7 +27,11 @@
       "Bash(node server.js)",
       "Bash(curl -s \"http://localhost:5001/api/content/courses/public\")",
       "Bash(node:*)",
-      "Bash(curl -s \"http://localhost:5001/api/content/categories/public\")"
+      "Bash(curl -s \"http://localhost:5001/api/content/categories/public\")",
+      "Bash(curl -X POST http://localhost:5001/api/posts/create -H \"Content-Type: application/json\" -H \"Authorization: Bearer test-admin-token\" -d '{\n  \"\"content\"\": \"\"Welcome to FLP AcademyWorks Community! 🎉\\n\\nThis is your new home for trading education updates, market insights, and community announcements. Stay tuned for daily trading tips and exclusive content!\"\"\n}')",
+      "Bash(curl:*)",
+      "Bash(git push:*)",
+      "Bash(sqlite3:*)"
     ],
     "deny": [],
     "ask": []

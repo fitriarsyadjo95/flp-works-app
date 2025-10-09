@@ -6,6 +6,7 @@
 const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
+const logger = require('./logger');
 
 class PostManager {
     constructor() {
@@ -17,7 +18,7 @@ class PostManager {
         this.db.pragma('journal_mode = WAL');
 
         this.initializeDatabase();
-        console.log('✓ Post Manager initialized with database:', dbPath);
+        logger.info('Post Manager initialized', { database: dbPath });
     }
 
     initializeDatabase() {
@@ -68,7 +69,7 @@ class PostManager {
             CREATE INDEX IF NOT EXISTS idx_post_views_post_id ON post_views(post_id);
         `);
 
-        console.log('✓ Post database schema initialized');
+        logger.debug('Post database schema initialized');
     }
 
     /**

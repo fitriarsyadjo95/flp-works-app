@@ -6,6 +6,7 @@
 const express = require('express');
 const router = express.Router();
 const SignalManager = require('./signal-manager');
+const logger = require('./logger');
 
 // Store reference to Socket.IO instance (will be set by server.js)
 let io = null;
@@ -19,7 +20,16 @@ function setIO(socketIO) {
  */
 function authenticateSignalAPI(req, res, next) {
     const authHeader = req.headers.authorization;
-    const expectedKey = process.env.SIGNAL_API_KEY || 'your-secure-api-key-change-in-production';
+    const expectedKey = process.env.SIGNAL_API_KEY;
+
+    // Fail fast if API key not configured
+    if (!expectedKey) {
+        logger.error('SIGNAL_API_KEY environment variable is not set');
+        return res.status(500).json({
+            error: 'Server misconfiguration',
+            message: 'Signal API key not configured'
+        });
+    }
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({
@@ -78,7 +88,7 @@ router.post('/ingest', authenticateSignalAPI, async (req, res) => {
         // Broadcast to all connected WebSocket clients
         if (io) {
             io.emit('new-signal', savedSignal);
-            console.log(`✓ Signal broadcasted to ${io.sockets.sockets.size} connected clients`);
+            logger.info('Signal broadcasted via WebSocket', { clients: io.sockets.sockets.size });
         }
 
         // Return success response
@@ -90,7 +100,7 @@ router.post('/ingest', authenticateSignalAPI, async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Signal ingest error:', error);
+        logger.error('Signal ingest error', { error: error.message });
         res.status(500).json({
             error: 'Internal server error',
             message: 'Failed to process signal'
@@ -113,7 +123,7 @@ router.get('/active', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error fetching active signals:', error);
+        logger.error('Error fetching active signals', { error: error.message });
         res.status(500).json({
             error: 'Internal server error',
             message: 'Failed to fetch active signals'
@@ -146,7 +156,7 @@ router.get('/history', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error fetching signal history:', error);
+        logger.error('Error fetching signal history', { error: error.message });
         res.status(500).json({
             error: 'Internal server error',
             message: 'Failed to fetch signal history'
@@ -176,7 +186,7 @@ router.get('/:id', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error fetching signal:', error);
+        logger.error('Error fetching signal', { error: error.message });
         res.status(500).json({
             error: 'Internal server error',
             message: 'Failed to fetch signal'
@@ -223,7 +233,7 @@ router.patch('/:id/status', authenticateSignalAPI, async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error updating signal:', error);
+        logger.error('Error updating signal', { error: error.message });
         res.status(500).json({
             error: 'Internal server error',
             message: error.message || 'Failed to update signal'
@@ -247,7 +257,7 @@ router.get('/stats/summary', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error fetching statistics:', error);
+        logger.error('Error fetching statistics', { error: error.message });
         res.status(500).json({
             error: 'Internal server error',
             message: 'Failed to fetch statistics'
@@ -294,7 +304,7 @@ router.post('/test', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Test signal error:', error);
+        logger.error('Test signal error', { error: error.message });
         res.status(500).json({
             error: 'Internal server error',
             message: 'Failed to create test signal'

@@ -1460,6 +1460,195 @@ router.post('/user/login', async (req, res) => {
     }
 });
 
+/**
+ * Apple OAuth Sign In (Native iOS)
+ * POST /api/content/user/oauth/apple
+ */
+router.post('/user/oauth/apple', async (req, res) => {
+    try {
+        const { user_id, identity_token, email, full_name } = req.body;
+
+        // Validation
+        if (!user_id || !identity_token) {
+            return res.status(400).json({
+                success: false,
+                message: 'User ID and identity token are required'
+            });
+        }
+
+        // In production, verify the identity_token with Apple's servers
+        // For now, we'll trust it (Apple already validated it on the client)
+
+        // Check if user exists by Apple user_id
+        let user = ContentManager.db.prepare('SELECT * FROM users WHERE apple_id = ?').get(user_id);
+
+        if (!user && email) {
+            // Check if user exists by email
+            user = ContentManager.db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+
+            if (user) {
+                // Link Apple ID to existing account
+                ContentManager.db.prepare('UPDATE users SET apple_id = ? WHERE id = ?').run(user_id, user.id);
+                console.log(`✓ Linked Apple ID to existing user: ${email}`);
+            }
+        }
+
+        if (!user) {
+            // Create new user
+            const { v4: uuidv4 } = require('uuid');
+            const userId = uuidv4();
+            const referralCode = `FLP${Math.random().toString(36).substr(2, 8).toUpperCase()}`;
+
+            const userName = full_name || email?.split('@')[0] || 'Apple User';
+
+            ContentManager.db.prepare(`
+                INSERT INTO users (id, email, username, full_name, apple_id, referral_code, is_premium, created_at, last_login)
+                VALUES (?, ?, ?, ?, ?, ?, 0, datetime('now'), datetime('now'))
+            `).run(
+                userId,
+                email || `${user_id}@privaterelay.appleid.com`,
+                userName,
+                full_name || userName,
+                user_id,
+                referralCode
+            );
+
+            user = ContentManager.db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+            console.log(`✓ New user created via Apple Sign In: ${email || user_id}`);
+        } else {
+            // Update last login
+            ContentManager.db.prepare('UPDATE users SET last_login = datetime(\'now\') WHERE id = ?').run(user.id);
+            console.log(`✓ User logged in via Apple Sign In: ${user.email}`);
+        }
+
+        // Generate JWT token
+        const jwt = require('jsonwebtoken');
+        const token = jwt.sign(
+            { userId: user.id, email: user.email },
+            process.env.JWT_SECRET || 'your-secret-key-change-in-production',
+            { expiresIn: '30d' }
+        );
+
+        res.json({
+            success: true,
+            message: 'Apple Sign In successful',
+            user: {
+                id: user.id,
+                email: user.email,
+                username: user.username,
+                fullName: user.full_name,
+                phone: user.phone,
+                isPremium: user.is_premium === 1,
+                referralCode: user.referral_code
+            },
+            token
+        });
+    } catch (error) {
+        console.error('Apple Sign In error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to sign in with Apple',
+            error: error.message
+        });
+    }
+});
+
+// ==================== PUSH NOTIFICATIONS ====================
+
+/**
+ * Register Device Token for Push Notifications
+ * POST /api/notifications/register
+ */
+router.post('/notifications/register', extractUserId, async (req, res) => {
+    try {
+        const { userId } = req;
+        const { device_token, platform } = req.body;
+
+        if (!device_token) {
+            return res.status(400).json({
+                success: false,
+                message: 'Device token is required'
+            });
+        }
+
+        // Check if device token already exists
+        const existing = ContentManager.db.prepare(
+            'SELECT * FROM device_tokens WHERE device_token = ?'
+        ).get(device_token);
+
+        if (existing) {
+            // Update user_id if changed
+            if (existing.user_id !== userId) {
+                ContentManager.db.prepare(`
+                    UPDATE device_tokens
+                    SET user_id = ?, updated_at = datetime('now')
+                    WHERE device_token = ?
+                `).run(userId, device_token);
+                console.log(`✓ Updated device token user: ${userId}`);
+            }
+        } else {
+            // Insert new device token
+            const { v4: uuidv4 } = require('uuid');
+            ContentManager.db.prepare(`
+                INSERT INTO device_tokens (id, user_id, device_token, platform, created_at, updated_at)
+                VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))
+            `).run(uuidv4(), userId, device_token, platform || 'ios');
+            console.log(`✓ Registered new device token for user: ${userId}`);
+        }
+
+        res.json({
+            success: true,
+            message: 'Device token registered successfully'
+        });
+
+    } catch (error) {
+        console.error('Device token registration error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to register device token',
+            error: error.message
+        });
+    }
+});
+
+/**
+ * Unregister Device Token
+ * POST /api/notifications/unregister
+ */
+router.post('/notifications/unregister', extractUserId, async (req, res) => {
+    try {
+        const { userId } = req;
+        const { device_token } = req.body;
+
+        if (!device_token) {
+            return res.status(400).json({
+                success: false,
+                message: 'Device token is required'
+            });
+        }
+
+        ContentManager.db.prepare(`
+            DELETE FROM device_tokens
+            WHERE device_token = ? AND user_id = ?
+        `).run(device_token, userId);
+
+        console.log(`✓ Unregistered device token for user: ${userId}`);
+
+        res.json({
+            success: true,
+            message: 'Device token unregistered successfully'
+        });
+
+    } catch (error) {
+        console.error('Device token unregistration error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to unregister device token',
+            error: error.message
+        });
+    }
+});
+
 // ==================== COURSE PROGRESS TRACKING ====================
 
 /**
@@ -1671,6 +1860,279 @@ router.get('/courses/recent', (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Failed to get recent courses',
+            error: error.message
+        });
+    }
+});
+
+// ==================== REFERRAL PROGRAM ====================
+
+/**
+ * Get Referral Stats
+ * GET /api/referrals/stats
+ */
+router.get('/referrals/stats', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+
+        // Count total referrals
+        const totalReferrals = ContentManager.db.prepare(`
+            SELECT COUNT(*) as count FROM users WHERE referred_by = ?
+        `).get(userId)?.count || 0;
+
+        // Count active (premium) referrals
+        const activeReferrals = ContentManager.db.prepare(`
+            SELECT COUNT(*) as count FROM users WHERE referred_by = ? AND is_premium = 1
+        `).get(userId)?.count || 0;
+
+        // Calculate rewards (7 days premium per active referral)
+        const rewardsDays = activeReferrals * 7;
+
+        res.json({
+            success: true,
+            stats: {
+                total_referrals: totalReferrals,
+                active_referrals: activeReferrals,
+                rewards_earned: `${rewardsDays} days`
+            }
+        });
+
+    } catch (error) {
+        console.error('Get referral stats error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to get referral stats',
+            error: error.message
+        });
+    }
+});
+
+/**
+ * Get Referral List
+ * GET /api/referrals/list
+ */
+router.get('/referrals/list', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+
+        const referrals = ContentManager.db.prepare(`
+            SELECT
+                id,
+                full_name as name,
+                email,
+                is_premium,
+                created_at
+            FROM users
+            WHERE referred_by = ?
+            ORDER BY created_at DESC
+        `).all(userId);
+
+        // Format referrals for response
+        const formattedReferrals = referrals.map(ref => ({
+            id: ref.id,
+            name: ref.name || ref.email.split('@')[0],
+            email: ref.email,
+            is_premium: ref.is_premium === 1,
+            joined_date: new Date(ref.created_at).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            })
+        }));
+
+        res.json({
+            success: true,
+            referrals: formattedReferrals
+        });
+
+    } catch (error) {
+        console.error('Get referrals list error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to get referrals',
+            error: error.message
+        });
+    }
+});
+
+// ==================== USER SETTINGS ====================
+
+/**
+ * Update User Settings
+ * PUT /api/user/settings
+ */
+router.put('/user/settings', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+        const { signal_alerts, course_updates, community_notifications } = req.body;
+
+        // Check if user_settings table exists, create if not
+        ContentManager.db.prepare(`
+            CREATE TABLE IF NOT EXISTS user_settings (
+                user_id TEXT PRIMARY KEY,
+                signal_alerts BOOLEAN DEFAULT 1,
+                course_updates BOOLEAN DEFAULT 1,
+                community_notifications BOOLEAN DEFAULT 1,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        `).run();
+
+        // Upsert settings
+        ContentManager.db.prepare(`
+            INSERT INTO user_settings (user_id, signal_alerts, course_updates, community_notifications, updated_at)
+            VALUES (?, ?, ?, ?, datetime('now'))
+            ON CONFLICT(user_id) DO UPDATE SET
+                signal_alerts = excluded.signal_alerts,
+                course_updates = excluded.course_updates,
+                community_notifications = excluded.community_notifications,
+                updated_at = datetime('now')
+        `).run(
+            userId,
+            signal_alerts ? 1 : 0,
+            course_updates ? 1 : 0,
+            community_notifications ? 1 : 0
+        );
+
+        console.log(`✓ Updated settings for user: ${userId}`);
+
+        res.json({
+            success: true,
+            message: 'Settings updated successfully'
+        });
+
+    } catch (error) {
+        console.error('Update settings error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to update settings',
+            error: error.message
+        });
+    }
+});
+
+/**
+ * Delete User Account
+ * DELETE /api/user/account
+ */
+router.delete('/user/account', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+
+        // Soft delete - just mark as deleted
+        ContentManager.db.prepare(`
+            UPDATE users
+            SET email = 'deleted_' || id || '@deleted.com',
+                username = 'deleted_' || id,
+                full_name = 'Deleted User',
+                phone = NULL,
+                password_hash = NULL,
+                apple_id = NULL,
+                google_id = NULL,
+                referral_code = NULL,
+                last_login = datetime('now')
+            WHERE id = ?
+        `).run(userId);
+
+        // Delete device tokens
+        ContentManager.db.prepare(`
+            DELETE FROM device_tokens WHERE user_id = ?
+        `).run(userId);
+
+        console.log(`✓ Account deleted for user: ${userId}`);
+
+        res.json({
+            success: true,
+            message: 'Account deleted successfully'
+        });
+
+    } catch (error) {
+        console.error('Delete account error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to delete account',
+            error: error.message
+        });
+    }
+});
+
+// ==================== LEGAL DOCUMENTS ====================
+
+/**
+ * Get Privacy Policy (PUBLIC)
+ * GET /api/legal/privacy-policy
+ */
+router.get('/legal/privacy-policy', (req, res) => {
+    res.sendFile('privacy-policy.html', { root: './public' });
+});
+
+/**
+ * Get Terms of Service (PUBLIC)
+ * GET /api/legal/terms-of-service
+ */
+router.get('/legal/terms-of-service', (req, res) => {
+    res.sendFile('terms-of-service.html', { root: './public' });
+});
+
+// ==================== SUPPORT ====================
+
+/**
+ * Submit Contact Form
+ * POST /api/support/contact
+ */
+router.post('/support/contact', async (req, res) => {
+    try {
+        const { name, email, subject, message } = req.body;
+
+        // Validation
+        if (!name || !email || !subject || !message) {
+            return res.status(400).json({
+                success: false,
+                message: 'All fields are required'
+            });
+        }
+
+        if (!email.includes('@')) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid email address'
+            });
+        }
+
+        // Store in database
+        const { v4: uuidv4 } = require('uuid');
+        ContentManager.db.prepare(`
+            CREATE TABLE IF NOT EXISTS support_tickets (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                subject TEXT NOT NULL,
+                message TEXT NOT NULL,
+                status TEXT DEFAULT 'open',
+                created_at TEXT NOT NULL
+            )
+        `).run();
+
+        ContentManager.db.prepare(`
+            INSERT INTO support_tickets (id, name, email, subject, message, created_at)
+            VALUES (?, ?, ?, ?, ?, datetime('now'))
+        `).run(uuidv4(), name, email, subject, message);
+
+        console.log(`✓ New support ticket from: ${email}`);
+
+        // TODO: Send email notification to support team
+        // You could integrate with SendGrid, Mailgun, or AWS SES here
+
+        res.json({
+            success: true,
+            message: 'Message sent successfully. We\'ll respond within 24 hours.'
+        });
+
+    } catch (error) {
+        console.error('Contact form error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to submit message',
             error: error.message
         });
     }

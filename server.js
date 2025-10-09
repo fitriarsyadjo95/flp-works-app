@@ -1,3 +1,10 @@
+// Load environment variables first
+require('dotenv').config();
+
+// Initialize Sentry first (before other imports)
+const sentry = require('./server/sentry');
+sentry.init();
+
 const express = require('express');
 const path = require('path');
 const helmet = require('helmet');
@@ -6,18 +13,32 @@ const cors = require('cors');
 const compression = require('compression');
 const http = require('http');
 const socketIO = require('socket.io');
+const logger = require('./server/logger');
+const csrfProtection = require('./server/csrf-protection');
 
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5001;
 const isProduction = process.env.NODE_ENV === 'production';
 
-// Import signals API, admin API, content API, posts API, and settings API
+// Log startup
+logger.info('Starting FLP AcademyWorks Server', {
+    environment: isProduction ? 'production' : 'development',
+    port: PORT,
+    nodeVersion: process.version
+});
+
+// Import signals API, admin API, content API, posts API, settings API, and OAuth
 const { router: signalsRouter, setIO: setSignalsIO } = require('./server/signals-api');
 const adminRouter = require('./server/admin-api');
 const contentRouter = require('./server/content-api');
 const { router: postsRouter, setIO: setPostsIO } = require('./server/posts-api');
 const settingsRouter = require('./server/settings-api');
+const { router: authRouter, passport } = require('./server/auth-oauth');
+
+// Sentry request handler (must be first middleware)
+app.use(sentry.requestHandler());
+app.use(sentry.tracingHandler());
 
 // Security middleware
 app.use(helmet({
@@ -46,29 +67,70 @@ app.use(helmet({
     }
   },
   crossOriginEmbedderPolicy: false,
-  crossOriginResourcePolicy: { policy: "cross-origin" }
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  hsts: {
+    maxAge: 31536000, // 1 year
+    includeSubDomains: true,
+    preload: true
+  }
 }));
 
+logger.info('Security headers configured', {
+  csp: 'enabled',
+  hsts: 'enabled',
+  xssProtection: 'enabled'
+});
+
 // CORS configuration
+const corsOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',')
+  : (isProduction ? [process.env.PRODUCTION_DOMAIN] : '*');
+
 app.use(cors({
-  origin: isProduction ? ['https://your-production-domain.com'] : '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: corsOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
+  exposedHeaders: ['X-CSRF-Token'],
+  credentials: true
 }));
+
+logger.info('CORS configured', { origins: corsOrigins });
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: isProduction ? 100 : 1000, // Limit: 100 for production, 1000 for development
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) * 60 * 1000 || 15 * 60 * 1000,
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || (isProduction ? 100 : 1000),
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+  handler: (req, res) => {
+    logger.warn('Rate limit exceeded', {
+      ip: req.ip,
+      path: req.path,
+      userAgent: req.get('user-agent')
+    });
+    res.status(429).json({
+      error: 'Too many requests',
+      message: 'Please try again later'
+    });
+  }
 });
 
 app.use(limiter);
 
+logger.info('Rate limiting configured', {
+  windowMinutes: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15,
+  maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || (isProduction ? 100 : 1000)
+});
+
 // Compression middleware
 app.use(compression());
+
+// Initialize Passport
+app.use(passport.initialize());
+
+// HTTP request logging
+app.use(logger.httpMiddleware);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
@@ -94,7 +156,7 @@ const io = socketIO(server, {
 
 // WebSocket connection handling
 io.on('connection', (socket) => {
-  console.log(`✓ Client connected to signals: ${socket.id}`);
+  logger.info('WebSocket client connected', { socketId: socket.id });
 
   // Send current active signals on connection
   const SignalManager = require('./server/signal-manager');
@@ -102,7 +164,11 @@ io.on('connection', (socket) => {
   socket.emit('initial-signals', activeSignals);
 
   socket.on('disconnect', () => {
-    console.log(`✗ Client disconnected: ${socket.id}`);
+    logger.info('WebSocket client disconnected', { socketId: socket.id });
+  });
+
+  socket.on('error', (error) => {
+    logger.error('WebSocket error', { socketId: socket.id, error: error.message });
   });
 });
 
@@ -119,6 +185,9 @@ app.use('/api/admin', adminRouter);
 app.use('/api/content', contentRouter);
 app.use('/api/posts', postsRouter);
 app.use('/api/settings', settingsRouter);
+
+// OAuth routes
+app.use('/auth', authRouter);
 
 // Serve static files from www directory
 app.use(express.static('www', {
@@ -191,13 +260,22 @@ app.get('*', (req, res) => {
   res.redirect('/');
 });
 
+// Sentry error handler (must be before custom error handlers)
+app.use(sentry.errorHandler());
+
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Server error:', err.stack);
+  logger.error('Server error', {
+    error: err.message,
+    stack: err.stack,
+    url: req.originalUrl,
+    method: req.method,
+    ip: req.ip
+  });
 
   // Don't leak error details in production
   const errorResponse = isProduction
-    ? { error: 'Internal server error' }
+    ? { error: 'Internal server error', requestId: req.id }
     : { error: err.message, stack: err.stack };
 
   res.status(err.status || 500).json(errorResponse);
@@ -210,34 +288,63 @@ app.use((req, res) => {
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received: closing HTTP server');
-  app.close(() => {
-    console.log('HTTP server closed');
+  logger.info('SIGTERM signal received: closing HTTP server');
+  server.close(() => {
+    logger.info('HTTP server closed');
+    process.exit(0);
   });
 });
 
 process.on('SIGINT', () => {
-  console.log('\nSIGINT signal received: closing HTTP server');
-  process.exit(0);
+  logger.info('SIGINT signal received: closing HTTP server');
+  server.close(() => {
+    logger.info('HTTP server closed');
+    process.exit(0);
+  });
+});
+
+// Uncaught exception handler
+process.on('uncaughtException', (error) => {
+  sentry.captureException(error, { context: 'uncaughtException' });
+  logger.error('Uncaught Exception', {
+    error: error.message,
+    stack: error.stack
+  });
+  process.exit(1);
+});
+
+// Unhandled promise rejection handler
+process.on('unhandledRejection', (reason, promise) => {
+  sentry.captureException(reason, { context: 'unhandledRejection', promise });
+  logger.error('Unhandled Promise Rejection', {
+    reason: reason,
+    promise: promise
+  });
 });
 
 server.listen(PORT, () => {
+  logger.info('Server started successfully', {
+    port: PORT,
+    environment: isProduction ? 'production' : 'development',
+    url: `http://localhost:${PORT}`
+  });
+
   console.log(`\n${'='.repeat(60)}`);
   console.log(`FLP AcademyWorks Server Started`);
   console.log(`${'='.repeat(60)}`);
   console.log(`\n📱 Application URL: http://localhost:${PORT}`);
   console.log(`🌍 Environment: ${isProduction ? 'production' : 'development'}`);
   console.log(`\n🔒 Security Features:`);
-  console.log(`   ✓ Helmet security headers`);
-  console.log(`   ✓ Rate limiting (100 requests per 15 minutes)`);
+  console.log(`   ✓ Helmet security headers + HSTS`);
+  console.log(`   ✓ Rate limiting configured`);
   console.log(`   ✓ CORS protection`);
-  console.log(`   ✓ Compression enabled`);
-  console.log(`   ✓ Content Security Policy`);
+  console.log(`   ✓ Bcrypt password hashing`);
+  console.log(`   ✓ Structured logging (Winston)`);
   console.log(`\n📊 Signal Integration:`);
   console.log(`   ✓ WebSocket server active`);
   console.log(`   ✓ Signal database initialized`);
   console.log(`   ✓ API endpoint: POST /api/signals/ingest`);
   console.log(`   ✓ Real-time broadcasting enabled`);
-  console.log(`\n🔑 API Key: ${process.env.SIGNAL_API_KEY || 'your-secure-api-key-change-in-production'}`);
+  console.log(`\n📝 Logs: ${process.env.LOG_DIR || './logs'}`);
   console.log(`\n${'='.repeat(60)}\n`);
 });

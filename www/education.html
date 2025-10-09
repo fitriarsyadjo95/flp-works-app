@@ -101,26 +101,20 @@
             </div>
         </div>
 
-        <!-- Filter Tags -->
+        <!-- Watch Status Filter -->
         <div class="px-4 mt-4">
             <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                <button class="bg-primary text-black px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap filter-btn" onclick="filterContent('all')">
-                    All
+                <button class="bg-primary text-black px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap watch-filter-btn active" data-status="all" onclick="filterByWatchStatus('all')">
+                    All Videos
                 </button>
-                <button class="bg-gray-800 text-gray-300 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap filter-btn" onclick="filterContent('strategy')">
-                    Strategy
+                <button class="bg-gray-800 text-gray-300 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap watch-filter-btn" data-status="not-watched" onclick="filterByWatchStatus('not-watched')">
+                    Not Watched
                 </button>
-                <button class="bg-gray-800 text-gray-300 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap filter-btn" onclick="filterContent('psychology')">
-                    Psychology
+                <button class="bg-gray-800 text-gray-300 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap watch-filter-btn" data-status="watching" onclick="filterByWatchStatus('watching')">
+                    Currently Watching
                 </button>
-                <button class="bg-gray-800 text-gray-300 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap filter-btn" onclick="filterContent('mt4')">
-                    MT4
-                </button>
-                <button class="bg-gray-800 text-gray-300 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap filter-btn" onclick="filterContent('beginner')">
-                    Beginner
-                </button>
-                <button class="bg-gray-800 text-gray-300 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap filter-btn" onclick="filterContent('advanced')">
-                    Advanced
+                <button class="bg-gray-800 text-gray-300 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap watch-filter-btn" data-status="finished" onclick="filterByWatchStatus('finished')">
+                    Finished
                 </button>
             </div>
         </div>
@@ -360,25 +354,6 @@
             </div>
         </div>
 
-        <!-- Progress Summary -->
-        <div class="px-4 mt-6">
-            <div class="bg-gray-900 rounded-lg p-4">
-                <h3 class="text-base font-semibold mb-3">Your Progress</h3>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center">
-                        <span>Courses Completed</span>
-                        <span class="text-primary font-bold">8/24</span>
-                    </div>
-                    <div class="w-full bg-gray-700 rounded-full h-2">
-                        <div class="bg-primary h-2 rounded-full" style="width: 33%"></div>
-                    </div>
-                    <div class="flex justify-between items-center text-xs text-gray-400">
-                        <span>Total Watch Time</span>
-                        <span>4h 32m</span>
-                    </div>
-                </div>
-            </div>
-        </div>
     </main>
 
     <!-- iOS-style Tab Bar -->
@@ -492,10 +467,20 @@
             return userData;
         }
 
-        // Load courses from API
-        async function loadCourses() {
+        // Load courses from API with watch status
+        async function loadCourses(watchStatus = 'all') {
             try {
-                const response = await fetch('/api/content/courses/public');
+                const userData = JSON.parse(localStorage.getItem('flp_user'));
+                const headers = {};
+
+                // Only add X-User-ID header if user is logged in
+                if (userData?.id) {
+                    headers['X-User-ID'] = userData.id;
+                }
+
+                const response = await fetch(`/api/content/user/courses-with-status?watchStatus=${watchStatus}`, {
+                    headers: headers
+                });
                 const data = await response.json();
 
                 if (data.success && data.courses) {
@@ -507,6 +492,23 @@
                 console.error('Error loading courses:', error);
                 showError('Error loading courses');
             }
+        }
+
+        // Filter courses by watch status
+        function filterByWatchStatus(status) {
+            // Update active button state
+            document.querySelectorAll('.watch-filter-btn').forEach(btn => {
+                if (btn.dataset.status === status) {
+                    btn.classList.add('bg-primary', 'text-black', 'active');
+                    btn.classList.remove('bg-gray-800', 'text-gray-300');
+                } else {
+                    btn.classList.remove('bg-primary', 'text-black', 'active');
+                    btn.classList.add('bg-gray-800', 'text-gray-300');
+                }
+            });
+
+            // Reload courses with filter
+            loadCourses(status);
         }
 
         function renderCourses(courses) {
@@ -535,6 +537,20 @@
                     'Strategy': 'bg-indigo-600/20 text-indigo-300'
                 };
 
+                // Watch status badge
+                const watchStatus = course.watch_status || 'not-watched';
+                const watchStatusBadges = {
+                    'not-watched': '',
+                    'watching': '<div class="absolute top-2 left-2 bg-yellow-600/90 text-white px-2 py-1 rounded text-xs font-medium">In Progress</div>',
+                    'finished': '<div class="absolute top-2 left-2 bg-green-600/90 text-white px-2 py-1 rounded text-xs font-medium flex items-center gap-1"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Completed</div>'
+                };
+
+                // Progress bar for watching status
+                const progressBar = watchStatus === 'watching' && course.progress_percent > 0 ?
+                    `<div class="absolute bottom-0 left-0 w-full h-1 bg-gray-700">
+                        <div class="h-full bg-yellow-500" style="width: ${course.progress_percent}%"></div>
+                    </div>` : '';
+
                 return `
                     <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg course-card" data-course-id="${course.id}">
                         <a href="course-video.html?id=${course.id}" class="block aspect-video bg-gradient-to-br from-blue-600/20 to-purple-700/20 flex items-center justify-center relative" style="cursor: pointer;">
@@ -546,7 +562,9 @@
                                     </svg>
                                 </div>`
                             }
+                            ${watchStatusBadges[watchStatus]}
                             ${course.duration ? `<div class="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">${course.duration}</div>` : ''}
+                            ${progressBar}
                         </a>
                         <div class="p-4">
                             <h3 class="text-base font-semibold mb-2">${course.title}</h3>

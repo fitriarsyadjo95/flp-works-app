@@ -88,168 +88,204 @@
     <main class="pt-20 pb-24 max-w-md mx-auto px-4">
         <!-- Stats -->
         <div class="bg-bg-elevated rounded-2xl p-6 mb-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-2xl font-sf-display font-bold text-label-primary">18</div>
-                    <div class="text-xs text-label-secondary">Items Saved</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-sf-display font-bold text-primary">12</div>
-                    <div class="text-xs text-label-secondary">Videos</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-sf-display font-bold text-info">6</div>
-                    <div class="text-xs text-label-secondary">Articles</div>
+            <div class="flex items-center justify-center gap-12">
+                <div class="text-center">
+                    <div class="text-3xl font-sf-display font-bold text-primary" data-videos-count>0</div>
+                    <div class="text-xs text-label-secondary mt-1">Videos Saved</div>
                 </div>
             </div>
-        </div>
-
-        <!-- Filter Tabs -->
-        <div class="flex bg-bg-elevated rounded-xl p-1 mb-6">
-            <button class="flex-1 bg-primary text-bg py-2 px-3 rounded-lg text-xs font-medium tab-btn" onclick="filterContent('all')">
-                All
-            </button>
-            <button class="flex-1 text-label-secondary py-2 px-3 rounded-lg text-xs font-medium tab-btn" onclick="filterContent('videos')">
-                Videos
-            </button>
-            <button class="flex-1 text-label-secondary py-2 px-3 rounded-lg text-xs font-medium tab-btn" onclick="filterContent('articles')">
-                Articles
-            </button>
         </div>
 
         <!-- Saved Items -->
         <div class="space-y-4" id="savedContent">
-            <!-- Saved Video 1 -->
-            <div class="bg-bg-elevated rounded-2xl overflow-hidden saved-item" data-type="video">
-                <div class="relative">
-                    <div class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
-                        <div class="w-12 h-12 flex items-center justify-center">
-                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-white">
-                                <path d="M8 5v14l11-7z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="absolute top-3 right-3">
-                        <button class="bg-black/50 text-white p-2 rounded-full">
-                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                                <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-base font-sf-ui font-semibold text-label-primary mb-2">Master the 5-Minute Scalping Strategy</h3>
-                    <div class="flex items-center justify-between text-xs text-label-tertiary mb-3 font-sf-ui">
-                        <span class="flex items-center gap-1">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
-                                <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
-                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                            32.8K views
-                        </span>
-                        <span class="flex items-center gap-1">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12,6 12,12 16,14"></polyline>
-                            </svg>
-                            12:30
-                        </span>
-                    </div>
-                    <div class="text-xs text-label-secondary">Saved 2 days ago</div>
-                </div>
-            </div>
-
-            <!-- Saved Article 1 -->
-            <div class="bg-bg-elevated rounded-2xl p-4 saved-item" data-type="article">
-                <div class="flex gap-3">
-                    <div class="w-16 h-16 bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6 text-primary">
-                            <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"></path>
-                        </svg>
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex items-start justify-between mb-2">
-                            <h3 class="text-base font-sf-ui font-semibold text-label-primary">Understanding Market Psychology</h3>
-                            <button class="text-label-secondary p-1">
-                                <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                                    <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                </svg>
-                            </button>
-                        </div>
-                        <p class="text-xs text-label-tertiary mb-2">Learn how emotions drive market movements and how to use this to your advantage...</p>
-                        <div class="flex items-center gap-3 text-xs text-label-secondary">
-                            <span>5 min read</span>
-                            <span>Saved 1 week ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- More saved items would continue here -->
-            <div class="bg-bg-elevated rounded-2xl overflow-hidden saved-item" data-type="video">
-                <div class="relative">
-                    <div class="h-48 bg-gradient-to-br from-blue-700 to-blue-800 flex items-center justify-center">
-                        <div class="w-12 h-12 flex items-center justify-center">
-                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-white">
-                                <path d="M8 5v14l11-7z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="absolute top-3 right-3">
-                        <button class="bg-black/50 text-white p-2 rounded-full">
-                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                                <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-base font-sf-ui font-semibold text-label-primary mb-2">Risk Management: The 2% Rule</h3>
-                    <div class="flex items-center justify-between text-xs text-label-tertiary mb-3 font-sf-ui">
-                        <span class="flex items-center gap-1">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
-                                <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
-                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                            45.2K views
-                        </span>
-                        <span class="flex items-center gap-1">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12,6 12,12 16,14"></polyline>
-                            </svg>
-                            18:45
-                        </span>
-                    </div>
-                    <div class="text-xs text-label-secondary">Saved 3 days ago</div>
-                </div>
+            <!-- Loading state -->
+            <div class="text-center py-12">
+                <div class="text-label-secondary">Loading saved videos...</div>
             </div>
         </div>
     </main>
 
     <script>
-        function filterContent(type) {
-            // Update active tab
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('bg-primary', 'text-bg');
-                btn.classList.add('text-label-secondary');
-            });
-            event.target.classList.add('bg-primary', 'text-bg');
-            event.target.classList.remove('text-label-secondary');
+        // Check authentication
+        function checkAuth() {
+            const user = localStorage.getItem('flp_user');
+            if (!user) {
+                window.location.href = 'index.html';
+                return null;
+            }
 
-            // Filter content
-            const items = document.querySelectorAll('.saved-item');
-            items.forEach(item => {
-                if (type === 'all') {
-                    item.style.display = 'block';
-                } else if (type === 'videos' && item.dataset.type === 'video') {
-                    item.style.display = 'block';
-                } else if (type === 'articles' && item.dataset.type === 'article') {
-                    item.style.display = 'block';
+            const userData = JSON.parse(user);
+            if (!userData.isLoggedIn) {
+                window.location.href = 'index.html';
+                return null;
+            }
+
+            return userData;
+        }
+
+        // Format duration from seconds to MM:SS
+        function formatDuration(seconds) {
+            if (!seconds) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Format view count
+        function formatViews(views) {
+            if (views >= 1000000) {
+                return (views / 1000000).toFixed(1) + 'M';
+            } else if (views >= 1000) {
+                return (views / 1000).toFixed(1) + 'K';
+            }
+            return views.toString();
+        }
+
+        // Format saved date
+        function formatSavedDate(savedAt) {
+            const saved = new Date(savedAt);
+            const now = new Date();
+            const diffMs = now - saved;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 0) return 'Today';
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return `${diffDays} days ago`;
+            if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+            return `${Math.floor(diffDays / 30)} months ago`;
+        }
+
+        // Load saved content from backend
+        async function loadSavedContent() {
+            try {
+                const userData = checkAuth();
+                if (!userData) return;
+
+                const response = await fetch('/api/content/user/saved', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-User-ID': userData.id || 'demo-user'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const courses = data.courses || [];
+
+                    // Update stats
+                    document.querySelector('[data-videos-count]').textContent = courses.length;
+
+                    // Render courses
+                    renderSavedCourses(courses);
                 } else {
-                    item.style.display = 'none';
+                    console.error('Failed to load saved content:', data.error);
+                    renderEmptyState();
                 }
-            });
+            } catch (error) {
+                console.error('Error loading saved content:', error);
+                renderEmptyState();
+            }
+        }
+
+        // Render saved courses
+        function renderSavedCourses(courses) {
+            const container = document.getElementById('savedContent');
+
+            if (courses.length === 0) {
+                renderEmptyState();
+                return;
+            }
+
+            container.innerHTML = courses.map(course => `
+                <div class="bg-bg-elevated rounded-2xl overflow-hidden saved-item" data-course-id="${course.id}">
+                    <div class="relative">
+                        <div class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center" style="${course.thumbnail_url ? `background-image: url(${course.thumbnail_url}); background-size: cover; background-position: center;` : ''}">
+                            ${!course.thumbnail_url ? `
+                            <div class="w-12 h-12 flex items-center justify-center">
+                                <svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-white">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                            </div>
+                            ` : ''}
+                        </div>
+                        <div class="absolute top-3 right-3">
+                            <button onclick="removeSavedCourse('${course.id}')" class="bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors">
+                                <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                    <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-base font-sf-ui font-semibold text-label-primary mb-2">${course.title || 'Untitled Video'}</h3>
+                        <div class="flex items-center justify-between text-xs text-label-tertiary mb-3 font-sf-ui">
+                            <span class="flex items-center gap-1">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                    <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                ${formatViews(course.views || 0)} views
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12,6 12,12 16,14"></polyline>
+                                </svg>
+                                ${formatDuration(course.duration_seconds || 0)}
+                            </span>
+                        </div>
+                        <div class="text-xs text-label-secondary">Saved ${formatSavedDate(course.saved_at)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render empty state
+        function renderEmptyState() {
+            const container = document.getElementById('savedContent');
+            container.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-bg-elevated rounded-full flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-label-tertiary">
+                            <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-label-primary mb-2">No Saved Videos</h3>
+                    <p class="text-sm text-label-secondary mb-6">Videos you save will appear here</p>
+                    <a href="education.html" class="inline-block bg-primary text-bg px-6 py-2 rounded-lg text-sm font-medium">
+                        Browse Videos
+                    </a>
+                </div>
+            `;
+        }
+
+        // Remove saved course
+        async function removeSavedCourse(courseId) {
+            try {
+                const userData = checkAuth();
+                if (!userData) return;
+
+                const response = await fetch(`/api/content/user/saved/${courseId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-User-ID': userData.id || 'demo-user'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Reload saved content
+                    loadSavedContent();
+                } else {
+                    alert('Failed to remove video: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error removing saved course:', error);
+                alert('Failed to remove video');
+            }
         }
 
         function goBack() {
@@ -261,6 +297,11 @@
                 window.location.href = 'home.html';
             }
         }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedContent();
+        });
     </script>
 </body>
 </html>

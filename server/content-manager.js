@@ -60,6 +60,8 @@ class ContentManager {
                 full_name TEXT,
                 phone TEXT,
                 password_hash TEXT,
+                apple_id TEXT UNIQUE,
+                google_id TEXT UNIQUE,
                 is_premium BOOLEAN DEFAULT 0,
                 referral_code TEXT UNIQUE,
                 referred_by TEXT,

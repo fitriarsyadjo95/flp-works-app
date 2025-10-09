@@ -60,11 +60,6 @@
         <div class="flex-1">
             <div class="text-white font-semibold text-sm line-clamp-1" id="navTitle">Course Video</div>
         </div>
-        <button onclick="toggleBookmark()" id="bookmarkBtn" class="text-label-secondary hover:text-primary transition-colors">
-            <svg id="bookmarkIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6">
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-            </svg>
-        </button>
     </nav>
 
     <!-- Main Content -->
@@ -120,16 +115,12 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="grid grid-cols-3 gap-3 mb-6">
+            <div class="grid grid-cols-2 gap-3 mb-6">
                 <button id="saveBtn" onclick="toggleSaveVideo()" class="bg-fill-secondary text-label-primary py-3 rounded-lg font-semibold text-sm hover:bg-fill-primary transition-colors flex items-center justify-center gap-2">
                     <svg id="saveIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
                         <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
                     </svg>
                     <span id="saveText">Save</span>
-                </button>
-                <button id="completeBtn" onclick="markAsCompleted()" class="bg-primary text-bg py-3 rounded-lg font-semibold text-sm hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
-                    <span id="completeIcon">✓</span>
-                    <span id="completeText">Complete</span>
                 </button>
                 <button onclick="shareVideo()" class="bg-fill-secondary text-label-primary py-3 rounded-lg font-semibold text-sm hover:bg-fill-primary transition-colors flex items-center justify-center gap-2">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
@@ -152,9 +143,7 @@
 
     <script>
         let currentCourse = null;
-        let isBookmarked = false;
         let isSaved = false;
-        let isCompleted = false;
 
         // Get course ID from URL
         function getCourseIdFromURL() {
@@ -192,16 +181,11 @@
 
         // Display course details
         function displayCourse(course) {
-            // Check if saved, bookmarked, or completed
+            // Check if saved
             isSaved = courseStorage.isInWatchLater(course.id);
-            isBookmarked = courseStorage.isBookmarked(course.id);
-            const progress = courseStorage.getCourseProgress(course.id);
-            isCompleted = progress.completed;
 
-            // Update button states
+            // Update button state
             updateSaveButton();
-            updateBookmarkButton();
-            updateCompleteButton();
 
             // Set title
             document.getElementById('navTitle').textContent = course.title;
@@ -372,80 +356,22 @@
             const saveBtn = document.getElementById('saveBtn');
 
             if (isSaved) {
+                // Grayed out filled state when saved
                 saveIcon.setAttribute('fill', 'currentColor');
+                saveIcon.setAttribute('stroke', 'currentColor');
                 saveText.textContent = 'Saved';
-                saveBtn.classList.add('bg-primary', 'text-bg');
-                saveBtn.classList.remove('bg-fill-secondary', 'text-label-primary');
+                saveBtn.classList.remove('bg-fill-secondary', 'text-label-primary', 'hover:bg-fill-primary');
+                saveBtn.classList.add('bg-fill-tertiary', 'text-label-tertiary');
+                saveBtn.style.opacity = '0.6';
             } else {
+                // Default outline state when not saved
                 saveIcon.setAttribute('fill', 'none');
+                saveIcon.setAttribute('stroke', 'currentColor');
                 saveText.textContent = 'Save';
-                saveBtn.classList.remove('bg-primary', 'text-bg');
-                saveBtn.classList.add('bg-fill-secondary', 'text-label-primary');
+                saveBtn.classList.remove('bg-fill-tertiary', 'text-label-tertiary');
+                saveBtn.classList.add('bg-fill-secondary', 'text-label-primary', 'hover:bg-fill-primary');
+                saveBtn.style.opacity = '1';
             }
-        }
-
-        // Toggle bookmark
-        function toggleBookmark() {
-            if (!currentCourse) return;
-
-            const result = courseStorage.toggleBookmark(currentCourse.id, currentCourse);
-            isBookmarked = result.bookmarked;
-            updateBookmarkButton();
-            showToast(result.message, result.bookmarked ? 'success' : 'info');
-        }
-
-        // Update bookmark button UI
-        function updateBookmarkButton() {
-            const icon = document.getElementById('bookmarkIcon');
-            if (isBookmarked) {
-                icon.setAttribute('fill', 'currentColor');
-            } else {
-                icon.setAttribute('fill', 'none');
-            }
-        }
-
-        // Mark as completed
-        function markAsCompleted() {
-            if (!currentCourse) return;
-
-            if (isCompleted) {
-                showToast('Course already completed!', 'info');
-                return;
-            }
-
-            const result = courseStorage.markAsCompleted(currentCourse.id, currentCourse.title);
-            if (result.success) {
-                isCompleted = true;
-                updateCompleteButton();
-                showToast('🎉 Course marked as completed!', 'success');
-
-                // Add confetti effect (optional)
-                celebrateCompletion();
-            }
-        }
-
-        // Update complete button UI
-        function updateCompleteButton() {
-            const completeBtn = document.getElementById('completeBtn');
-            const completeText = document.getElementById('completeText');
-            const completeIcon = document.getElementById('completeIcon');
-
-            if (isCompleted) {
-                completeBtn.classList.add('bg-success');
-                completeBtn.classList.remove('bg-primary');
-                completeText.textContent = 'Completed';
-                completeIcon.textContent = '✓';
-            }
-        }
-
-        // Celebrate completion with animation
-        function celebrateCompletion() {
-            // Simple celebration - could add confetti library here
-            const completeBtn = document.getElementById('completeBtn');
-            completeBtn.style.transform = 'scale(1.1)';
-            setTimeout(() => {
-                completeBtn.style.transform = 'scale(1)';
-            }, 200);
         }
 
         // Share video

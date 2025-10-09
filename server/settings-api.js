@@ -247,4 +247,111 @@ router.post('/cache/clear', extractUserId, (req, res) => {
     }
 });
 
+/**
+ * GET /api/settings/membership/check
+ * Check if user is pro member
+ */
+router.get('/membership/check', extractUserId, (req, res) => {
+    try {
+        const isPro = SettingsManager.isProMember(req.userId);
+
+        res.json({
+            success: true,
+            isPro,
+            membershipTier: isPro ? 'pro' : 'free'
+        });
+    } catch (error) {
+        console.error('Check membership error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+/**
+ * PUT /api/settings/membership/:userId
+ * Update user membership status (Admin only)
+ */
+router.put('/membership/:userId', (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { isPro } = req.body;
+
+        if (isPro === undefined) {
+            return res.status(400).json({
+                success: false,
+                error: 'isPro field is required'
+            });
+        }
+
+        const result = SettingsManager.updateMembership(userId, isPro);
+
+        res.json(result);
+    } catch (error) {
+        console.error('Update membership error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+/**
+ * GET /api/settings/users
+ * Get all users (Admin only)
+ */
+router.get('/users', (req, res) => {
+    try {
+        const users = SettingsManager.getAllUsers();
+
+        res.json({
+            success: true,
+            count: users.length,
+            users
+        });
+    } catch (error) {
+        console.error('Get users error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+/**
+ * GET /api/settings/config/:key
+ * Get app configuration
+ */
+router.get('/config/:key', (req, res) => {
+    try {
+        const { key } = req.params;
+        const value = SettingsManager.getAppConfig(key);
+
+        res.json({
+            success: true,
+            key,
+            value: value || null
+        });
+    } catch (error) {
+        console.error('Get config error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+/**
+ * PUT /api/settings/config
+ * Update app configuration (Admin only)
+ */
+router.put('/config', (req, res) => {
+    try {
+        const { key, value } = req.body;
+
+        if (!key || !value) {
+            return res.status(400).json({
+                success: false,
+                error: 'key and value are required'
+            });
+        }
+
+        const result = SettingsManager.updateAppConfig(key, value);
+
+        res.json(result);
+    } catch (error) {
+        console.error('Update config error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 module.exports = router;

@@ -5,13 +5,15 @@
 
 const Database = require('better-sqlite3');
 const path = require('path');
+const logger = require('./logger');
 
 class SettingsManager {
     constructor() {
-        const dbPath = path.join(__dirname, '..', 'settings.db');
+        const dbPath = process.env.SETTINGS_DATABASE_PATH || path.join(__dirname, '..', 'settings.db');
         this.db = new Database(dbPath);
         this.db.pragma('journal_mode = WAL');
         this.initializeDatabase();
+        logger.info('Settings Manager initialized', { database: dbPath });
     }
 
     /**
@@ -27,6 +29,11 @@ class SettingsManager {
                 -- Profile settings
                 username TEXT,
                 email TEXT,
+
+                -- Membership settings
+                membership_tier TEXT DEFAULT 'free',
+                is_pro INTEGER DEFAULT 0,
+                pro_since DATETIME,
 
                 -- Notification preferences
                 notifications_signals INTEGER DEFAULT 1,
@@ -49,10 +56,21 @@ class SettingsManager {
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
 
+            CREATE TABLE IF NOT EXISTS app_config (
+                key TEXT PRIMARY KEY,
+                value TEXT,
+                description TEXT,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+
+            -- Insert default Telegram upgrade link
+            INSERT OR IGNORE INTO app_config (key, value, description)
+            VALUES ('telegram_upgrade_link', 'https://t.me/yourusername', 'Telegram DM link for Pro membership upgrade');
+
             CREATE INDEX IF NOT EXISTS idx_user_settings_user_id ON user_settings(user_id);
         `);
 
-        console.log('✓ Settings database schema initialized');
+        logger.debug('Settings database schema initialized');
     }
 
     /**
@@ -278,6 +296,76 @@ class SettingsManager {
                 exportDate: new Date().toISOString()
             }
         };
+    }
+
+    /**
+     * Check if user is pro member
+     */
+    isProMember(userId) {
+        const settings = this.getSettings(userId);
+        return settings.is_pro === 1;
+    }
+
+    /**
+     * Update user membership status
+     */
+    updateMembership(userId, isPro) {
+        const existing = this.getSettings(userId);
+
+        this.db.prepare(`
+            UPDATE user_settings
+            SET is_pro = ?,
+                membership_tier = ?,
+                pro_since = CASE WHEN ? = 1 AND is_pro = 0 THEN datetime('now') ELSE pro_since END,
+                updated_at = datetime('now')
+            WHERE user_id = ?
+        `).run(isPro ? 1 : 0, isPro ? 'pro' : 'free', isPro ? 1 : 0, userId);
+
+        return { success: true, message: `Membership updated to ${isPro ? 'Pro' : 'Free'}` };
+    }
+
+    /**
+     * Get app configuration
+     */
+    getAppConfig(key) {
+        const config = this.db.prepare(`
+            SELECT value FROM app_config WHERE key = ?
+        `).get(key);
+
+        return config ? config.value : null;
+    }
+
+    /**
+     * Update app configuration
+     */
+    updateAppConfig(key, value) {
+        this.db.prepare(`
+            INSERT OR REPLACE INTO app_config (key, value, updated_at)
+            VALUES (?, ?, datetime('now'))
+        `).run(key, value);
+
+        return { success: true, message: 'Configuration updated' };
+    }
+
+    /**
+     * Get all users (for admin)
+     */
+    getAllUsers() {
+        const users = this.db.prepare(`
+            SELECT user_id, username, email, is_pro, membership_tier, pro_since, created_at
+            FROM user_settings
+            ORDER BY created_at DESC
+        `).all();
+
+        return users.map(user => ({
+            userId: user.user_id,
+            username: user.username || 'Anonymous',
+            email: user.email || 'N/A',
+            isPro: user.is_pro === 1,
+            membershipTier: user.membership_tier,
+            proSince: user.pro_since,
+            createdAt: user.created_at
+        }));
     }
 }
 

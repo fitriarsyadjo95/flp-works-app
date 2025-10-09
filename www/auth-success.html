@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0B0B" />
+    <title>Authentication Successful - FLP AcademyWorks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind-config.js"></script>
+</head>
+<body class="bg-bg text-label-primary font-sf-ui min-h-screen flex items-center justify-center">
+    <div class="text-center px-4">
+        <div class="text-primary text-4xl mb-4">✓</div>
+        <h1 class="text-2xl font-bold mb-2">Authentication Successful!</h1>
+        <p class="text-label-secondary mb-4">Redirecting you to the app...</p>
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+    </div>
+
+    <script>
+        // Get token and user data from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const userDataEncoded = urlParams.get('user');
+
+        if (token && userDataEncoded) {
+            try {
+                const userData = JSON.parse(decodeURIComponent(userDataEncoded));
+
+                // Store user data and token in localStorage
+                localStorage.setItem('flp_user', JSON.stringify({
+                    ...userData,
+                    name: userData.username || userData.fullName,
+                    loginTime: new Date().toISOString(),
+                    isLoggedIn: true
+                }));
+
+                localStorage.setItem('flp_auth_token', token);
+
+                // Redirect to home page after a short delay
+                setTimeout(() => {
+                    window.location.href = '/home.html';
+                }, 1500);
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                alert('Authentication successful but there was an error. Please login again.');
+                window.location.href = '/login.html';
+            }
+        } else {
+            // No token or user data, redirect to login
+            alert('Authentication failed. Please try again.');
+            window.location.href = '/login.html';
+        }
+    </script>
+</body>
+</html>

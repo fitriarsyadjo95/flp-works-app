@@ -517,17 +517,111 @@
             return userData;
         }
 
+        // Check Pro membership
+        async function checkProMembership() {
+            try {
+                const response = await fetch('/api/settings/membership/check', {
+                    headers: {
+                        'Authorization': `User ${getUserId()}`
+                    }
+                });
+                const data = await response.json();
+                return data.isPro;
+            } catch (error) {
+                console.error('Error checking membership:', error);
+                return false;
+            }
+        }
+
+        function getUserId() {
+            const userData = localStorage.getItem('flp_user');
+            if (userData) {
+                const user = JSON.parse(userData);
+                return user.id || user.email || `user_${user.name}`;
+            }
+            let anonId = localStorage.getItem('flp_anon_id');
+            if (!anonId) {
+                anonId = `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                localStorage.setItem('flp_anon_id', anonId);
+            }
+            return anonId;
+        }
+
+        async function showUpgradeModal() {
+            // Get Telegram link from backend
+            let telegramLink = 'https://t.me/yourusername';
+            try {
+                const response = await fetch('/api/settings/config/telegram_upgrade_link');
+                const data = await response.json();
+                if (data.success && data.value) {
+                    telegramLink = data.value;
+                }
+            } catch (error) {
+                console.error('Error fetching Telegram link:', error);
+            }
+
+            const modal = document.createElement('div');
+            modal.id = 'upgradeModal';
+            modal.className = 'fixed inset-0 bg-overlay flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-bg-elevated rounded-2xl p-8 w-full max-w-sm shadow-elevated border border-primary/20 text-center">
+                    <div class="w-20 h-20 bg-primary/20 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 text-primary">
+                            <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-sf-display font-semibold mb-2">Upgrade to Pro</h3>
+                    <p class="text-label-secondary text-sm mb-6">
+                        Access premium trading signals and exclusive content. Upgrade to Pro membership to unlock all features.
+                    </p>
+                    <a href="${telegramLink}" target="_blank" class="w-full block bg-primary text-bg py-3.5 rounded-lg font-sf-ui font-semibold mb-3 hover:bg-primary/90 transition-all">
+                        Contact on Telegram
+                    </a>
+                    <button onclick="closeUpgradeModal()" class="w-full bg-bg-secondary text-label-secondary py-3 rounded-lg font-sf-ui font-medium hover:bg-fill-secondary transition-all">
+                        Maybe Later
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            window.closeUpgradeModal = function() {
+                const modalEl = document.getElementById('upgradeModal');
+                if (modalEl) {
+                    modalEl.remove();
+                }
+                // Redirect to home page
+                window.location.href = 'home.html';
+            };
+
+            // Close on backdrop click
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeUpgradeModal();
+                }
+            });
+        }
+
         // Initialize page
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', async function() {
             const userData = checkAuth();
             if (userData) {
-                // Hide loading screen
-                document.getElementById('loadingScreen').style.display = 'none';
+                // Check Pro membership
+                const isPro = await checkProMembership();
 
-                // Initialize signal client if available
-                if (typeof SignalClient !== 'undefined') {
-                    window.signalClient = new SignalClient();
-                    window.signalClient.connect();
+                if (!isPro) {
+                    // Show upgrade modal for non-pro users
+                    document.getElementById('loadingScreen').style.display = 'none';
+                    showUpgradeModal();
+                } else {
+                    // Hide loading screen
+                    document.getElementById('loadingScreen').style.display = 'none';
+
+                    // Initialize signal client if available
+                    if (typeof SignalClient !== 'undefined') {
+                        window.signalClient = new SignalClient();
+                        window.signalClient.connect();
+                    }
                 }
             }
         });

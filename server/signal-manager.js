@@ -6,14 +6,15 @@
 const Database = require('better-sqlite3');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
+const logger = require('./logger');
 
 class SignalManager {
     constructor() {
         // Initialize database
-        const dbPath = path.join(__dirname, '..', 'signals.db');
+        const dbPath = process.env.DATABASE_PATH || path.join(__dirname, '..', 'signals.db');
         this.db = new Database(dbPath);
         this.initDatabase();
-        console.log('✓ Signal Manager initialized with database:', dbPath);
+        logger.info('Signal Manager initialized', { database: dbPath });
     }
 
     /**
@@ -45,7 +46,7 @@ class SignalManager {
             CREATE INDEX IF NOT EXISTS idx_pair ON signals(pair);
         `);
 
-        console.log('✓ Database schema initialized');
+        logger.debug('Signal database schema initialized');
     }
 
     /**

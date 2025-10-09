@@ -1,9 +1,70 @@
+# Dependencies
 node_modules/
-.DS_Store
+
+# Environment variables
 .env
 .env.local
+.env.production
+.env.*.local
+
+# Databases (CRITICAL: Never commit database files!)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+/data/
+/database/
+
+# Logs
 *.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# Build outputs
 dist/
 build/
+.next/
+out/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Uploads
+uploads/
+public/uploads/
+
+# SSL certificates (if any)
+*.pem
+*.key
+*.cert
+
+# Backup files
+*.backup
+*.bak
+
+# Redis dumps
+dump.rdb
+
+# PM2
+.pm2/
