@@ -90,32 +90,229 @@
     <main class="pt-16 pb-20 max-w-md mx-auto">
         <!-- Profile Header -->
         <div class="px-4 mt-6">
-            <div class="bg-gray-900 rounded-lg p-6 text-center">
-                <div id="userAvatar" class="w-24 h-24 bg-primary rounded-full mx-auto mb-4 flex items-center justify-center text-black text-3xl font-bold">
-                    JD
+            <div class="bg-gray-900 rounded-lg p-6">
+                <div class="text-center mb-6">
+                    <div id="userAvatar" class="w-24 h-24 bg-primary rounded-full mx-auto mb-4 flex items-center justify-center text-black text-3xl font-bold">
+                        JD
+                    </div>
                 </div>
-                <h2 id="userName" class="text-xl font-bold">John Doe</h2>
+
+                <!-- Profile Fields - View Mode -->
+                <div id="profileViewMode" class="space-y-4">
+                    <div>
+                        <label class="block text-xs text-label-secondary mb-2">Full Name</label>
+                        <div class="w-full bg-bg-elevated border border-separator rounded-lg px-4 py-3 text-label-primary text-sm" id="fullNameDisplay">
+                            -
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-label-secondary mb-2">Username</label>
+                        <div class="w-full bg-bg-elevated border border-separator rounded-lg px-4 py-3 text-label-primary text-sm" id="usernameDisplay">
+                            -
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-label-secondary mb-2">Email</label>
+                        <div class="w-full bg-bg-elevated border border-separator rounded-lg px-4 py-3 text-label-primary text-sm" id="emailDisplay">
+                            -
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-label-secondary mb-2">Phone Number</label>
+                        <div class="w-full bg-bg-elevated border border-separator rounded-lg px-4 py-3 text-label-primary text-sm" id="phoneDisplay">
+                            -
+                        </div>
+                    </div>
+
+                    <button
+                        id="editProfileBtn"
+                        class="w-full bg-gray-700 text-white font-semibold py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                        onclick="toggleEditMode(true)"
+                    >
+                        Edit Profile
+                    </button>
+                </div>
+
+                <!-- Profile Fields - Edit Mode (Hidden by default) -->
+                <div id="profileEditMode" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs text-label-secondary mb-2">Full Name</label>
+                        <input
+                            type="text"
+                            id="fullName"
+                            class="w-full bg-bg-elevated border border-separator rounded-lg px-4 py-3 text-label-primary text-sm focus:border-primary focus:outline-none"
+                            placeholder="Enter your full name"
+                        />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-label-secondary mb-2">Username</label>
+                        <input
+                            type="text"
+                            id="username"
+                            class="w-full bg-bg-elevated border border-separator rounded-lg px-4 py-3 text-label-primary text-sm focus:border-primary focus:outline-none"
+                            placeholder="Enter your username"
+                        />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-label-secondary mb-2">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            class="w-full bg-bg-elevated border border-separator rounded-lg px-4 py-3 text-label-primary text-sm focus:border-primary focus:outline-none"
+                            placeholder="Enter your email"
+                        />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-label-secondary mb-2">Phone Number</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            class="w-full bg-bg-elevated border border-separator rounded-lg px-4 py-3 text-label-primary text-sm focus:border-primary focus:outline-none"
+                            placeholder="Enter your phone number"
+                        />
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button
+                            id="cancelEditBtn"
+                            class="flex-1 bg-gray-700 text-white font-semibold py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                            onclick="toggleEditMode(false)"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            id="saveProfileBtn"
+                            class="flex-1 bg-primary text-bg font-semibold py-3 rounded-lg hover:bg-primary/90 transition-colors"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Password Section -->
+        <div class="px-4 mt-6">
+            <div class="bg-gray-900 rounded-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-white">Change Password</h3>
+                </div>
+
+                <!-- Password View Mode - Shows button to open change password form -->
+                <div id="passwordViewMode">
+                    <button
+                        id="showPasswordFormBtn"
+                        class="w-full bg-gray-700 text-white font-semibold py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                        onclick="togglePasswordEditMode(true)"
+                    >
+                        Change Password
+                    </button>
+                </div>
+
+                <!-- Password Edit Mode - Hidden by default -->
+                <div id="passwordEditMode" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs text-label-secondary mb-2">Current Password</label>
+                        <div class="relative">
+                            <input
+                                type="password"
+                                id="currentPassword"
+                                class="w-full bg-bg-elevated border border-separator rounded-lg px-4 py-3 text-label-primary text-sm focus:border-primary focus:outline-none"
+                                placeholder="Enter current password"
+                            />
+                            <button
+                                type="button"
+                                onclick="togglePasswordVisibility('currentPassword', this)"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
+                                    <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-label-secondary mb-2">New Password</label>
+                        <div class="relative">
+                            <input
+                                type="password"
+                                id="newPassword"
+                                class="w-full bg-bg-elevated border border-separator rounded-lg px-4 py-3 text-label-primary text-sm focus:border-primary focus:outline-none"
+                                placeholder="Enter new password"
+                            />
+                            <button
+                                type="button"
+                                onclick="togglePasswordVisibility('newPassword', this)"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
+                                    <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="text-xs text-label-tertiary mt-1">Password must be at least 6 characters</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-label-secondary mb-2">Confirm New Password</label>
+                        <div class="relative">
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                class="w-full bg-bg-elevated border border-separator rounded-lg px-4 py-3 text-label-primary text-sm focus:border-primary focus:outline-none"
+                                placeholder="Confirm new password"
+                            />
+                            <button
+                                type="button"
+                                onclick="togglePasswordVisibility('confirmPassword', this)"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
+                                    <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button
+                            id="cancelPasswordBtn"
+                            class="flex-1 bg-gray-700 text-white font-semibold py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                            onclick="togglePasswordEditMode(false)"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            id="changePasswordBtn"
+                            class="flex-1 bg-primary text-bg font-semibold py-3 rounded-lg hover:bg-primary/90 transition-colors"
+                        >
+                            Save Password
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Menu Items -->
         <div class="px-4 mt-6 space-y-3">
-            <!-- Watch History -->
-            <div class="bg-gray-900 rounded-lg p-4 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="text-xl">📺</div>
-                    <div>
-                        <div class="font-semibold">Watch History</div>
-                        <div class="text-gray-400 text-xs">124 videos watched</div>
-                    </div>
-                </div>
-                <div class="text-gray-400">›</div>
-            </div>
-
             <!-- Saved Content -->
             <a href="saved-content.html" class="bg-gray-900 rounded-lg p-4 flex items-center justify-between hover:bg-gray-800 transition-colors">
                 <div class="flex items-center gap-3">
-                    <div class="text-xl">💾</div>
+                    <div class="text-xl">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                            <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"></path>
+                        </svg>
+                    </div>
                     <div>
                         <div class="font-semibold">Saved Content</div>
                         <div class="text-gray-400 text-xs">18 items saved</div>
@@ -143,60 +340,7 @@
                 </div>
             </a>
 
-            <!-- Connect MT4/MT5 -->
-            <a href="trading-platforms.html" class="bg-gray-900 rounded-lg p-4 hover:bg-gray-800 transition-colors block">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center gap-3">
-                        <div class="text-xl">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
-                                <rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
-                                <path d="M12 18h.01"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <div class="font-semibold">Trading Platforms</div>
-                            <div class="text-gray-400 text-xs">Connect your accounts</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs">MT4 Account</span>
-                        <button class="bg-green-600 text-white px-3 py-1 rounded text-xs">
-                            ✓ Connected
-                        </button>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs">MT5 Account</span>
-                        <button class="bg-gray-700 text-gray-300 px-3 py-1 rounded text-xs">
-                            Connect
-                        </button>
-                    </div>
-                </div>
-            </a>
-
-            <!-- Subscription -->
-            <a href="premium-membership.html" class="bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-lg p-4 hover:from-primary/30 hover:to-primary/20 transition-all block">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center gap-3">
-                        <div class="text-xl">👑</div>
-                        <div>
-                            <div class="font-semibold">Premium Membership</div>
-                            <div class="text-gray-400 text-xs">Active until Dec 2024</div>
-                        </div>
-                    </div>
-                    <div class="bg-primary text-black px-3 py-1 rounded-full text-xs font-bold">
-                        PRO
-                    </div>
-                </div>
-                <div class="text-xs text-gray-300">
-                    • Unlimited access to all courses
-                    • Priority signals & analysis
-                    • 1-on-1 coaching sessions
-                </div>
-            </a>
-
-            <!-- Settings -->
+            <!-- Account Settings -->
             <a href="settings.html" class="bg-gray-900 rounded-lg p-4 flex items-center justify-between hover:bg-gray-800 transition-colors">
                 <div class="flex items-center gap-3">
                     <div class="text-xl">
@@ -206,7 +350,7 @@
                         </svg>
                     </div>
                     <div>
-                        <div class="font-semibold">Settings</div>
+                        <div class="font-semibold">Account Settings</div>
                         <div class="text-gray-400 text-xs">Notifications, privacy & more</div>
                     </div>
                 </div>
@@ -216,7 +360,11 @@
             <!-- Help & Support -->
             <a href="help-support.html" class="bg-gray-900 rounded-lg p-4 flex items-center justify-between hover:bg-gray-800 transition-colors">
                 <div class="flex items-center gap-3">
-                    <div class="text-xl">❓</div>
+                    <div class="text-xl">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+                            <path d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"></path>
+                        </svg>
+                    </div>
                     <div>
                         <div class="font-semibold">Help & Support</div>
                         <div class="text-gray-400 text-xs">FAQ, contact us</div>
@@ -324,19 +472,216 @@
             return userData;
         }
 
+        // Toggle between view and edit mode
+        function toggleEditMode(isEditing) {
+            const viewMode = document.getElementById('profileViewMode');
+            const editMode = document.getElementById('profileEditMode');
+
+            if (isEditing) {
+                // Switch to edit mode
+                viewMode.classList.add('hidden');
+                editMode.classList.remove('hidden');
+
+                // Populate edit fields with current values
+                const userData = JSON.parse(localStorage.getItem('flp_user'));
+                document.getElementById('fullName').value = userData.fullName || '';
+                document.getElementById('username').value = userData.username || userData.name || '';
+                document.getElementById('email').value = userData.email || '';
+                document.getElementById('phone').value = userData.phone || '';
+            } else {
+                // Switch back to view mode
+                viewMode.classList.remove('hidden');
+                editMode.classList.add('hidden');
+            }
+        }
+
         // Update profile with user data
         function updateProfile(userData) {
             // Update avatar with initials
-            const initials = userData.name ? userData.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
+            const fullName = userData.fullName || userData.name || '';
+            const initials = fullName ? fullName.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
             document.getElementById('userAvatar').textContent = initials;
-            
-            // Update name
-            document.getElementById('userName').textContent = userData.name || 'User';
-            
-            // Update user email if available
-            const emailElement = document.querySelector('[data-user-email]');
-            if (emailElement && userData.email) {
-                emailElement.textContent = userData.email;
+
+            // Populate view mode displays
+            document.getElementById('fullNameDisplay').textContent = userData.fullName || '-';
+            document.getElementById('usernameDisplay').textContent = userData.username || userData.name || '-';
+            document.getElementById('emailDisplay').textContent = userData.email || '-';
+            document.getElementById('phoneDisplay').textContent = userData.phone || '-';
+
+            // Populate edit mode fields
+            document.getElementById('fullName').value = userData.fullName || '';
+            document.getElementById('username').value = userData.username || userData.name || '';
+            document.getElementById('email').value = userData.email || '';
+            document.getElementById('phone').value = userData.phone || '';
+        }
+
+        // Save profile changes
+        async function saveProfile() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            if (!fullName || !email) {
+                alert('Please fill in Full Name and Email');
+                return;
+            }
+
+            const saveBtn = document.getElementById('saveProfileBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+
+            try {
+                const userData = JSON.parse(localStorage.getItem('flp_user'));
+                const userId = userData.id || 'demo-user';
+
+                const response = await fetch('/api/content/user/update', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-User-ID': userId
+                    },
+                    body: JSON.stringify({
+                        fullName,
+                        username,
+                        email,
+                        phone
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update local storage
+                    const updatedUser = {
+                        ...userData,
+                        fullName,
+                        username,
+                        email,
+                        phone,
+                        name: username || fullName
+                    };
+                    localStorage.setItem('flp_user', JSON.stringify(updatedUser));
+
+                    // Update UI
+                    updateProfile(updatedUser);
+
+                    // Switch back to view mode
+                    toggleEditMode(false);
+
+                    alert('Profile updated successfully!');
+                } else {
+                    alert('Failed to update profile: ' + (data.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('Failed to update profile. Please try again.');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+            }
+        }
+
+        // Toggle between password view and edit mode
+        function togglePasswordEditMode(isEditing) {
+            const viewMode = document.getElementById('passwordViewMode');
+            const editMode = document.getElementById('passwordEditMode');
+
+            if (isEditing) {
+                // Switch to edit mode
+                viewMode.classList.add('hidden');
+                editMode.classList.remove('hidden');
+
+                // Clear password fields
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            } else {
+                // Switch back to view mode
+                viewMode.classList.remove('hidden');
+                editMode.classList.add('hidden');
+
+                // Clear password fields
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            }
+        }
+
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+
+            const eyeOpen = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
+                <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>`;
+            const eyeClosed = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
+                <path d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 11-4.243-4.243m4.242 4.242L9.88 9.88"></path>
+            </svg>`;
+
+            button.innerHTML = type === 'password' ? eyeOpen : eyeClosed;
+        }
+
+        // Change password
+        async function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value.trim();
+            const newPassword = document.getElementById('newPassword').value.trim();
+            const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('Please fill in all password fields');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert('New password must be at least 6 characters');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('New passwords do not match');
+                return;
+            }
+
+            const changeBtn = document.getElementById('changePasswordBtn');
+            changeBtn.disabled = true;
+            changeBtn.textContent = 'Changing...';
+
+            try {
+                const userData = JSON.parse(localStorage.getItem('flp_user'));
+                const userId = userData.id || 'demo-user';
+
+                const response = await fetch('/api/content/user/change-password', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-User-ID': userId
+                    },
+                    body: JSON.stringify({
+                        currentPassword,
+                        newPassword
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Password changed successfully!');
+
+                    // Switch back to view mode
+                    togglePasswordEditMode(false);
+                } else {
+                    alert('Failed to change password: ' + (data.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error changing password:', error);
+                alert('Failed to change password. Please try again.');
+            } finally {
+                changeBtn.disabled = false;
+                changeBtn.textContent = 'Save Password';
             }
         }
 
@@ -378,19 +723,19 @@
         // Initialize page and event listeners
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, setting up logout');
-            
+
             // Set up logout button
             const logoutBtn = document.getElementById('logoutButton');
             if (logoutBtn) {
                 console.log('Logout button found, adding event listener');
-                
+
                 logoutBtn.addEventListener('click', function(event) {
                     event.preventDefault();
                     event.stopPropagation();
                     console.log('Logout button clicked');
                     performLogout();
                 });
-                
+
                 // Also handle touch events for mobile
                 logoutBtn.addEventListener('touchend', function(event) {
                     event.preventDefault();
@@ -401,7 +746,19 @@
             } else {
                 console.error('Logout button not found!');
             }
-            
+
+            // Set up save profile button
+            const saveProfileBtn = document.getElementById('saveProfileBtn');
+            if (saveProfileBtn) {
+                saveProfileBtn.addEventListener('click', saveProfile);
+            }
+
+            // Set up change password button
+            const changePasswordBtn = document.getElementById('changePasswordBtn');
+            if (changePasswordBtn) {
+                changePasswordBtn.addEventListener('click', changePassword);
+            }
+
             // Check authentication
             const userData = checkAuth();
             if (userData) {
@@ -410,7 +767,7 @@
                 if (loadingScreen) {
                     loadingScreen.style.display = 'none';
                 }
-                
+
                 // Update profile with user data
                 updateProfile(userData);
             }

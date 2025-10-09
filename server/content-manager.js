@@ -6,14 +6,15 @@
 const Database = require('better-sqlite3');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
+const logger = require('./logger');
 
 class ContentManager {
     constructor() {
         // Use same database file as signals
-        const dbPath = path.join(__dirname, '..', 'signals.db');
+        const dbPath = process.env.DATABASE_PATH || path.join(__dirname, '..', 'signals.db');
         this.db = new Database(dbPath);
         this.initDatabase();
-        console.log('✓ Content Manager initialized');
+        logger.info('Content Manager initialized', { database: dbPath });
     }
 
     /**
@@ -56,6 +57,8 @@ class ContentManager {
                 id TEXT PRIMARY KEY,
                 email TEXT UNIQUE NOT NULL,
                 username TEXT,
+                full_name TEXT,
+                phone TEXT,
                 password_hash TEXT,
                 is_premium BOOLEAN DEFAULT 0,
                 referral_code TEXT UNIQUE,
@@ -79,17 +82,15 @@ class ContentManager {
                 FOREIGN KEY (user_id) REFERENCES users(id)
             );
 
-            -- User progress tracking
-            CREATE TABLE IF NOT EXISTS user_progress (
+            -- Password reset tokens
+            CREATE TABLE IF NOT EXISTS password_reset_tokens (
                 id TEXT PRIMARY KEY,
                 user_id TEXT NOT NULL,
-                course_id TEXT NOT NULL,
-                completed BOOLEAN DEFAULT 0,
-                progress_percent INTEGER DEFAULT 0,
-                last_watched TEXT,
-                UNIQUE(user_id, course_id),
-                FOREIGN KEY (user_id) REFERENCES users(id),
-                FOREIGN KEY (course_id) REFERENCES courses(id)
+                token TEXT UNIQUE NOT NULL,
+                expires_at TEXT NOT NULL,
+                used BOOLEAN DEFAULT 0,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES users(id)
             );
 
             -- Saved content
@@ -103,14 +104,46 @@ class ContentManager {
                 FOREIGN KEY (course_id) REFERENCES courses(id)
             );
 
+            -- Watch history (tracks video watch progress)
+            CREATE TABLE IF NOT EXISTS watch_history (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                course_id TEXT NOT NULL,
+                watch_status TEXT CHECK(watch_status IN ('not-watched', 'watching', 'finished')) DEFAULT 'not-watched',
+                progress_percent INTEGER DEFAULT 0,
+                last_watched_at TEXT,
+                first_watched_at TEXT,
+                completed_at TEXT,
+                UNIQUE(user_id, course_id),
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                FOREIGN KEY (course_id) REFERENCES courses(id)
+            );
+
+            -- Course Progress Tracking Table
+            CREATE TABLE IF NOT EXISTS course_progress (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                course_id TEXT NOT NULL,
+                progress_percent INTEGER DEFAULT 0,
+                completed BOOLEAN DEFAULT 0,
+                first_watched TEXT,
+                last_watched TEXT,
+                completed_at TEXT,
+                UNIQUE(user_id, course_id),
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                FOREIGN KEY (course_id) REFERENCES courses(id)
+            );
+
             CREATE INDEX IF NOT EXISTS idx_courses_category ON courses(category);
             CREATE INDEX IF NOT EXISTS idx_courses_published ON courses(is_published);
             CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
             CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
             CREATE INDEX IF NOT EXISTS idx_notifications_global ON notifications(is_global);
+            CREATE INDEX IF NOT EXISTS idx_course_progress_user ON course_progress(user_id);
+            CREATE INDEX IF NOT EXISTS idx_course_progress_course ON course_progress(course_id);
         `);
 
-        console.log('✓ Content database schema initialized');
+        logger.debug('Content database schema initialized');
     }
 
     // ==================== COURSES ====================
@@ -294,7 +327,7 @@ class ContentManager {
      */
     getUsers(filters = {}) {
         try {
-            let query = 'SELECT id, email, username, is_premium, referral_code, referred_by, created_at, last_login FROM users WHERE 1=1';
+            let query = 'SELECT id, email, username, full_name, phone, is_premium, referral_code, referred_by, created_at, last_login FROM users WHERE 1=1';
             const params = [];
 
             if (filters.is_premium !== undefined) {
@@ -323,7 +356,7 @@ class ContentManager {
      */
     getUserById(id) {
         try {
-            const stmt = this.db.prepare('SELECT id, email, username, is_premium, referral_code, referred_by, created_at, last_login FROM users WHERE id = ?');
+            const stmt = this.db.prepare('SELECT id, email, username, full_name, phone, is_premium, referral_code, referred_by, created_at, last_login FROM users WHERE id = ?');
             return stmt.get(id);
         } catch (error) {
             console.error('Error getting user:', error);
@@ -339,7 +372,7 @@ class ContentManager {
             const fields = [];
             const values = [];
 
-            const allowedFields = ['email', 'username', 'is_premium'];
+            const allowedFields = ['email', 'username', 'full_name', 'phone', 'is_premium'];
 
             allowedFields.forEach(field => {
                 if (updates[field] !== undefined) {
@@ -651,9 +684,9 @@ class ContentManager {
     close() {
         try {
             this.db.close();
-            console.log('✓ Content database connection closed');
+            logger.info('Content database connection closed');
         } catch (error) {
-            console.error('Error closing database:', error);
+            logger.error('Error closing Content database', { error: error.message });
         }
     }
 }
