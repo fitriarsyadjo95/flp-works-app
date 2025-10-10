@@ -918,6 +918,51 @@ router.get('/user/stats', extractUserId, (req, res) => {
 });
 
 /**
+ * Get user profile
+ * GET /api/content/user/profile
+ */
+router.get('/user/profile', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+
+        // Get user from database
+        const user = ContentManager.db.prepare(`
+            SELECT id, email, username, full_name, phone, is_premium, referral_code, created_at
+            FROM users
+            WHERE id = ?
+        `).get(userId);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            user: {
+                id: user.id,
+                email: user.email,
+                username: user.username,
+                fullName: user.full_name,
+                phone: user.phone,
+                isPremium: user.is_premium === 1,
+                referralCode: user.referral_code,
+                createdAt: user.created_at
+            }
+        });
+    } catch (error) {
+        console.error('Get user profile error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get user profile',
+            message: error.message
+        });
+    }
+});
+
+/**
  * Update user profile
  * PUT /api/content/user/update
  */
@@ -1316,7 +1361,7 @@ router.post('/user/reset-password', async (req, res) => {
  */
 router.post('/user/register', async (req, res) => {
     try {
-        const { email, password, username, fullName, phone, experience } = req.body;
+        const { email, password, username, fullName, phone, experience, referral_code } = req.body;
 
         // Validation
         if (!email || !password) {
@@ -1349,12 +1394,24 @@ router.post('/user/register', async (req, res) => {
 
         const userId = uuidv4();
         const passwordHash = await bcrypt.hash(password, 10);
-        const referralCode = `FLP${Math.random().toString(36).substr(2, 8).toUpperCase()}`;
+        const userReferralCode = `FLP${Math.random().toString(36).substr(2, 8).toUpperCase()}`;
 
         ContentManager.db.prepare(`
             INSERT INTO users (id, email, password_hash, username, full_name, phone, referral_code, is_premium, created_at, last_login)
             VALUES (?, ?, ?, ?, ?, ?, ?, 0, datetime('now'), datetime('now'))
-        `).run(userId, email, passwordHash, username || email.split('@')[0], fullName || '', phone || '', referralCode);
+        `).run(userId, email, passwordHash, username || email.split('@')[0], fullName || '', phone || '', userReferralCode);
+
+        // If referral code provided, create referral link
+        if (referral_code) {
+            const referrer = ContentManager.db.prepare('SELECT id FROM users WHERE referral_code = ?').get(referral_code);
+            if (referrer) {
+                const referralId = uuidv4();
+                ContentManager.db.prepare(`
+                    INSERT OR IGNORE INTO referrals (id, referrer_id, referred_user_id, status, created_at)
+                    VALUES (?, ?, ?, 'pending', datetime('now'))
+                `).run(referralId, referrer.id, userId);
+            }
+        }
 
         const user = ContentManager.db.prepare('SELECT id, email, username, full_name, phone, is_premium, referral_code, created_at FROM users WHERE id = ?').get(userId);
 
@@ -2138,4 +2195,499 @@ router.post('/support/contact', async (req, res) => {
     }
 });
 
+// ==================== NOTIFICATIONS ====================
+
+/**
+ * Get user notifications
+ * GET /api/notifications
+ */
+router.get('/notifications', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+        const { limit = 50, offset = 0 } = req.query;
+
+        // Create notifications table if it doesn't exist
+        ContentManager.db.prepare(`
+            CREATE TABLE IF NOT EXISTS notifications (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                type TEXT NOT NULL,
+                title TEXT NOT NULL,
+                message TEXT NOT NULL,
+                data TEXT,
+                is_read INTEGER DEFAULT 0,
+                created_at TEXT DEFAULT (datetime('now')),
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            )
+        `).run();
+
+        // Get notifications
+        const notifications = ContentManager.db.prepare(`
+            SELECT * FROM notifications
+            WHERE user_id = ?
+            ORDER BY created_at DESC
+            LIMIT ? OFFSET ?
+        `).all(userId, parseInt(limit), parseInt(offset));
+
+        // Parse data JSON field
+        const parsedNotifications = notifications.map(notif => ({
+            ...notif,
+            data: notif.data ? JSON.parse(notif.data) : null,
+            isRead: notif.is_read === 1,
+            userId: notif.user_id,
+            createdAt: notif.created_at
+        }));
+
+        // Get unread count
+        const unreadCount = ContentManager.db.prepare(`
+            SELECT COUNT(*) as count FROM notifications
+            WHERE user_id = ? AND is_read = 0
+        `).get(userId)?.count || 0;
+
+        res.json({
+            notifications: parsedNotifications,
+            unreadCount
+        });
+    } catch (error) {
+        console.error('Get notifications error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get notifications',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * Mark notification as read
+ * PUT /api/notifications/:id/read
+ */
+router.put('/notifications/:id/read', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+        const { id } = req.params;
+
+        ContentManager.db.prepare(`
+            UPDATE notifications
+            SET is_read = 1
+            WHERE id = ? AND user_id = ?
+        `).run(id, userId);
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Mark notification read error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to mark notification as read',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * Mark all notifications as read
+ * PUT /api/notifications/mark-all-read
+ */
+router.put('/notifications/mark-all-read', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+
+        ContentManager.db.prepare(`
+            UPDATE notifications
+            SET is_read = 1
+            WHERE user_id = ?
+        `).run(userId);
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Mark all notifications read error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to mark all notifications as read',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * Delete notification
+ * DELETE /api/notifications/:id
+ */
+router.delete('/notifications/:id', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+        const { id } = req.params;
+
+        ContentManager.db.prepare(`
+            DELETE FROM notifications
+            WHERE id = ? AND user_id = ?
+        `).run(id, userId);
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Delete notification error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to delete notification',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * Create notification (internal use for testing or system notifications)
+ * POST /api/notifications/create
+ */
+router.post('/notifications/create', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+        const { type, title, message, data, targetUserId } = req.body;
+
+        const { v4: uuidv4 } = require('uuid');
+        const notificationId = uuidv4();
+        const recipientId = targetUserId || userId;
+
+        ContentManager.db.prepare(`
+            INSERT INTO notifications (id, user_id, type, title, message, data, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
+        `).run(
+            notificationId,
+            recipientId,
+            type,
+            title,
+            message,
+            data ? JSON.stringify(data) : null
+        );
+
+        res.json({ success: true, id: notificationId });
+    } catch (error) {
+        console.error('Create notification error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to create notification',
+            message: error.message
+        });
+    }
+});
+
+// ==================== SAVED CONTENT ====================
+
+/**
+ * Get user's saved courses
+ * GET /api/content/saved/courses
+ */
+router.get('/saved/courses', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+
+        // Create saved_courses table if it doesn't exist
+        ContentManager.db.prepare(`
+            CREATE TABLE IF NOT EXISTS saved_courses (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                course_id TEXT NOT NULL,
+                created_at TEXT DEFAULT (datetime('now')),
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                FOREIGN KEY (course_id) REFERENCES courses(id),
+                UNIQUE(user_id, course_id)
+            )
+        `).run();
+
+        // Get saved courses with full course details
+        const savedCourses = ContentManager.db.prepare(`
+            SELECT c.* FROM courses c
+            INNER JOIN saved_courses sc ON c.id = sc.course_id
+            WHERE sc.user_id = ?
+            ORDER BY sc.created_at DESC
+        `).all(userId);
+
+        res.json({ courses: savedCourses });
+    } catch (error) {
+        console.error('Get saved courses error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get saved courses',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * Get user's saved posts
+ * GET /api/content/saved/posts
+ */
+router.get('/saved/posts', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+
+        // Create saved_posts table if it doesn't exist
+        ContentManager.db.prepare(`
+            CREATE TABLE IF NOT EXISTS saved_posts (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                post_id INTEGER NOT NULL,
+                created_at TEXT DEFAULT (datetime('now')),
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                FOREIGN KEY (post_id) REFERENCES community_posts(id),
+                UNIQUE(user_id, post_id)
+            )
+        `).run();
+
+        // Get saved posts with full post details
+        const savedPosts = ContentManager.db.prepare(`
+            SELECT
+                p.*,
+                COALESCE((SELECT COUNT(*) FROM post_views WHERE post_id = p.id), 0) as view_count,
+                COALESCE((SELECT COUNT(*) FROM post_reactions WHERE post_id = p.id), 0) as total_reactions,
+                COALESCE((SELECT json_group_object(reaction, count)
+                    FROM (SELECT reaction, COUNT(*) as count
+                        FROM post_reactions
+                        WHERE post_id = p.id
+                        GROUP BY reaction)
+                ), '{}') as reactions
+            FROM community_posts p
+            INNER JOIN saved_posts sp ON p.id = sp.post_id
+            WHERE sp.user_id = ?
+            ORDER BY sp.created_at DESC
+        `).all(userId);
+
+        // Parse reactions JSON
+        const parsedPosts = savedPosts.map(post => ({
+            ...post,
+            reactions: JSON.parse(post.reactions || '{}')
+        }));
+
+        res.json({ posts: parsedPosts });
+    } catch (error) {
+        console.error('Get saved posts error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get saved posts',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * Save a course
+ * POST /api/content/saved/courses/:courseId
+ */
+router.post('/saved/courses/:courseId', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+        const { courseId } = req.params;
+        const { v4: uuidv4 } = require('uuid');
+
+        ContentManager.db.prepare(`
+            INSERT OR IGNORE INTO saved_courses (id, user_id, course_id, created_at)
+            VALUES (?, ?, ?, datetime('now'))
+        `).run(uuidv4(), userId, courseId);
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Save course error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to save course',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * Save a post
+ * POST /api/content/saved/posts/:postId
+ */
+router.post('/saved/posts/:postId', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+        const { postId } = req.params;
+        const { v4: uuidv4 } = require('uuid');
+
+        ContentManager.db.prepare(`
+            INSERT OR IGNORE INTO saved_posts (id, user_id, post_id, created_at)
+            VALUES (?, ?, ?, datetime('now'))
+        `).run(uuidv4(), userId, parseInt(postId));
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Save post error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to save post',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * Remove a saved course
+ * DELETE /api/content/saved/courses/:courseId
+ */
+router.delete('/saved/courses/:courseId', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+        const { courseId } = req.params;
+
+        ContentManager.db.prepare(`
+            DELETE FROM saved_courses
+            WHERE user_id = ? AND course_id = ?
+        `).run(userId, courseId);
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Remove saved course error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to remove saved course',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * Remove a saved post
+ * DELETE /api/content/saved/posts/:postId
+ */
+router.delete('/saved/posts/:postId', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+        const { postId } = req.params;
+
+        ContentManager.db.prepare(`
+            DELETE FROM saved_posts
+            WHERE user_id = ? AND post_id = ?
+        `).run(userId, parseInt(postId));
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Remove saved post error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to remove saved post',
+            message: error.message
+        });
+    }
+});
+
+// ==================== WATCH LATER ====================
+
+/**
+ * Get user's watch later list
+ * GET /api/content/user/watch-later
+ */
+router.get('/user/watch-later', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+
+        // Create watch_later table if it doesn't exist
+        ContentManager.db.prepare(`
+            CREATE TABLE IF NOT EXISTS watch_later (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                course_id TEXT NOT NULL,
+                created_at TEXT DEFAULT (datetime('now')),
+                UNIQUE(user_id, course_id)
+            )
+        `).run();
+
+        // Get watch later courses with full course details
+        const watchLaterCourses = ContentManager.db.prepare(`
+            SELECT c.* FROM courses c
+            INNER JOIN watch_later wl ON c.id = wl.course_id
+            WHERE wl.user_id = ?
+            ORDER BY wl.created_at DESC
+        `).all(userId);
+
+        res.json({
+            success: true,
+            data: watchLaterCourses
+        });
+    } catch (error) {
+        console.error('Get watch later error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get watch later courses',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * Add a course to watch later
+ * POST /api/content/user/watch-later
+ */
+router.post('/user/watch-later', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+        const { course_id } = req.body;
+
+        if (!course_id) {
+            return res.status(400).json({
+                success: false,
+                error: 'Course ID is required'
+            });
+        }
+
+        // Create watch_later table if it doesn't exist
+        ContentManager.db.prepare(`
+            CREATE TABLE IF NOT EXISTS watch_later (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                course_id TEXT NOT NULL,
+                created_at TEXT DEFAULT (datetime('now')),
+                UNIQUE(user_id, course_id)
+            )
+        `).run();
+
+        // Insert or ignore (prevents duplicates)
+        const id = `wl_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        ContentManager.db.prepare(`
+            INSERT OR IGNORE INTO watch_later (id, user_id, course_id, created_at)
+            VALUES (?, ?, ?, datetime('now'))
+        `).run(id, userId, course_id);
+
+        res.json({
+            success: true,
+            message: 'Added to watch later'
+        });
+    } catch (error) {
+        console.error('Add to watch later error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to add to watch later',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * Remove a course from watch later
+ * DELETE /api/content/user/watch-later/:courseId
+ */
+router.delete('/user/watch-later/:courseId', extractUserId, (req, res) => {
+    try {
+        const { userId } = req;
+        const { courseId } = req.params;
+
+        ContentManager.db.prepare(`
+            DELETE FROM watch_later
+            WHERE user_id = ? AND course_id = ?
+        `).run(userId, courseId);
+
+        res.json({
+            success: true,
+            message: 'Removed from watch later'
+        });
+    } catch (error) {
+        console.error('Remove from watch later error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to remove from watch later',
+            message: error.message
+        });
+    }
+});
+
 module.exports = router;
+module.exports.extractUserId = extractUserId;

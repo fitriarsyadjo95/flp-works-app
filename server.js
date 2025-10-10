@@ -5,6 +5,26 @@ require('dotenv').config();
 const sentry = require('./server/sentry');
 sentry.init();
 
+// Add crash detection handlers IMMEDIATELY after Sentry
+process.on('exit', (code) => {
+  console.error(`[CRASH DETECTION] Process exiting with code: ${code}`);
+  console.error(`[CRASH DETECTION] Stack trace:`, new Error().stack);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('[CRASH DETECTION] Uncaught exception:', error);
+  console.error('[CRASH DETECTION] Stack:', error.stack);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[CRASH DETECTION] Unhandled rejection at:', promise);
+  console.error('[CRASH DETECTION] Reason:', reason);
+  process.exit(1);
+});
+
+console.log('[DEBUG] Crash handlers installed');
+
 const express = require('express');
 const path = require('path');
 const helmet = require('helmet');
@@ -28,13 +48,17 @@ logger.info('Starting FLP AcademyWorks Server', {
     nodeVersion: process.version
 });
 
-// Import signals API, admin API, content API, posts API, settings API, and OAuth
+// Import signals API, admin API, content API, posts API, settings API, referrals API, and OAuth
 const { router: signalsRouter, setIO: setSignalsIO } = require('./server/signals-api');
 const adminRouter = require('./server/admin-api');
 const contentRouter = require('./server/content-api');
 const { router: postsRouter, setIO: setPostsIO } = require('./server/posts-api');
 const settingsRouter = require('./server/settings-api');
+const referralsRouter = require('./server/referrals-api');
 const { router: authRouter, passport } = require('./server/auth-oauth');
+
+console.log('[DEBUG] All modules loaded successfully');
+console.log('[DEBUG] About to configure middleware...');
 
 // Sentry request handler (must be first middleware)
 app.use(sentry.requestHandler());
@@ -185,6 +209,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/content', contentRouter);
 app.use('/api/posts', postsRouter);
 app.use('/api/settings', settingsRouter);
+app.use('/api/referrals', referralsRouter);
 
 // OAuth routes
 app.use('/auth', authRouter);
